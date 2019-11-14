@@ -1,10 +1,10 @@
-import { Object3D, RawShaderMaterial } from 'three'
+import { Object3D/* , RawShaderMaterial */ } from 'three'
 
-import { datGui } from 'utils/debug'
-import Bobby from './Bobby'
+// import { datGui } from 'utils/debug'
+// import Bobby from './Bobby'
 
-import vertexShader from './ObjectShader/object.vs'
-import fragmentShader from './ObjectShader/object.fs'
+// import vertexShader from './ObjectShader/object.vs'
+// import fragmentShader from './ObjectShader/object.fs'
 
 export default class Objects extends Object3D {
   constructor () {
@@ -16,12 +16,10 @@ export default class Objects extends Object3D {
     } */
 
     this.initMaterial()
-    
 
     this.addControlGui()
-
-    
   }
+
   initMaterial () {
     /* this.myMat = new MeshPhysicalMaterial({
       color: new Color(this.colors.primary),

@@ -11,8 +11,8 @@ import {
 
 import Stats from 'stats.js'
 
-import Objects from './objects/Objects'
-import Ground from './objects/ground/Ground'
+// import Objects from './objects/Objects'
+// import Ground from './objects/ground/Ground'
 
 import createComposer from './postfx/Composer'
 import createLight from './objects/Lights'
@@ -80,7 +80,7 @@ export default class Webgl {
   }
 
   initObjects () {
-    
+    /* *** */
   }
 
   render () {
