@@ -13,6 +13,10 @@ export default class Ressource extends Object3D {
 
     this.type = options.type ? options.type : constants.RESSOURCES.TYPES.VEGETATION
 
+    if (options.position) {
+      this.position.set(options.position.x, options.position.y, options.position.z)
+    }
+
     this.init()
   }
 

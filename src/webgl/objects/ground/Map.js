@@ -22,7 +22,7 @@ export default class Map {
 
   get (x, y) {
     let h = 1
-
+    y = y * 0.01
     for (let e = 1; e < this.exp; e++) {
       for (let i = 0; i < this.n; i++) {
         // h += (Math.cos(x * this.xHtab[e * this.n + i] * e + y * this.yHtab[e * this.n + i] * e)) * this.ampltab[e * this.n + i]
