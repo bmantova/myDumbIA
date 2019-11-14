@@ -1,10 +1,8 @@
 precision highp float;
 
 uniform float uTime;
-
-varying vec2 vUv;
-varying float vHeight;
+varying vec3 pos;
 
 void main() {
-  gl_FragColor = vec4(mix(vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 1.0), vHeight), 1.0);
+  gl_FragColor = vec4((1.0 - pos.z) *.5, 0.0, pos.z*.5, 1.0);
 }

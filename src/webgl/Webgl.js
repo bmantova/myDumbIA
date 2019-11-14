@@ -12,7 +12,7 @@ import {
 import Stats from 'stats.js'
 
 // import Objects from './objects/Objects'
-// import Ground from './objects/ground/Ground'
+import Ground from './objects/ground/Ground'
 
 import createComposer from './postfx/Composer'
 import createLight from './objects/Lights'
@@ -42,7 +42,7 @@ export default class Webgl {
       0.1,
       1000
     )
-    this.camera.position.z = 15
+    this.camera.position.set(0, 5, 15)
     this.scene.add(this.camera)
     this.scene.background = new Color(0x111)
 
@@ -55,6 +55,10 @@ export default class Webgl {
     this.stats = new Stats()
     this.stats.showPanel(0)
     $parent.appendChild(this.stats.dom)
+
+    this.ground = new Ground()
+
+    this.scene.add(this.ground)
 
     this.initObjects()
 
@@ -91,7 +95,7 @@ export default class Webgl {
     this.controls.update()
 
     this.scene.children.forEach((child) => {
-      if (child.update) child.update(audio, this.currentTime)
+      if (child.update) child.update(this.currentTime)
     })
     // this.objects.update()
     // this.ground.update()

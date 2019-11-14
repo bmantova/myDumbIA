@@ -17,7 +17,7 @@ export default class Objects extends Object3D {
 
     this.initMaterial()
 
-    this.addControlGui()
+    this.addControlGui() 
   }
 
   initMaterial () {
