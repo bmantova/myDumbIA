@@ -19,8 +19,17 @@ import createLight from './objects/Lights'
 
 import audio from 'utils/audio'
 
+import ADN from 'objects/ADN'
+
 export default class Webgl {
   constructor ($parent) {
+    /* DEBUT DEBUG AXEL */
+    const first = new ADN()
+    const second = new ADN()
+    console.log(first.canFuckWith(second))
+    console.log(first.mixADNWith(second))
+    /* FIN DEBUG AXEL */
+
     this.currentTime = 0
     this.render = this.render.bind(this)
     this.onResize = this.onResize.bind(this)
