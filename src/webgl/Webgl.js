@@ -136,8 +136,6 @@ export default class Webgl {
   }
 
   getOthers (element) {
-    return this.elements.filter((e) => {
-      return e.id !== element.id
-    })
+    return this.elements.filter((e) => e.id !== element.id)
   }
 }
