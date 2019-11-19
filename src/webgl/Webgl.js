@@ -71,10 +71,10 @@ export default class Webgl {
 
     this.nextId = 0
     this.elements = []
-    for (let i = 0; i < 500; i++) {
-      this.elements.push({ id: this.nextId, class: new Fellow(new ADN()) })
-      this.elements[i].class.position.set((Math.random() - 0.5) * constants.GROUND.SIZE, 0, (Math.random() - 0.5) * constants.GROUND.SIZE)
-      this.scene.add(this.elements[i].class)
+    for (let i = 0; i < 20; i++) {
+      this.elements.push(new Fellow({ ADN: new ADN() }))
+      this.elements[i].position.set((Math.random() - 0.5) * constants.GROUND.SIZE, 0, (Math.random() - 0.5) * constants.GROUND.SIZE)
+      this.scene.add(this.elements[i])
       this.nextId++
     }
 
@@ -121,9 +121,8 @@ export default class Webgl {
     })
 
     this.elements.forEach((element) => {
-      const others = this.elements.filter((e) => e.id !== element.id)
-      element.class.update()
-      element.class.move(others, this.ground)
+      element.update()
+      element.move(this, this.ground)
     })
 
     // this.objects.update()
@@ -134,5 +133,11 @@ export default class Webgl {
     this.composer.render()
     this.stats.end()
     requestAnimationFrame(this.render)
+  }
+
+  getOthers (element) {
+    return this.elements.filter((e) => {
+      return e.id !== element.id
+    })
   }
 }
