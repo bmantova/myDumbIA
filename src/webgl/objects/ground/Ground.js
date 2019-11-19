@@ -1,4 +1,4 @@
-import { Object3D, PlaneBufferGeometry, RawShaderMaterial, Mesh, DoubleSide, Vector3 } from 'three'
+import { Object3D, PlaneBufferGeometry, RawShaderMaterial, Mesh/* , DoubleSide */, Vector3 } from 'three'
 
 import constants from 'utils/constants'
 
@@ -21,9 +21,9 @@ export default class Ground extends Object3D {
     this.material = new RawShaderMaterial({
       uniforms: {},
       vertexShader: vertexShader,
-      fragmentShader: fragmentShader,
-      side: DoubleSide,
-      wireframe: true
+      fragmentShader: fragmentShader
+      // side: DoubleSide
+      // wireframe: true
     })
 
     const vertices = this.geometry.attributes.position.array
@@ -34,30 +34,50 @@ export default class Ground extends Object3D {
 
     for (let i = 0; i <= constants.GROUND.SUB; i++) {
       for (let j = 0; j <= constants.GROUND.SUB; j++) {
-        vertices[(i * (constants.GROUND.SUB + 1) + j) * 3 + 2] = this.height.get(j, -i) * 10
+        vertices[(i * (constants.GROUND.SUB + 1) + j) * 3 + 2] = this.height.get(j, i) * 10
       }
     }
 
     var plane = new Mesh(this.geometry, this.material)
 
-    plane.rotation.x = Math.PI * 0.5
+    plane.rotation.x = -Math.PI * 0.5
     plane.rotation.z = Math.PI
     this.add(plane)
 
-    for (let i = 0; i < 100; i++) {
-      const x = (Math.random() - 0.5) * constants.GROUND.SIZE
-      const y = (Math.random() - 0.5) * constants.GROUND.SIZE
-      this.add(new Vegetation({ size: 3, position: new Vector3(x, this.getHeight(x, y) - 3, y) }))
+    for (let i = 0; i < 500; i++) {
+      let x
+      let y
+      let essais = 0
+      let next = true
+      while (essais < 3 && next) {
+        x = (Math.random() - 0.5) * constants.GROUND.SIZE
+        y = (Math.random() - 0.5) * constants.GROUND.SIZE
+
+        if (this.getHeight(x, y) > 5) next = false
+
+        essais++
+      }
+
+      const size = Math.abs(this.humidity.get(x, y) + 3)
+      this.add(new Vegetation({ size: size, position: new Vector3(x, this.getHeight(x, y), y) }))
     }
   }
 
   getHeight (x, y) {
     const ratio = (constants.GROUND.SUB) / constants.GROUND.SIZE
-    return this.height.get((x - constants.GROUND.SIZE * 0.5) * ratio, (-y - constants.GROUND.SIZE * 0.5) * ratio) * 10
+    return this.height.get((x - constants.GROUND.SIZE * 0.5) * ratio, (y - constants.GROUND.SIZE * 0.5) * ratio) * 10
+  }
+
+  getBiomeInfo (x, y) {
+    return {
+      height: this.getHeight(x, y),
+      humidity: this.humidity.get(x, y),
+      temperature: this.temperature.get(x, y)
+    }
   }
 
   update (time) {
-    // this.rotateY(0.04)
+    this.rotateY(0.04)
     // this.material.uniforms.uTime.value += 0.01
     // this.material.uniforms.uAmplitude.value = audio.volumeconst vertices = geometry.attributes.position.array
   }

@@ -1,10 +1,10 @@
 import {
-  PointLight,
+  DirectionalLight,
   AmbientLight
 } from 'three'
 
 export default function createLight (scene) {
-  const light = new PointLight(0xffffff, 1, 100)
+  const light = new DirectionalLight(0xffffff, 1)
   scene.add(light)
 
   const ambient = new AmbientLight(0x666666)
