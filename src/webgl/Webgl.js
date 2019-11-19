@@ -20,26 +20,10 @@ import createLight from './objects/Lights'
 import audio from 'utils/audio'
 
 import ADN from 'objects/ADN'
+import Fellow from './objects/Fellow'
 
 export default class Webgl {
   constructor ($parent) {
-    /* DEBUT DEBUG AXEL */
-    const adns = []
-    const first = new ADN()
-    const second = new ADN()
-    adns.push(first)
-    adns.push(second)
-    console.log(first.canFuckWith(second))
-    for (let i = 0; i < 5; i++) {
-      const rand1 = Math.floor(Math.random() * adns.length)
-      const rand2 = Math.floor(Math.random() * adns.length)
-      const adn = adns[rand1].getADNFromReproductionWith(adns[rand2])
-      console.log(adn)
-      adns.push(new ADN(adn))
-    }
-    console.log(adns)
-    /* FIN DEBUG AXEL */
-
     this.currentTime = 0
     this.render = this.render.bind(this)
     this.onResize = this.onResize.bind(this)
@@ -76,6 +60,32 @@ export default class Webgl {
     $parent.appendChild(this.stats.dom)
 
     this.ground = new Ground()
+
+    /* DEBUT DEBUG AXEL */
+    const adns = []
+    const first = new ADN()
+    const second = new ADN()
+    adns.push(first)
+    adns.push(second)
+    // console.log(first.canFuckWith(second))
+    for (let i = 0; i < 5; i++) {
+      const rand1 = Math.floor(Math.random() * adns.length)
+      const rand2 = Math.floor(Math.random() * adns.length)
+      const adn = adns[rand1].getADNFromReproductionWith(adns[rand2])
+      // console.log(adn)
+      adns.push(new ADN(adn))
+    }
+    // console.log(adns)
+    this.nextId = 0
+    this.elements = []
+    for (let i = 0; i < 5; i++) {
+      this.elements.push({ id: this.nextId, class: new Fellow(new ADN()) })
+      this.elements[i].class.position.set(i * Math.random(), i * Math.random(), 1)
+      this.scene.add(this.elements[i].class)
+      this.nextId++
+    }
+
+    /* FIN DEBUG AXEL */
 
     this.scene.add(this.ground)
 
@@ -116,6 +126,13 @@ export default class Webgl {
     this.scene.children.forEach((child) => {
       if (child.update) child.update(this.currentTime)
     })
+
+    this.elements.forEach((element) => {
+      const others = this.elements.filter((e) => e.id !== element.id)
+      element.class.update()
+      element.class.move(others, this.ground)
+    })
+
     // this.objects.update()
     // this.ground.update()
 

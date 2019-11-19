@@ -1,7 +1,7 @@
 export default {
   GROUND: {
-    SIZE: 100,
-    SUB: 128,
+    SIZE: 512,
+    SUB: 256,
     MAPS: {
       HEIGHT: {
         max: 0.06,
