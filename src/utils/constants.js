@@ -6,7 +6,7 @@ export default {
       HEIGHT: {
         max: 0.06,
         n: 20,
-        exp: 6
+        exp: 7
       },
       HUMIDITY: {
         max: 0.05,

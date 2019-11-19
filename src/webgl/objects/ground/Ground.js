@@ -19,7 +19,11 @@ export default class Ground extends Object3D {
     this.geometry = new PlaneBufferGeometry(constants.GROUND.SIZE, constants.GROUND.SIZE, constants.GROUND.SUB, constants.GROUND.SUB)
 
     this.material = new RawShaderMaterial({
-      uniforms: {},
+      uniforms: {
+        uTime: {
+          value: 0.0
+        }
+      },
       vertexShader: vertexShader,
       fragmentShader: fragmentShader
       // side: DoubleSide
@@ -49,7 +53,7 @@ export default class Ground extends Object3D {
       let y
       let essais = 0
       let next = true
-      while (essais < 3 && next) {
+      while (essais < 5 && next) {
         x = (Math.random() - 0.5) * constants.GROUND.SIZE
         y = (Math.random() - 0.5) * constants.GROUND.SIZE
 
@@ -77,7 +81,7 @@ export default class Ground extends Object3D {
   }
 
   update (time) {
-    this.rotateY(0.04)
+    // this.rotateY(0.01)
     // this.material.uniforms.uTime.value += 0.01
     // this.material.uniforms.uAmplitude.value = audio.volumeconst vertices = geometry.attributes.position.array
   }

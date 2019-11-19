@@ -21,6 +21,7 @@ import audio from 'utils/audio'
 
 import ADN from 'objects/ADN'
 import Fellow from './objects/Fellow'
+import constants from 'utils/constants'
 
 export default class Webgl {
   constructor ($parent) {
@@ -67,20 +68,12 @@ export default class Webgl {
     const second = new ADN()
     adns.push(first)
     adns.push(second)
-    // console.log(first.canFuckWith(second))
-    for (let i = 0; i < 5; i++) {
-      const rand1 = Math.floor(Math.random() * adns.length)
-      const rand2 = Math.floor(Math.random() * adns.length)
-      const adn = adns[rand1].getADNFromReproductionWith(adns[rand2])
-      // console.log(adn)
-      adns.push(new ADN(adn))
-    }
-    // console.log(adns)
+
     this.nextId = 0
     this.elements = []
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 500; i++) {
       this.elements.push({ id: this.nextId, class: new Fellow(new ADN()) })
-      this.elements[i].class.position.set(i * Math.random(), i * Math.random(), 1)
+      this.elements[i].class.position.set((Math.random() - 0.5) * constants.GROUND.SIZE, 0, (Math.random() - 0.5) * constants.GROUND.SIZE)
       this.scene.add(this.elements[i].class)
       this.nextId++
     }

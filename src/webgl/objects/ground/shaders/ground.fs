@@ -14,18 +14,18 @@ void main() {
   float g = 0.0;
   float b = 0.0;
 
-  float z = pos.z;
-  if(z < -9.0) {
+  float z = pos.z;// + sin(uTime * 2.0) * 5.0;
+  if(z < -7.0) {
   	r = 0.0;
   	g = 0.0;
   	b = 0.1;
   }
-  else if(z < -6.0) {
+  else if(z < -3.0) {
   	r = 0.0;
   	g = 0.0;
   	b = 0.3;
   }
-  else if(z < -1.0) {
+  else if(z < 0.0) {
   	r = 0.1;
   	g = 0.1;
   	b = 0.9;
