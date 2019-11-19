@@ -1,17 +1,17 @@
 export default {
   GROUND: {
-    SIZE: 512,
-    SUB: 256,
+    SIZE: 500,
+    SUB: 128,
     MAPS: {
       HEIGHT: {
         max: 0.06,
         n: 20,
-        exp: 4
+        exp: 6
       },
       HUMIDITY: {
         max: 0.05,
         n: 20,
-        exp: 3
+        exp: 4
       },
       TEMPERATURE: {
         max: 0.03,
