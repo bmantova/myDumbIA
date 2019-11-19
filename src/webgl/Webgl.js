@@ -27,7 +27,7 @@ export default class Webgl {
     const first = new ADN()
     const second = new ADN()
     console.log(first.canFuckWith(second))
-    console.log(first.mixADNWith(second))
+    console.log(first.getMixedADNWith(second))
     /* FIN DEBUG AXEL */
 
     this.currentTime = 0

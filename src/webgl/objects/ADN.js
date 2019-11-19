@@ -7,6 +7,7 @@ export default class ADN {
     this.capacity = {
       sight: options.capacity.sight ? options.capacity.sight : 0.1,
       swim: options.capacity.swim ? options.capacity.swim : 0,
+      breathing: options.capacity.breathing ? options.capacity.breathing : 0.1,
       fly: options.capacity.fly ? options.capacity.fly : 0,
       adaptation: options.capacity.adaptation ? options.capacity.adaptation : 0.5
     }
@@ -14,12 +15,20 @@ export default class ADN {
       interval: options.reproduction.interval ? options.reproduction.interval : 3,
       litter: options.reproduction.litter ? options.reproduction.litter : 1
     }
+    this.diet = {
+      carnivorous: options.reproduction.carnivorous ? options.reproduction.carnivorous : 0
+    }
     this.morphology = {
       size: options.morphology.size ? options.morphology.size : 1,
+      weight: options.morphology.weight ? options.morphology.weight : 1,
+      head: options.morphology.head ? options.morphology.head : 0,
       fur: options.morphology.fur ? options.morphology.fur : 0,
       arms: options.morphology.arams ? options.morphology.arms : 0,
+      wings: options.morphology.wings ? options.morphology.wings : 0,
       legs: options.morphology.legs ? options.morphology.legs : 0,
-      wings: options.morphology.wings ? options.morphology.wings : 0
+      feet: options.morphology.feet ? options.morphology.feet : 0,
+      eyes: options.morphology.eyes ? options.morphology.eyes : 0,
+      breathingOrifice: options.morphology.breathingOrifice ? options.morphology.breathingOrifice : 0
     }
 
     this.store = {
@@ -55,7 +64,7 @@ export default class ADN {
     return this.deepSumObjects(this.store, ADN) < constants.RESSOURCES.REPRODUCTION.DELTA_MAX_DIFFERENCE
   }
 
-  mixADNWith (ADN) {
+  getMixedADNWith (ADN) {
     return this.deepAverageObjects(this.store, ADN)
   }
 }
