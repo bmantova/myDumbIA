@@ -24,10 +24,20 @@ import ADN from 'objects/ADN'
 export default class Webgl {
   constructor ($parent) {
     /* DEBUT DEBUG AXEL */
+    const adns = []
     const first = new ADN()
     const second = new ADN()
+    adns.push(first)
+    adns.push(second)
     console.log(first.canFuckWith(second))
-    console.log(first.getMixedADNWith(second))
+    for (let i = 0; i < 5; i++) {
+      const rand1 = Math.floor(Math.random() * adns.length)
+      const rand2 = Math.floor(Math.random() * adns.length)
+      const adn = adns[rand1].getADNFromReproductionWith(adns[rand2])
+      console.log(adn)
+      adns.push(new ADN(adn))
+    }
+    console.log(adns)
     /* FIN DEBUG AXEL */
 
     this.currentTime = 0

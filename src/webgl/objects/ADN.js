@@ -12,16 +12,17 @@ export default class ADN {
       adaptation: options.capacity.adaptation ? options.capacity.adaptation : 0.5
     }
     this.reproduction = {
-      interval: options.reproduction.interval ? options.reproduction.interval : 3,
-      litter: options.reproduction.litter ? options.reproduction.litter : 1
+      interval: options.reproduction.interval ? options.reproduction.interval : 0.3,
+      litter: options.reproduction.litter ? options.reproduction.litter : 0.1
     }
     this.diet = {
       carnivorous: options.reproduction.carnivorous ? options.reproduction.carnivorous : 0
     }
     this.morphology = {
-      size: options.morphology.size ? options.morphology.size : 1,
-      weight: options.morphology.weight ? options.morphology.weight : 1,
+      size: options.morphology.size ? options.morphology.size : 0.1,
+      weight: options.morphology.weight ? options.morphology.weight : 0.1,
       head: options.morphology.head ? options.morphology.head : 0,
+      neck: options.morphology.neck ? options.morphology.neck : 0,
       fur: options.morphology.fur ? options.morphology.fur : 0,
       arms: options.morphology.arams ? options.morphology.arms : 0,
       wings: options.morphology.wings ? options.morphology.wings : 0,
@@ -33,7 +34,8 @@ export default class ADN {
 
     this.store = {
       capacity: this.capacity,
-      interval: this.interval,
+      reproduction: this.reproduction,
+      diet: this.diet,
       morphology: this.morphology
     }
   }
@@ -54,7 +56,7 @@ export default class ADN {
       if (typeof obj2[key] === 'object') {
         acc[key] = this.deepAverageObjects(obj1[key], obj2[key])
       } else if (Object.prototype.hasOwnProperty.call(obj2, key) && !isNaN(parseFloat(obj2[key]))) {
-        acc[key] = (obj1[key] + obj2[key]) / 2
+        acc[key] = Math.random() > 0.5 ? obj1[key] : obj2[key]
       }
       return acc
     }, {})
@@ -64,7 +66,28 @@ export default class ADN {
     return this.deepSumObjects(this.store, ADN) < constants.RESSOURCES.REPRODUCTION.DELTA_MAX_DIFFERENCE
   }
 
-  getMixedADNWith (ADN) {
-    return this.deepAverageObjects(this.store, ADN)
+  getADNFromReproductionWith (ADN) {
+    const ADNFromReproduction = this.deepAverageObjects(this.store, ADN)
+    return this.geneticEvolution(ADNFromReproduction, ADNFromReproduction.capacity.adaptation)
+  }
+
+  clamp (value, max = 1, min = 0) {
+    return Math.min(Math.max(value, min), max)
+  }
+
+  geneticEvolution (ADN, adaptationCoeff) {
+    return Object.keys(ADN).reduce((acc, key) => {
+      if (typeof ADN[key] === 'object') {
+        acc[key] = this.geneticEvolution(ADN[key], adaptationCoeff)
+      } else if (Object.prototype.hasOwnProperty.call(ADN, key) && !isNaN(parseFloat(ADN[key]))) {
+        const rand = Math.random()
+        if (rand > adaptationCoeff) {
+          acc[key] = this.clamp(ADN[key] + (rand - 0.5) * adaptationCoeff)
+        } else {
+          acc[key] = ADN[key]
+        }
+      }
+      return acc
+    }, {})
   }
 }
