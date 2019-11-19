@@ -74,17 +74,21 @@ export default class Fellow extends Ressource {
       if (!this.focus) {
         this.findFocus(webgl)
       } else {
-        const focus = webgl.elements.find((element) => element.id === this.focus.element.id)
-        if (focus) {
-          this.focus = { element: focus, distance: this.position.distanceTo(focus.position) }
+        const findedFocus = webgl.elements.find((element) => element.id === this.focus.element.id)
+        if (findedFocus) {
+          this.focus = { element: findedFocus, distance: this.position.distanceTo(findedFocus.position) }
         } else {
           this.findFocus(webgl)
         }
       }
       const deltaX = (this.focus.element.position.x - this.position.x)
       const deltaZ = (this.focus.element.position.z - this.position.z)
-      this.position.x += (deltaX / Math.abs(deltaX)) * this.getSpeed()
-      this.position.z += (deltaZ / Math.abs(deltaZ)) * this.getSpeed()
+      if (deltaX !== 0) {
+        this.position.x += (deltaX / Math.abs(deltaX)) * this.getSpeed()
+      }
+      if (deltaZ !== 0) {
+        this.position.z += (deltaZ / Math.abs(deltaZ)) * this.getSpeed()
+      }
       /* if (this.position.distanceTo(this.focus.element.position) < this.effectiveSize + this.focus.element.effectiveSize) {
         if (this.desire >= 1) {
           console.log('desire ok')
