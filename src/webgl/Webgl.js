@@ -61,7 +61,7 @@ export default class Webgl {
       0.1,
       1000
     )
-    this.camera.position.set(0, 5, 15)
+    this.camera.position.set(0, 30, 100)
     this.scene.add(this.camera)
     this.scene.background = new Color(0x111)
 
