@@ -1,6 +1,6 @@
 import constants from 'utils/constants'
 
-/* ctrlconst */ constants.RESSOURCES.REPRODUCTION = { DELTA_MAX_DIFFERENCE: 2 }
+/* ctrlconst */ constants.RESSOURCES.REPRODUCTION = { DELTA_MAX_DIFFERENCE: 5 }
 
 export default class ADN {
   constructor (options = { capacity: {}, reproduction: {}, morphology: {} }) {

@@ -26,6 +26,7 @@ import constants from 'utils/constants'
 export default class Webgl {
   constructor ($parent) {
     this.currentTime = 0
+    this.previousTime = 0
     this.render = this.render.bind(this)
     this.onResize = this.onResize.bind(this)
     this.onBeat = this.onBeat.bind(this)
@@ -46,7 +47,7 @@ export default class Webgl {
       0.1,
       1000
     )
-    this.camera.position.set(0, 30, 100)
+    this.camera.position.set(0, 150, 400)
     this.scene.add(this.camera)
     this.scene.background = new Color(0x111)
 
@@ -69,13 +70,10 @@ export default class Webgl {
     adns.push(first)
     adns.push(second)
 
-    this.nextId = 0
     this.elements = []
     for (let i = 0; i < 20; i++) {
-      this.elements.push(new Fellow({ ADN: new ADN() }))
-      this.elements[i].position.set((Math.random() - 0.5) * constants.GROUND.SIZE, 0, (Math.random() - 0.5) * constants.GROUND.SIZE)
-      this.scene.add(this.elements[i])
-      this.nextId++
+      const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE }
+      this.addFellow(new Fellow({ ADN: new ADN() }), position)
     }
 
     /* FIN DEBUG AXEL */
@@ -132,6 +130,10 @@ export default class Webgl {
     // this.renderer.render( this.scene, this.camera )
     this.composer.render()
     this.stats.end()
+    if (this.currentTime > this.previousTime + 80) {
+      console.log(this.elements)
+      this.previousTime = this.currentTime
+    }
     requestAnimationFrame(this.render)
   }
 
@@ -139,5 +141,16 @@ export default class Webgl {
     return this.elements.filter((e) => {
       return e.id !== element.id
     })
+  }
+
+  addFellow (fellow, position) {
+    this.elements.push(fellow)
+    this.elements[this.elements.length - 1].position.set(position.x, position.y, position.z)
+    this.scene.add(fellow)
+  }
+
+  removeFellow (fellow) {
+    this.scene.remove(fellow)
+    this.elements = this.elements.filter((el) => el.id !== fellow.id)
   }
 }

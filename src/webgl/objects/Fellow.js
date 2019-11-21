@@ -16,6 +16,7 @@ export default class Fellow extends Ressource {
     const material = new MeshBasicMaterial({ color: 0xff0000 })
     this.body = new Mesh(geometry, material)
     this.add(this.body)
+    this.test = 0
   }
 
   getSpeed () {
@@ -24,11 +25,11 @@ export default class Fellow extends Ressource {
   }
 
   increaseHunger () {
-    this.hunger += (this.ADN.morphology.size + this.ADN.morphology.weight) * 0.01
+    this.hunger += (this.ADN.morphology.size + this.ADN.morphology.weight) * 0.005
   }
 
   increaseDesire () {
-    this.desire += this.ADN.morphology.interval * 0.01
+    this.desire += this.ADN.reproduction.interval * 0.005
   }
 
   increaseDirection () {
@@ -70,7 +71,7 @@ export default class Fellow extends Ressource {
   }
 
   move (webgl, ground) {
-    if (this.desire >= 1 || this.hunger >= 1) {
+    if ((this.desire >= 1 || this.hunger >= 1) && webgl.elements.length > 1) {
       if (!this.focus) {
         this.findFocus(webgl)
       } else {
@@ -89,19 +90,31 @@ export default class Fellow extends Ressource {
       if (deltaZ !== 0) {
         this.position.z += (deltaZ / Math.abs(deltaZ)) * this.getSpeed()
       }
-      /* if (this.position.distanceTo(this.focus.element.position) < this.effectiveSize + this.focus.element.effectiveSize) {
+      if (this.position.distanceTo(this.focus.element.position) < (this.effectiveSize + this.focus.element.effectiveSize)) {
         if (this.desire >= 1) {
-          console.log('desire ok')
+          this.focus.element.desire = 0
           this.desire = 0
-          this.focus.desire = 0
           if (this.ADN.canFuckWith(this.focus.element.ADN)) {
-            webgl.elements.push(new Fellow(this.ADN.getADNFromReproductionWith(this.focus.element.ADN)))
-            console.log('enfant')
+            for (let i = 0; i < Math.floor(this.ADN.reproduction.litter * 10); i++) {
+              webgl.addFellow(new Fellow({ ADN: this.ADN.getADNFromReproductionWith(this.focus.element.ADN) }), this.position)
+              console.log('fellow né ')
+              console.log(this.ADN.getADNFromReproductionWith(this.focus.element.ADN))
+            }
           }
-          if (this.focus.hunger >= 1) {
+          if (this.focus.element.hunger >= 1) {
+            this.focus.element.hunger = 0
+            webgl.removeFellow(this)
+            this.focus.element.focus = null
+            console.log('fellow mort')
           }
+          this.focus = null
+        } else if (this.hunger >= 1) {
+          this.hunger = 0
+          webgl.removeFellow(this.focus.element)
+          console.log('fellow mort')
+          this.focus = null
         }
-      } */
+      }
     } else {
       this.position.x += Math.cos(this.direction) * this.getSpeed()
       this.position.z += Math.sin(this.direction) * this.getSpeed()
