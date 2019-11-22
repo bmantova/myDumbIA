@@ -1,5 +1,5 @@
 import Ressource from './Ressource'
-import { BoxGeometry, MeshBasicMaterial, Mesh } from 'three'
+import { BoxGeometry, MeshBasicMaterial, Mesh, Color } from 'three'
 import ADN from './ADN'
 import constants from 'utils/constants'
 
@@ -11,9 +11,9 @@ export default class Fellow extends Ressource {
     this.hunger = 0
     this.direction = Math.random() * Math.PI * 2
     this.focus = null
-    this.effectiveSize = this.ADN.morphology.size * 100
+    this.effectiveSize = this.ADN.morphology.size * 20
     const geometry = new BoxGeometry(this.effectiveSize, this.effectiveSize, this.effectiveSize)
-    const material = new MeshBasicMaterial({ color: 0xff0000 })
+    const material = new MeshBasicMaterial({ color: new Color('hsl(' + Math.round(this.ADN.morphology.color * 360) + ' ,100%, 50%)') })
     this.body = new Mesh(geometry, material)
     this.add(this.body)
     this.test = 0
@@ -33,7 +33,7 @@ export default class Fellow extends Ressource {
   }
 
   increaseDirection () {
-    this.direction += (Math.random() - 0.5) * 0.01
+    this.direction += (Math.random() - 0.5) * 0.5
     if (Math.abs(this.position.x) >= constants.GROUND.SIZE / 2 ||
         Math.abs(this.position.z) >= constants.GROUND.SIZE / 2) {
       this.direction = -this.direction

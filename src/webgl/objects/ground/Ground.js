@@ -63,7 +63,7 @@ export default class Ground extends Object3D {
       }
 
       const size = Math.abs(this.humidity.get(x, y) + 3)
-      this.add(new Vegetation({ size: size, position: new Vector3(x, this.getHeight(x, y), y), life: Math.floor(Math.random() * 50 + 50), born: Math.floor(Math.random() * -50) }))
+      this.add(new Vegetation({ size: size, position: new Vector3(x, this.getHeight(x, y), y), life: Math.floor(Math.random() * 500 + 500), born: Math.floor(Math.random() * -500) }))
     }
   }
 

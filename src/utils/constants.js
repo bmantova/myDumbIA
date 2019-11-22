@@ -24,6 +24,12 @@ export default {
     TYPES: {
       VEGETATION: 'vegetation',
       MEAT: 'meat'
+    },
+    REPRODUCTION: {
+      DELTA_MAX_DIFFERENCE: 5
+    },
+    VEGETATION: {
+      FALLING_TIME: 20
     }
   }
 }

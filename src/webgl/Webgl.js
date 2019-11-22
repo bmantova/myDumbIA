@@ -71,9 +71,9 @@ export default class Webgl {
     adns.push(second)
 
     this.elements = []
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 200; i++) {
       const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE }
-      this.addFellow(new Fellow({ ADN: new ADN() }), position)
+      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: Math.round(Math.random()) } }) }), position)
     }
 
     /* FIN DEBUG AXEL */

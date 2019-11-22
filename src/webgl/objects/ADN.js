@@ -1,9 +1,12 @@
 import constants from 'utils/constants'
 
-/* ctrlconst */ constants.RESSOURCES.REPRODUCTION = { DELTA_MAX_DIFFERENCE: 5 }
-
 export default class ADN {
   constructor (options = { capacity: {}, reproduction: {}, morphology: {} }) {
+    if (!options.capcacity) options.capacity = {}
+    if (!options.reproduction) options.reproduction = {}
+    if (!options.morphology) options.morphology = {}
+    if (!options.diet) options.diet = {}
+
     this.capacity = {
       sight: options.capacity.sight ? options.capacity.sight : 0.1,
       swim: options.capacity.swim ? options.capacity.swim : 0,
@@ -29,7 +32,8 @@ export default class ADN {
       legs: options.morphology.legs ? options.morphology.legs : 0,
       feet: options.morphology.feet ? options.morphology.feet : 0,
       eyes: options.morphology.eyes ? options.morphology.eyes : 0,
-      breathingOrifice: options.morphology.breathingOrifice ? options.morphology.breathingOrifice : 0
+      breathingOrifice: options.morphology.breathingOrifice ? options.morphology.breathingOrifice : 0,
+      color: options.morphology.color ? options.morphology.color : 0.5
     }
 
     this.store = {
@@ -82,7 +86,7 @@ export default class ADN {
       } else if (Object.prototype.hasOwnProperty.call(ADN, key) && !isNaN(parseFloat(ADN[key]))) {
         const rand = Math.random()
         if (rand > adaptationCoeff) {
-          acc[key] = this.clamp(ADN[key] + (rand - 0.5) * adaptationCoeff)
+          acc[key] = this.clamp(ADN[key] + (rand - 0.5) * adaptationCoeff * 0.1)
         } else {
           acc[key] = ADN[key]
         }

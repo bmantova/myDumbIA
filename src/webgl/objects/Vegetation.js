@@ -13,8 +13,6 @@ import constants from 'utils/constants'
 
 import Ressource from './Ressource'
 
-constants.RESSOURCES.VEGETATION = { FALLING_TIME: 20 }
-
 export default class Vegetation extends Ressource {
   constructor (options = {}) {
     super(options)
