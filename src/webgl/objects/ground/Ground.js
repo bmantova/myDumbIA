@@ -63,7 +63,7 @@ export default class Ground extends Object3D {
       }
 
       const size = Math.abs(this.humidity.get(x, y) + 3)
-      this.add(new Vegetation({ size: size, position: new Vector3(x, this.getHeight(x, y), y) }))
+      this.add(new Vegetation({ size: size, position: new Vector3(x, this.getHeight(x, y), y), life: Math.floor(Math.random() * 50 + 50), born: Math.floor(Math.random() * -50) }))
     }
   }
 
@@ -82,7 +82,18 @@ export default class Ground extends Object3D {
 
   update (time) {
     // this.rotateY(0.01)
-    // this.material.uniforms.uTime.value += 0.01
+    this.material.uniforms.uTime.value += 0.01
+    this.children.forEach((child) => {
+      if (child.update) {
+        if (child.isAlive()) child.update(time)
+        else {
+          const x = child.position.x + Math.random() * child.size
+          const y = child.position.z + Math.random() * child.size
+          this.add(new Vegetation({ size: child.size + (Math.random() - 0.5) * 2, position: new Vector3(x, this.getHeight(x, y), y), life: child.life, born: time }))
+          this.remove(child)
+        }
+      }
+    })
     // this.material.uniforms.uAmplitude.value = audio.volumeconst vertices = geometry.attributes.position.array
   }
 }

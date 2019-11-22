@@ -10,6 +10,7 @@ export default class Ressource extends Object3D {
 
     this.density = options.density ? options.density : 1
     this.size = options.size ? options.size : 1
+    this.alive = true
 
     this.type = options.type ? options.type : constants.RESSOURCES.TYPES.VEGETATION
 
@@ -18,6 +19,14 @@ export default class Ressource extends Object3D {
     }
 
     this.init()
+  }
+
+  isAlive () {
+    return this.alive
+  }
+
+  die () {
+    this.alive = false
   }
 
   init () {

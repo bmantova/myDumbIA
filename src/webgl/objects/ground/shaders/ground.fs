@@ -14,7 +14,7 @@ void main() {
   float g = 0.0;
   float b = 0.0;
 
-  float z = pos.z;// + sin(uTime * 2.0) * 5.0;
+  float z = pos.z + sin(uTime * 0.1) * 2.0;
   if(z < -7.0) {
   	r = 0.0;
   	g = 0.0;
