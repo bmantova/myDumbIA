@@ -1,6 +1,7 @@
 precision highp float;
 
 uniform float uTime;
+uniform float uDay;
 varying vec3 pos;
 
 /* float clamp(floatv, a, b) {
@@ -60,6 +61,10 @@ void main() {
   	g = 0.9;
   	b = 0.9;
   }
+
+  r = r * (uDay * 0.4 + 0.6);
+  g = g * (uDay * 0.4 + 0.6);
+  b = b * (uDay * 0.4 + 0.6);
 
   gl_FragColor = vec4(r, g, b, 1.0);
   // gl_FragColor = vec4((1.0 - pos.z) *.05, .1 - abs(pos.z*.001), pos.z*.05, 1.0);

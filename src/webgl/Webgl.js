@@ -2,7 +2,8 @@ import {
   Scene,
   PerspectiveCamera,
   WebGLRenderer,
-  Color
+  Color,
+  Raycaster
 } from 'three'
 
 import {
@@ -17,7 +18,7 @@ import Ground from './objects/ground/Ground'
 import createComposer from './postfx/Composer'
 import createLight from './objects/Lights'
 
-import audio from 'utils/audio'
+import utils from 'utils/utils'
 
 import ADN from 'objects/ADN'
 import Fellow from './objects/Fellow'
@@ -29,7 +30,6 @@ export default class Webgl {
     this.previousTime = 0
     this.render = this.render.bind(this)
     this.onResize = this.onResize.bind(this)
-    this.onBeat = this.onBeat.bind(this)
 
     this.renderer = new WebGLRenderer({
       antialias: true
@@ -57,6 +57,8 @@ export default class Webgl {
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement)
 
+    this.raycaster = new Raycaster()
+
     this.stats = new Stats()
     this.stats.showPanel(0)
     $parent.appendChild(this.stats.dom)
@@ -71,7 +73,7 @@ export default class Webgl {
     adns.push(second)
 
     this.elements = []
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < 20; i++) {
       const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE }
       this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: Math.round(Math.random()) } }) }), position)
     }
@@ -81,6 +83,7 @@ export default class Webgl {
     this.scene.add(this.ground)
 
     this.initObjects()
+    this.raycastEvent()
 
     this.onResize()
     this.render()
@@ -99,10 +102,6 @@ export default class Webgl {
     this.camera.updateProjectionMatrix()
   }
 
-  onBeat () {
-    this.ground.onBeat(audio)
-  }
-
   initObjects () {
     /* *** */
   }
@@ -113,6 +112,8 @@ export default class Webgl {
     this.currentTime++
 
     this.controls.update()
+
+    utils.debug('#fellows', this.elements.length)
 
     this.scene.children.forEach((child) => {
       if (child.update) child.update(this.currentTime)
@@ -131,7 +132,6 @@ export default class Webgl {
     this.composer.render()
     this.stats.end()
     if (this.currentTime > this.previousTime + 80) {
-      console.log(this.elements)
       this.previousTime = this.currentTime
     }
     requestAnimationFrame(this.render)
@@ -152,5 +152,28 @@ export default class Webgl {
   removeFellow (fellow) {
     this.scene.remove(fellow)
     this.elements = this.elements.filter((el) => el.id !== fellow.id)
+  }
+
+  searchFellow (x, y) {
+    return this.elements.filter((el) => Math.floor(el.position.x = Math.floor(x)) && Math.floor(el.position.y) === Math.floor(y))
+  }
+
+  raycastEvent () {
+    window.addEventListener('mousemove', function (e) {
+      const mouse = {
+        x: (e.clientX / this.renderer.domElement.clientWidth) * 2 - 1,
+        y: (e.clientY / this.renderer.domElement.clientHeight) * 2 - 1
+      }
+      this.raycaster.setFromCamera(mouse, this.camera)
+      const intersected = this.raycaster.intersectObjects(this.elements)
+
+      if (intersected.length > 0) {
+        if (intersected.length > 0) {
+          utils.mousewin('Hello', intersected[0].position.x + ', ' + intersected[0].position.y + ', ' + intersected[0].position.z, e.clientX, e.clientY)
+        } else {
+          utils.mousewin('close')
+        }
+      }
+    }.bind(this))
   }
 }

@@ -1,6 +1,7 @@
-import { Object3D, PlaneBufferGeometry, RawShaderMaterial, Mesh/* , DoubleSide */, Vector3 } from 'three'
+import { Object3D, PlaneBufferGeometry, RawShaderMaterial, Mesh/* , DoubleSide */, Vector3, IcosahedronBufferGeometry, MeshBasicMaterial } from 'three'
 
 import constants from 'utils/constants'
+import utils from 'utils/utils'
 
 import vertexShader from './shaders/ground.vs'
 import fragmentShader from './shaders/ground.fs'
@@ -22,6 +23,9 @@ export default class Ground extends Object3D {
       uniforms: {
         uTime: {
           value: 0.0
+        },
+        uDay: {
+          value: 0.0
         }
       },
       vertexShader: vertexShader,
@@ -42,11 +46,16 @@ export default class Ground extends Object3D {
       }
     }
 
-    var plane = new Mesh(this.geometry, this.material)
+    this.plane = new Mesh(this.geometry, this.material)
 
-    plane.rotation.x = -Math.PI * 0.5
-    plane.rotation.z = Math.PI
-    this.add(plane)
+    this.sun = new Mesh(new IcosahedronBufferGeometry(10, 2), new MeshBasicMaterial({ color: 0xffff66 }))
+    this.moon = new Mesh(new IcosahedronBufferGeometry(5, 2), new MeshBasicMaterial({ color: 0xaaaaaa }))
+    this.add(this.sun)
+    this.add(this.moon)
+
+    this.plane.rotation.x = -Math.PI * 0.5
+    this.plane.rotation.z = Math.PI
+    this.add(this.plane)
 
     for (let i = 0; i < 500; i++) {
       let x
@@ -54,8 +63,8 @@ export default class Ground extends Object3D {
       let essais = 0
       let next = true
       while (essais < 5 && next) {
-        x = (Math.random() - 0.5) * constants.GROUND.SIZE
-        y = (Math.random() - 0.5) * constants.GROUND.SIZE
+        x = utils.randfloat(-constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
+        y = utils.randfloat(-constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
 
         if (this.getHeight(x, y) > 5) next = false
 
@@ -63,7 +72,7 @@ export default class Ground extends Object3D {
       }
 
       const size = Math.abs(this.humidity.get(x, y) + 3)
-      this.add(new Vegetation({ size: size, position: new Vector3(x, this.getHeight(x, y), y), life: Math.floor(Math.random() * 500 + 500), born: Math.floor(Math.random() * -500) }))
+      this.add(new Vegetation({ size: size, position: new Vector3(x, this.getHeight(x, y), y), life: utils.randint(500, 1000), born: Math.floor(Math.random() * -500) }))
     }
   }
 
@@ -82,18 +91,29 @@ export default class Ground extends Object3D {
 
   update (time) {
     // this.rotateY(0.01)
+    const timeMult = 0.01
+
     this.material.uniforms.uTime.value += 0.01
+    this.material.uniforms.uDay.value = Math.sin(time * timeMult)
     this.children.forEach((child) => {
       if (child.update) {
         if (child.isAlive()) child.update(time)
         else {
-          const x = child.position.x + Math.random() * child.size
-          const y = child.position.z + Math.random() * child.size
-          this.add(new Vegetation({ size: child.size + (Math.random() - 0.5) * 2, position: new Vector3(x, this.getHeight(x, y), y), life: child.life, born: time }))
+          const x = utils.limit(child.position.x + utils.randfloat(0, child.size), -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
+          const y = utils.limit(child.position.z + utils.randfloat(0, child.size), -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
+          this.add(new Vegetation({ size: child.size + utils.randfloat(-1, 1), position: new Vector3(x, this.getHeight(x, y), y), life: child.life + utils.randfloat(-10, 10), born: time }))
           this.remove(child)
         }
       }
     })
-    // this.material.uniforms.uAmplitude.value = audio.volumeconst vertices = geometry.attributes.position.array
+    utils.debug('time', time)
+    this.sun.position.set(
+      Math.cos(time * timeMult) * (constants.GROUND.SIZE * 0.6),
+      Math.sin(time * timeMult) * (constants.GROUND.SIZE * 0.6),
+      Math.sin(time * timeMult) * constants.GROUND.SIZE * Math.abs(Math.sin(time * timeMult / 300)))
+    this.moon.position.set(
+      -Math.cos(time * timeMult) * (constants.GROUND.SIZE * 0.6),
+      -Math.sin(time * timeMult) * (constants.GROUND.SIZE * 0.6),
+      -Math.sin(time * timeMult) * constants.GROUND.SIZE * Math.abs(Math.sin(time * timeMult / 300)))
   }
 }

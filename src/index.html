@@ -13,9 +13,46 @@
       height:100%;
       overflow:hidden;
     }
+    #debug {
+      position: fixed;
+      bottom: 0px;
+      left:0px;
+      color: white;
+      background-color:rgba(0,0,0,0.6);
+      border-radius: 0px 5px 0px 0px;
+      /* CSS for debug */
+    }
+    #debug>div {
+      border-bottom:1px solid #9995;
+      padding: 10px;
+    }
+    .res_title {
+      color: #AAA;
+      margin-right:2px;
+      font-size: 0.8em;
+      vertical-align:middle;
+      margin-right:10px;
+    }
+    .res_content {
+      float: right;
+    }
+    #mousewin {
+      position:fixed;
+      z-index:1;
+      background-color:rgba(0,0,0,0.6);
+      border-radius: 5px;
+      padding:5px;
+      font-size:12px;
+      color:white;
+      display:none;
+      width:200px;
+    }
+    /* Info pop up */
   </style>
 </head>
 
 <body>
+  <div id="debug"></div>
+  <div id="mousewin"></div>
 </body>
 </html>
