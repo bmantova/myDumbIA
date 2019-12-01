@@ -22,10 +22,12 @@ export default {
     const mw = document.getElementById('mousewin')
     if (name === 'close') {
       mw.style.display = 'none'
+      mw.style.animation = 'none'
     } else {
       mw.style.display = 'block'
       mw.style.left = (x + 10) + 'px'
       mw.style.top = y + 'px'
+      mw.style.animation = ''
       mw.innerHTML = '<div class="title">' + name + '</div>' + content
     }
   },

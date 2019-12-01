@@ -175,7 +175,7 @@ export default class Webgl {
       const curFellow = this.elements[i]
       if (intersected.length > 0) {
         utils.mousewin('Fellow #' + i,
-          'color <b>' + curFellow.ADN.morphology.color + '</b><br/>hunger <b>' + utils.virg(curFellow.hunger) + '</b><br/>desire <b>' + utils.virg(curFellow.desire) + '</b>',
+          'color <b>' + utils.virg(curFellow.ADN.morphology.color, 2) + '</b><br/>hunger <b>' + utils.virg(curFellow.hunger) + '</b><br/>desire <b>' + utils.virg(curFellow.desire) + '</b>',
           e.clientX, e.clientY)
       } else {
         utils.mousewin('close')
