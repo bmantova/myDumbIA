@@ -109,7 +109,7 @@ export default class Webgl {
   render () {
     this.stats.begin()
 
-    this.currentTime++
+    this.currentTime += constants.TIME.SPEED
 
     this.controls.update()
 

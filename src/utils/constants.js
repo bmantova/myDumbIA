@@ -31,6 +31,9 @@ export default {
     VEGETATION: {
       FALLING_TIME: 20
     }
+  },
+  TIME: {
+    SPEED: 1.0
   }
 }
 
