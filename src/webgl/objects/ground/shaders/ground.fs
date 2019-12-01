@@ -16,7 +16,7 @@ void main() {
   float g = 0.0;
   float b = 0.0;
 
-  float z = pos.z + sin(time * 0.1) * 2.0;
+  float z = pos.z;// + sin(time * 0.1) * 2.0;
   if(z < -7.0) { // Deep Sea
   	r = 0.0;
   	g = 0.1;
@@ -64,12 +64,12 @@ void main() {
   }
 
   float waveSeaColor = 0.0;
-  if(seaZ < -0.1) waveSeaColor = -0.1;
-  else if(seaZ > 0.1) waveSeaColor = 0.1;
+  if(seaZ < -0.15) waveSeaColor = -0.1;
+  else if(seaZ > 0.15) waveSeaColor = 0.1;
 
-  r = r * (uDay * 0.4 + 0.6) + waveSeaColor;
-  g = g * (uDay * 0.4 + 0.6) + waveSeaColor;
-  b = b * (uDay * 0.4 + 0.6) + waveSeaColor;
+  r = (r + waveSeaColor) * (uDay * 0.4 + 0.6);
+  g = (g + waveSeaColor) * (uDay * 0.4 + 0.6);
+  b = (b + waveSeaColor) * (uDay * 0.4 + 0.6);
 
   gl_FragColor = vec4(r, g, b, 1.0);
   // gl_FragColor = vec4((1.0 - pos.z) *.05, .1 - abs(pos.z*.001), pos.z*.05, 1.0);

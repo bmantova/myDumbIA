@@ -9,6 +9,8 @@ import fragmentShader from './shaders/ground.fs'
 import Map from './Map'
 import Vegetation from '../Vegetation'
 
+// TODO : a Sky
+
 export default class Ground extends Object3D {
   constructor (size) {
     super()

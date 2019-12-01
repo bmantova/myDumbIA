@@ -24,9 +24,13 @@ export default {
       mw.style.display = 'none'
     } else {
       mw.style.display = 'block'
-      mw.style.left = x + 'px'
+      mw.style.left = (x + 10) + 'px'
       mw.style.top = y + 'px'
       mw.innerHTML = '<div class="title">' + name + '</div>' + content
     }
+  },
+  virg: (v, e = 1) => {
+    const mult = Math.pow(10, e)
+    return Math.round(v * mult) / mult
   }
 }
