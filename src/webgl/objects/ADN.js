@@ -29,11 +29,8 @@ export default class ADN {
       neck: options.morphology.neck ? options.morphology.neck : 0,
       fur: options.morphology.fur ? options.morphology.fur : 0,
       arms: options.morphology.arms ? options.morphology.arms : 0,
-      wings: options.morphology.wings ? options.morphology.wings : 0,
       legs: options.morphology.legs ? options.morphology.legs : 0,
       feet: options.morphology.feet ? options.morphology.feet : 0,
-      eyes: options.morphology.eyes ? options.morphology.eyes : 0,
-      breathingOrifice: options.morphology.breathingOrifice ? options.morphology.breathingOrifice : 0,
       color: options.morphology.color ? options.morphology.color : 0.5
     }
 
