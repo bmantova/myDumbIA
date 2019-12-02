@@ -10,8 +10,6 @@ import Map from './Map'
 import Vegetation from '../Vegetation'
 import Sky from '../sky/Sky.js'
 
-// TODO : a Sky
-
 export default class Ground extends Object3D {
   constructor (size) {
     super()
@@ -91,7 +89,7 @@ export default class Ground extends Object3D {
 
   update (time) {
     // this.rotateY(0.01)
-    const timeMult = 0.01
+    const timeMult = 0.05
 
     this.material.uniforms.uTime.value += timeMult
     this.material.uniforms.uDay.value = Math.sin(time * timeMult)

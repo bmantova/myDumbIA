@@ -6,8 +6,6 @@ import constants from 'utils/constants'
 import vertexShader from './shaders/sky.vs'
 import fragmentShader from './shaders/sky.fs'
 
-// TODO : a Sky
-
 export default class Sky extends Object3D {
   constructor () {
     super()

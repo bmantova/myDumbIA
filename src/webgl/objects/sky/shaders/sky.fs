@@ -12,12 +12,6 @@ uniform float uMoonX;
 uniform float uMoonY;
 uniform float uMoonZ;
 
-/* float clamp(floatv, a, b) {
-	if(v > b) return b
-	if(v < a) return a
-	return v
-} */
-
 void main() {
   float r = 0.0;
   float g = 0.0;
@@ -27,7 +21,8 @@ void main() {
 	g = 0.3 + sin(pos.y * 0.004) * 0.2;
 	b = 0.7 + sin(pos.y * 0.004) * 0.3;
 
-  float stars = sin((pos.z + 37.2) * sin(pos.x - 59.7)) * sin(pos.y + 26.7);
+  // float stars = sin((pos.z + 37.2) * sin(pos.x - 59.7)) * sin(pos.y + 26.7);
+  float stars = sin(pos.z + 23.1) * 0.4 + sin(pos.y - 10.6) * 0.3 + sin(pos.x + 5.2) * 0.3;
   if(stars > 0.98) stars = clamp((stars - 0.98) * 50.0 - uDay * 2.0, 0.0, 1.0);
   else stars = 0.0;
 
