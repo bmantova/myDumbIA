@@ -12,7 +12,8 @@ export default class ADN {
       swim: options.capacity.swim ? options.capacity.swim : 0,
       breathing: options.capacity.breathing ? options.capacity.breathing : 0.1,
       fly: options.capacity.fly ? options.capacity.fly : 0,
-      adaptation: options.capacity.adaptation ? options.capacity.adaptation : 0.5
+      adaptation: options.capacity.adaptation ? options.capacity.adaptation : 0.5,
+      longevity: options.capacity.longevity ? options.capacity.longevity : 0.5
     }
     this.reproduction = {
       interval: options.reproduction.interval ? options.reproduction.interval : 0.3,

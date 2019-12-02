@@ -9,14 +9,15 @@ export default class Fellow extends Ressource {
     this.ADN = new ADN(options.ADN)
     this.desire = 0
     this.hunger = 0
+    this.age = 0
     this.direction = Math.random() * Math.PI * 2
     this.focus = null
     this.effectiveSize = this.ADN.morphology.size * 20
+    this.unfuckableEx = []
     const geometry = new BoxGeometry(this.effectiveSize, this.effectiveSize, this.effectiveSize)
     const material = new MeshBasicMaterial({ color: new Color('hsl(' + Math.round(this.ADN.morphology.color * 360) + ' ,100%, 50%)') })
     this.body = new Mesh(geometry, material)
     this.add(this.body)
-    this.test = 0
   }
 
   getSpeed () {
@@ -40,6 +41,15 @@ export default class Fellow extends Ressource {
     }
   }
 
+  increaseAge () {
+    this.age += (1 / this.ADN.capacity.longevity) * 0.00005
+  }
+
+  increaseEffectiveSize () {
+    this.effectiveSize = this.age * this.ADN.morphology.size * 20 + 1
+    this.body.scale.set(this.effectiveSize, this.effectiveSize, this.effectiveSize)
+  }
+
   clampPosition () {
     this.position.x = this.clamp(this.position.x, -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
     this.position.z = this.clamp(this.position.z, -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
@@ -55,6 +65,8 @@ export default class Fellow extends Ressource {
     this.increaseHunger()
     this.increaseDesire()
     this.increaseDirection()
+    this.increaseAge()
+    this.increaseEffectiveSize()
   }
 
   getClosest (array) {
@@ -66,6 +78,15 @@ export default class Fellow extends Ressource {
     return distances.reduce((prev, cur) => {
       return prev.distance < cur.distance ? prev : cur
     }, +Infinity)
+  }
+
+  ejectUnfuckableEx (array) {
+    if (this.unfuckableEx.length === 0) {
+      return array
+    }
+    return array.filter((e) => {
+      return !this.unfuckableEx.includes(e)
+    })
   }
 
   findFocus (webgl) {
@@ -81,7 +102,7 @@ export default class Fellow extends Ressource {
         this.focus = this.getClosest(webgl.ground.vegetation)
       }
     } else {
-      this.focus = this.getClosest(webgl.getOthers(this))
+      this.focus = this.getClosest(this.ejectUnfuckableEx(webgl.getOthers(this)))
     }
   }
 
@@ -111,13 +132,7 @@ export default class Fellow extends Ressource {
   }
 
   handleDesire (webgl) {
-    this.focus.element.desire = 0
-    this.desire = 0
-    if (this.ADN.canFuckWith(this.focus.element.ADN)) {
-      for (let i = 0; i < Math.floor(this.ADN.reproduction.litter * 10); i++) {
-        webgl.addFellow(new Fellow({ ADN: this.ADN.getADNFromReproductionWith(this.focus.element.ADN) }), this.position)
-      }
-    }
+    this.handleReproduction(webgl)
     if (this.focus.element.hunger >= 1) {
       this.focus.element.hunger = 0
       webgl.removeFellow(this)
@@ -126,24 +141,41 @@ export default class Fellow extends Ressource {
     this.focus = null
   }
 
+  handleReproduction (webgl) {
+    if (this.ADN.canFuckWith(this.focus.element.ADN)) {
+      this.focus.element.desire = 0
+      this.desire = 0
+      this.handleBirth(webgl)
+    } else {
+      this.unfuckableEx.push(this.focus.element)
+    }
+  }
+
+  handleBirth (webgl) {
+    for (let i = 0; i < Math.floor(this.ADN.reproduction.litter * 10); i++) {
+      webgl.addFellow(new Fellow({ ADN: this.ADN.getADNFromReproductionWith(this.focus.element.ADN) }), this.position)
+    }
+  }
+
   handleHunger (webgl) {
     this.hunger = 0
     if (this.focus.element.type === constants.RESSOURCES.TYPES.MEAT) {
+      if (this.focus.element.desire >= 1) {
+        this.handleReproduction(webgl)
+      }
       webgl.removeFellow(this.focus.element)
     } else {
-      console.log(webgl.ground.vegetation)
       webgl.ground.removeTree(this.focus.element)
-      console.log(webgl.ground.vegetation)
     }
     this.focus = null
   }
 
   handleCollision (webgl) {
     if (this.position.distanceTo(this.focus.element.position) < (this.effectiveSize + this.focus.element.effectiveSize)) {
-      if (this.desire >= 1) {
-        this.handleDesire(webgl)
-      } else if (this.hunger >= 1) {
+      if (this.hunger >= 1) {
         this.handleHunger(webgl)
+      } else if (this.desire >= 1) {
+        this.handleDesire(webgl)
       }
     }
   }
@@ -169,6 +201,13 @@ export default class Fellow extends Ressource {
       this.position.z += Math.sin(this.direction) * this.getSpeed()
     }
     this.clampPosition()
-    this.position.y = webgl.ground.getHeight(this.position.x, this.position.z) + this.effectiveSize * 0.5
+    this.position.y = webgl.ground.getHeight(this.position.x, this.position.z) + this.effectiveSize
+  }
+
+  handleDeath (webgl) {
+    if (this.hunger >= 2 || this.age >= 1) {
+      webgl.removeFellow(this)
+      console.log('mort vieillesse')
+    }
   }
 }
