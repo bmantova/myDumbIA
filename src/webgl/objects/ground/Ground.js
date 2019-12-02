@@ -68,16 +68,24 @@ export default class Ground extends Object3D {
         if (i === 0 || j === 0 || i === constants.GROUND.SUB || j === constants.GROUND.SUB) {
           verticesUnder[index] = this.height.get(j, i) * 10
         } else {
-          verticesUnder[index] = utils.randint(-20, 0)
+          const x = constants.GROUND.SUB / 2 - i
+          const y = constants.GROUND.SUB / 2 - j
+          const mult = constants.GROUND.SUB * 1.4142 * 0.5 - Math.sqrt((x * x) + (y * y))
+          verticesUnder[index] = utils.randint(-10 - mult, -5 - mult)
         }
       }
     }
 
     this.plane = new Mesh(this.geometry, this.material)
+    this.under = new Mesh(this.underGeometry, this.underMaterial)
 
     this.plane.rotation.x = -Math.PI * 0.5
     this.plane.rotation.z = Math.PI
     this.add(this.plane)
+
+    this.under.rotation.x = -Math.PI * 0.5
+    this.under.rotation.z = Math.PI
+    this.add(this.under)
 
     this.add(new Sky())
 
@@ -119,6 +127,10 @@ export default class Ground extends Object3D {
 
     this.material.uniforms.uTime.value += timeMult
     this.material.uniforms.uDay.value = Math.sin(time * timeMult)
+
+    this.underMaterial.uniforms.uTime.value += timeMult
+    this.underMaterial.uniforms.uDay.value = Math.sin(time * timeMult)
+
     this.children.forEach((child) => {
       if (child.update) {
         if (child.isAlive()) child.update(time * timeMult)

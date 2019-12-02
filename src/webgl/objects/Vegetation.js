@@ -17,20 +17,22 @@ export default class Vegetation extends Ressource {
   constructor (options = {}) {
     super(options)
 
+    this.effectiveSize = this.size
+
     this.life = options.life ? options.life : 100
     this.born = options.born ? options.born : 0
     this.init()
     const materialTronc = new MeshStandardMaterial({ color: new Color(0xBB5533), roughness: 1 })
-    const box = new BoxBufferGeometry(this.size * 0.1, this.size, this.size * 0.1)
+    const box = new BoxBufferGeometry(this.effectiveSize * 0.1, this.effectiveSize, this.effectiveSize * 0.1)
 
     const materialFeuilles = new MeshStandardMaterial({ color: new Color(0x55BB33), roughness: 1 })
-    const feuillesGeom = new IcosahedronBufferGeometry(this.size * 0.5)
+    const feuillesGeom = new IcosahedronBufferGeometry(this.effectiveSize * 0.5)
 
     const tronc = new Mesh(box, materialTronc)
     const feuilles = new Mesh(feuillesGeom, materialFeuilles)
 
-    tronc.position.y += this.size * 0.5
-    feuilles.position.y += this.size
+    tronc.position.y += this.effectiveSize * 0.5
+    feuilles.position.y += this.effectiveSize
 
     this.add(tronc)
     this.add(feuilles)
