@@ -138,5 +138,6 @@ export default class Ground extends Object3D {
 
   removeTree (elem) {
     this.remove(elem)
+    this.vegetation = this.vegetation.filter((el) => el.id !== elem.id)
   }
 }

@@ -131,13 +131,25 @@ export default class Fellow extends Ressource {
     if (this.focus.element.type === constants.RESSOURCES.TYPES.MEAT) {
       webgl.removeFellow(this.focus.element)
     } else {
+      console.log(webgl.ground.vegetation)
       webgl.ground.removeTree(this.focus.element)
+      console.log(webgl.ground.vegetation)
     }
     this.focus = null
   }
 
+  handleCollision (webgl) {
+    if (this.position.distanceTo(this.focus.element.position) < (this.effectiveSize + this.focus.element.effectiveSize)) {
+      if (this.desire >= 1) {
+        this.handleDesire(webgl)
+      } else if (this.hunger >= 1) {
+        this.handleHunger(webgl)
+      }
+    }
+  }
+
   move (webgl) {
-    if (this.canDesire() || this.canEat()) {
+    if (this.canFuck(webgl) || this.canEat(webgl)) {
       if (!this.focus) {
         this.findFocus(webgl)
       } else {
@@ -151,13 +163,7 @@ export default class Fellow extends Ressource {
       if (deltaZ !== 0) {
         this.position.z += (deltaZ / Math.abs(deltaZ)) * this.getSpeed()
       }
-      if (this.position.distanceTo(this.focus.element.position) < (this.effectiveSize + this.focus.element.effectiveSize)) {
-        if (this.desire >= 1) {
-          this.handleDesire(webgl)
-        } else if (this.hunger >= 1) {
-          this.handleHunger(webgl)
-        }
-      }
+      this.handleCollision(webgl)
     } else {
       this.position.x += Math.cos(this.direction) * this.getSpeed()
       this.position.z += Math.sin(this.direction) * this.getSpeed()

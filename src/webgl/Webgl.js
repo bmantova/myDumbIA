@@ -73,7 +73,7 @@ export default class Webgl {
     adns.push(second)
 
     this.fellows = []
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 1; i++) {
       const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE }
       this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: Math.round(Math.random()) } }), type: constants.RESSOURCES.TYPES.MEAT }), position)
     }
