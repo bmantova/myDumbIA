@@ -1,4 +1,4 @@
-import { Object3D, PlaneBufferGeometry, RawShaderMaterial, Mesh/* , DoubleSide */, Vector3 } from 'three'
+import { Object3D, PlaneBufferGeometry, RawShaderMaterial, Mesh/* , DoubleSide */, Vector3, BackSide } from 'three'
 
 import constants from 'utils/constants'
 import utils from 'utils/utils'
@@ -6,9 +6,13 @@ import utils from 'utils/utils'
 import vertexShader from './shaders/ground.vs'
 import fragmentShader from './shaders/ground.fs'
 
+import underVertexShader from './shaders/under.vs'
+import underFragmentShader from './shaders/under.fs'
+
 import Map from './Map'
 import Vegetation from '../Vegetation'
 import Sky from '../sky/Sky.js'
+// import { OBJLoader } from './loader/OBJLoader.js'
 
 export default class Ground extends Object3D {
   constructor (size) {
@@ -19,6 +23,7 @@ export default class Ground extends Object3D {
     this.temperature = new Map(constants.GROUND.MAPS.TEMPERATURE)
 
     this.geometry = new PlaneBufferGeometry(constants.GROUND.SIZE, constants.GROUND.SIZE, constants.GROUND.SUB, constants.GROUND.SUB)
+    this.underGeometry = new PlaneBufferGeometry(constants.GROUND.SIZE, constants.GROUND.SIZE, constants.GROUND.SUB, constants.GROUND.SUB)
 
     this.material = new RawShaderMaterial({
       uniforms: {
@@ -34,8 +39,23 @@ export default class Ground extends Object3D {
       // side: DoubleSide
       // wireframe: true
     })
+    this.underMaterial = new RawShaderMaterial({
+      uniforms: {
+        uTime: {
+          value: 0.0
+        },
+        uDay: {
+          value: 0.0
+        }
+      },
+      vertexShader: underVertexShader,
+      fragmentShader: underFragmentShader,
+      side: BackSide
+      // wireframe: true
+    })
 
     const vertices = this.geometry.attributes.position.array
+    const verticesUnder = this.underGeometry.attributes.position.array
 
     /* for (let i = 0; i < vertices.length; i++) {
       vertices[i * 3 + 2] = this.height.get((i * 3) % (constants.GROUND.SUB + 1) + 3, Math.floor((i * 3) / (constants.GROUND.SUB + 1))) * 10
@@ -43,7 +63,13 @@ export default class Ground extends Object3D {
 
     for (let i = 0; i <= constants.GROUND.SUB; i++) {
       for (let j = 0; j <= constants.GROUND.SUB; j++) {
+        const index = (i * (constants.GROUND.SUB + 1) + j) * 3 + 2
         vertices[(i * (constants.GROUND.SUB + 1) + j) * 3 + 2] = this.height.get(j, i) * 10
+        if (i === 0 || j === 0 || i === constants.GROUND.SUB || j === constants.GROUND.SUB) {
+          verticesUnder[index] = this.height.get(j, i) * 10
+        } else {
+          verticesUnder[index] = utils.randint(-20, 0)
+        }
       }
     }
 
@@ -89,7 +115,7 @@ export default class Ground extends Object3D {
 
   update (time) {
     // this.rotateY(0.01)
-    const timeMult = 0.05
+    const timeMult = 0.01
 
     this.material.uniforms.uTime.value += timeMult
     this.material.uniforms.uDay.value = Math.sin(time * timeMult)
@@ -105,5 +131,9 @@ export default class Ground extends Object3D {
       }
     })
     utils.debug('time', time)
+  }
+
+  removeTree (elem) {
+    this.remove(elem)
   }
 }
