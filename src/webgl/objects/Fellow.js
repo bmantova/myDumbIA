@@ -183,7 +183,7 @@ export default class Fellow extends Ressource {
 
   move (webgl) {
     if (this.canFuck(webgl) || this.canEat(webgl)) {
-      if (!this.focus) {
+      if (!this.focus || this.focus === 'undefined') {
         this.findFocus(webgl)
       } else {
         this.updateFocus(webgl)
@@ -215,9 +215,9 @@ export default class Fellow extends Ressource {
   toString () {
     let str = ''
     str += 'age<b>' + utils.virg(this.age)
-    str += '<br/>color<b>' + utils.virg(this.ADN.morphology.color, 2)
-    str += '<br/>desire<b>' + utils.virg(this.desire)
-    str += '<br/>hunger<b>' + utils.virg(this.hunger)
+    str += '</b><br/>color<b>' + utils.virg(this.ADN.morphology.color, 2)
+    str += '</b><br/>desire<b>' + utils.virg(this.desire)
+    str += '</b><br/>hunger<b>' + utils.virg(this.hunger)
     return str
   }
 }

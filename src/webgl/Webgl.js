@@ -174,7 +174,7 @@ export default class Webgl {
       }
 
       if (intersected.length > 0) {
-        const cur = this.fellow[i--]
+        const cur = this.fellows[i--]
         utils.mousewin('Fellow #' + i, cur.toString(), e.clientX, e.clientY)
       } else {
         utils.mousewin('close')
