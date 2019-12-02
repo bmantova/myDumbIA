@@ -2,6 +2,7 @@ import Ressource from './Ressource'
 import { BoxGeometry, MeshBasicMaterial, Mesh, Color } from 'three'
 import ADN from './ADN'
 import constants from 'utils/constants'
+import utils from 'utils/utils'
 
 export default class Fellow extends Ressource {
   constructor (options) {
@@ -209,5 +210,14 @@ export default class Fellow extends Ressource {
       webgl.removeFellow(this)
       console.log('mort vieillesse')
     }
+  }
+
+  toString () {
+    let str = ''
+    str += 'age<b>' + utils.virg(this.age)
+    str += '<br/>color<b>' + utils.virg(this.ADN.morphology.color, 2)
+    str += '<br/>desire<b>' + utils.virg(this.desire)
+    str += '<br/>hunger<b>' + utils.virg(this.hunger)
+    return str
   }
 }

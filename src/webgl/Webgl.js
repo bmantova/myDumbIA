@@ -163,17 +163,21 @@ export default class Webgl {
     window.addEventListener('mousemove', function (e) {
       const mouse = {
         x: (e.clientX / this.renderer.domElement.clientWidth) * 2 - 1,
-        y: (e.clientY / this.renderer.domElement.clientHeight) * 2 - 1
+        y: -(e.clientY / this.renderer.domElement.clientHeight) * 2 + 1
       }
       this.raycaster.setFromCamera(mouse, this.camera)
-      const intersected = this.raycaster.intersectObjects(this.fellows)
+
+      let i = 0
+      let intersected = []
+      while (i < this.fellows.length && intersected.length === 0) {
+        intersected = this.raycaster.intersectObject(this.fellows[i++].body)
+      }
 
       if (intersected.length > 0) {
-        if (intersected.length > 0) {
-          utils.mousewin('Hello', intersected[0].position.x + ', ' + intersected[0].position.y + ', ' + intersected[0].position.z, e.clientX, e.clientY)
-        } else {
-          utils.mousewin('close')
-        }
+        const cur = this.fellow[i--]
+        utils.mousewin('Fellow #' + i, cur.toString(), e.clientX, e.clientY)
+      } else {
+        utils.mousewin('close')
       }
     }.bind(this))
   }
