@@ -1,0 +1,162 @@
+html, body {
+  padding:0px;
+  margin:0px;
+  font-family:arial;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+#debug {
+  position: fixed;
+  bottom: 0px;
+  left:0px;
+  color: white;
+  background-color:rgba(0,0,0,0.6);
+  border-radius: 0px 5px 0px 0px;
+  animation:fadeIn 1s ease;
+  /* CSS for debug */
+}
+#debug>div {
+  border-bottom:1px solid #9995;
+  padding: 10px;
+}
+.res_title {
+  color: #AAA;
+  margin-right:2px;
+  font-size: 0.8em;
+  vertical-align:middle;
+  margin-right:10px;
+}
+.res_content {
+  float: right;
+}
+#mousewin {
+  transform-origin: 0% 0%;
+  position:fixed;
+  z-index:1;
+  border-radius: 0px 5px 5px 5px;
+  background-color:rgba(0,0,0,0.6);
+  padding:5px;
+  font-size:12px;
+  color:white;
+  display:none;
+  width:100px;
+  color:#AAA;
+  animation:fadeIn 0.5s forwards;
+  animation-timing-function: cubic-bezier(0.5,0,1.5,1.5);
+}
+
+#mousewin b {
+  color:white;
+  float:right;
+}
+
+@keyframes fadeIn {
+  0% {
+    background-color:rgba(0,0,0,0);
+    padding:0px;
+    transform: rotateZ(-45deg);
+    font-size:2px;
+  }
+  100% {
+    background-color:rgba(0,0,0,0.6);
+    transform: rotateZ(0deg);
+    padding:5px;
+    font-size:12px;
+  }
+}
+/* Info pop up */
+
+/* HOME */
+
+#HomeScreen {
+  position:absolute;
+  top:0;
+  left:0;
+  bottom:0;
+  right:0;
+  z-index:9999998;
+  background-color:white;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  display:none;
+}
+
+.titleContainer {
+  font-size:150px;
+  height:40%;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.buttonsContainer {
+  height:60%;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.button {
+  padding:20px 50px;
+  margin:20px;
+  border-radius: 20px;
+  background:rgba(105, 25, 25, 0.6);
+  font-size:35px;
+  font-weight:bold;
+  color:white;
+}
+
+.button:hover {
+  transform:scale(0.9)
+}
+
+.playButton {
+
+}
+
+.aboutButton {
+
+}
+
+#About {
+  position:absolute;
+  top:0;
+  /* left:100%; */
+  left:0;
+  height:100%;
+  width:100%;
+  z-index:9999999;
+  background-color:white;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  display:none;
+}
+
+.appearAnimation {
+  animation: appear 1s forwards;
+}
+
+@keyframes appear {
+  to {
+    left:0%;
+  }
+}
+
+#mouton {
+  opacity: 0;
+}
+
+#ours {
+  opacity: 0;
+}
+
+#rond {
+  opacity: 0;
+}
+

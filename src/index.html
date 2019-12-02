@@ -54,17 +54,13 @@
       escargot.animate({ d: escargotPoints }, 1500, mina.easeinout, toMouton); 
     }
     toMouton();
-
     var animation = new TimelineLite({onComplete:function() {
-    this.restart()}
-})
+      this.restart()}
+    })
 
     TweenLite.defaultEase = Linear.easeNone;
    
     animation.to("#loup", {duration: 0.5, x: 140, y: -50,ease: Linear.easeNone}).to("#loup", {duration: 0.5, x: 280, y: 0, ease: Linear.easeNone})
-
-
-
 
   </script>
 </body>

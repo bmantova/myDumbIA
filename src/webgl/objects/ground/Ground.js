@@ -1,4 +1,4 @@
-import { Object3D, PlaneBufferGeometry, RawShaderMaterial, Mesh/* , DoubleSide */, Vector3, IcosahedronBufferGeometry, MeshBasicMaterial } from 'three'
+import { Object3D, PlaneBufferGeometry, RawShaderMaterial, Mesh/* , DoubleSide */, Vector3 } from 'three'
 
 import constants from 'utils/constants'
 import utils from 'utils/utils'
@@ -8,6 +8,7 @@ import fragmentShader from './shaders/ground.fs'
 
 import Map from './Map'
 import Vegetation from '../Vegetation'
+import Sky from '../sky/Sky.js'
 
 export default class Ground extends Object3D {
   constructor (size) {
@@ -48,14 +49,11 @@ export default class Ground extends Object3D {
 
     this.plane = new Mesh(this.geometry, this.material)
 
-    this.sun = new Mesh(new IcosahedronBufferGeometry(10, 2), new MeshBasicMaterial({ color: 0xffff66 }))
-    this.moon = new Mesh(new IcosahedronBufferGeometry(5, 2), new MeshBasicMaterial({ color: 0xaaaaaa }))
-    this.add(this.sun)
-    this.add(this.moon)
-
     this.plane.rotation.x = -Math.PI * 0.5
     this.plane.rotation.z = Math.PI
     this.add(this.plane)
+
+    this.add(new Sky())
 
     for (let i = 0; i < 500; i++) {
       let x
@@ -91,13 +89,13 @@ export default class Ground extends Object3D {
 
   update (time) {
     // this.rotateY(0.01)
-    const timeMult = 0.01
+    const timeMult = 0.05
 
-    this.material.uniforms.uTime.value += 0.01
+    this.material.uniforms.uTime.value += timeMult
     this.material.uniforms.uDay.value = Math.sin(time * timeMult)
     this.children.forEach((child) => {
       if (child.update) {
-        if (child.isAlive()) child.update(time)
+        if (child.isAlive()) child.update(time * timeMult)
         else {
           const x = utils.limit(child.position.x + utils.randfloat(0, child.size), -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
           const y = utils.limit(child.position.z + utils.randfloat(0, child.size), -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
@@ -107,13 +105,5 @@ export default class Ground extends Object3D {
       }
     })
     utils.debug('time', time)
-    this.sun.position.set(
-      Math.cos(time * timeMult) * (constants.GROUND.SIZE * 0.6),
-      Math.sin(time * timeMult) * (constants.GROUND.SIZE * 0.6),
-      Math.sin(time * timeMult) * constants.GROUND.SIZE * Math.abs(Math.sin(time * timeMult / 300)))
-    this.moon.position.set(
-      -Math.cos(time * timeMult) * (constants.GROUND.SIZE * 0.6),
-      -Math.sin(time * timeMult) * (constants.GROUND.SIZE * 0.6),
-      -Math.sin(time * timeMult) * constants.GROUND.SIZE * Math.abs(Math.sin(time * timeMult / 300)))
   }
 }

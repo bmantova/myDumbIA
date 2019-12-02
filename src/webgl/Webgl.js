@@ -44,8 +44,8 @@ export default class Webgl {
     this.camera = new PerspectiveCamera(
       50,
       window.innerWidth / window.innerHeight,
-      0.1,
-      1000
+      1,
+      2000
     )
     this.camera.position.set(0, 150, 400)
     this.scene.add(this.camera)
@@ -109,7 +109,7 @@ export default class Webgl {
   render () {
     this.stats.begin()
 
-    this.currentTime++
+    this.currentTime += constants.TIME.SPEED
 
     this.controls.update()
 
@@ -162,17 +162,23 @@ export default class Webgl {
     window.addEventListener('mousemove', function (e) {
       const mouse = {
         x: (e.clientX / this.renderer.domElement.clientWidth) * 2 - 1,
-        y: (e.clientY / this.renderer.domElement.clientHeight) * 2 - 1
+        y: -(e.clientY / this.renderer.domElement.clientHeight) * 2 + 1
       }
       this.raycaster.setFromCamera(mouse, this.camera)
-      const intersected = this.raycaster.intersectObjects(this.elements)
 
+      let intersected = []
+      let i = 0
+      while (i < this.elements.length && intersected.length === 0) {
+        intersected = this.raycaster.intersectObject(this.elements[i++].body)
+      }
+      i--
+      const curFellow = this.elements[i]
       if (intersected.length > 0) {
-        if (intersected.length > 0) {
-          utils.mousewin('Hello', intersected[0].position.x + ', ' + intersected[0].position.y + ', ' + intersected[0].position.z, e.clientX, e.clientY)
-        } else {
-          utils.mousewin('close')
-        }
+        utils.mousewin('Fellow #' + i,
+          'color <b>' + utils.virg(curFellow.ADN.morphology.color, 2) + '</b><br/>hunger <b>' + utils.virg(curFellow.hunger) + '</b><br/>desire <b>' + utils.virg(curFellow.desire) + '</b>',
+          e.clientX, e.clientY)
+      } else {
+        utils.mousewin('close')
       }
     }.bind(this))
   }
