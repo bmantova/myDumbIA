@@ -26,12 +26,16 @@ module.exports = {
             }
           },
           {
-            loader: 'eslint-loader',
+            loader: 'eslint-loader'
             /* options: {
               fix: true
             } */
           }
         ]
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
       }
     ]
   },
