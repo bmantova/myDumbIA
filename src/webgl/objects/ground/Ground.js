@@ -66,12 +66,14 @@ export default class Ground extends Object3D {
         const index = (i * (constants.GROUND.SUB + 1) + j) * 3 + 2
         vertices[(i * (constants.GROUND.SUB + 1) + j) * 3 + 2] = this.height.get(j, i) * 10
         if (i === 0 || j === 0 || i === constants.GROUND.SUB || j === constants.GROUND.SUB) {
-          verticesUnder[index] = this.height.get(j, i) * 10
+          let h = this.height.get(j, i) * 10
+          h = h > 0 ? h : 0
+          verticesUnder[index] = h
         } else {
           const x = constants.GROUND.SUB / 2 - i
           const y = constants.GROUND.SUB / 2 - j
           const mult = constants.GROUND.SUB * 1.4142 * 0.5 - Math.sqrt((x * x) + (y * y))
-          verticesUnder[index] = utils.randint(-10 - mult, -5 - mult)
+          verticesUnder[index] = utils.randint(-mult * mult * 0.02, -mult)
         }
       }
     }
