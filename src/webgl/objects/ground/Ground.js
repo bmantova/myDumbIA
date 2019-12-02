@@ -14,6 +14,8 @@ import Vegetation from '../Vegetation'
 import Sky from '../sky/Sky.js'
 // import { OBJLoader } from './loader/OBJLoader.js'
 
+/* Chutes d'eau */
+
 export default class Ground extends Object3D {
   constructor (size) {
     super()
@@ -92,7 +94,7 @@ export default class Ground extends Object3D {
     this.add(new Sky())
 
     this.vegetation = []
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < 1; i++) {
       let x
       let y
       let essais = 0

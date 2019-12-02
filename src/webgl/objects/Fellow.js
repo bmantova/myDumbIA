@@ -94,7 +94,7 @@ export default class Fellow extends Ressource {
     if (this.hunger >= 1) {
       if (webgl.fellows.length > 1) {
         const diet = this.clamp(Math.random() * this.ADN.diet.carnivorous, 0, 1)
-        if (diet > 0.5) {
+        if (diet > 0.5 || webgl.ground.vegetation.length === 0) {
           this.focus = this.getClosest(webgl.getOthers(this))
         } else {
           this.focus = this.getClosest(webgl.ground.vegetation)
@@ -183,11 +183,14 @@ export default class Fellow extends Ressource {
 
   move (webgl) {
     if (this.canFuck(webgl) || this.canEat(webgl)) {
-      if (!this.focus || this.focus === 'undefined') {
+      if (!this.focus) {
         this.findFocus(webgl)
       } else {
         this.updateFocus(webgl)
       }
+    }
+
+    if (this.focus && this.focus.element && this.focus !== 'undefined') {
       const deltaX = (this.focus.element.position.x - this.position.x)
       const deltaZ = (this.focus.element.position.z - this.position.z)
       if (deltaX !== 0) {
