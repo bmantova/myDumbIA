@@ -44,8 +44,8 @@ export default class Webgl {
     this.camera = new PerspectiveCamera(
       50,
       window.innerWidth / window.innerHeight,
-      1,
-      2000
+      0.1,
+      1000
     )
     this.camera.position.set(0, 150, 400)
     this.scene.add(this.camera)
@@ -72,10 +72,10 @@ export default class Webgl {
     adns.push(first)
     adns.push(second)
 
-    this.elements = []
+    this.fellows = []
     for (let i = 0; i < 20; i++) {
       const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE }
-      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: Math.round(Math.random()) } }) }), position)
+      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: Math.round(Math.random()) } }), type: constants.RESSOURCES.TYPES.MEAT }), position)
     }
 
     /* FIN DEBUG AXEL */
@@ -109,19 +109,19 @@ export default class Webgl {
   render () {
     this.stats.begin()
 
-    this.currentTime += constants.TIME.SPEED
+    this.currentTime++
 
     this.controls.update()
 
-    utils.debug('#fellows', this.elements.length)
+    utils.debug('#fellows', this.fellows.length)
 
     this.scene.children.forEach((child) => {
       if (child.update) child.update(this.currentTime)
     })
 
-    this.elements.forEach((element) => {
+    this.fellows.forEach((element) => {
       element.update()
-      element.move(this, this.ground)
+      element.move(this)
     })
 
     // this.objects.update()
@@ -138,47 +138,41 @@ export default class Webgl {
   }
 
   getOthers (element) {
-    return this.elements.filter((e) => {
+    return this.fellows.filter((e) => {
       return e.id !== element.id
     })
   }
 
   addFellow (fellow, position) {
-    this.elements.push(fellow)
-    this.elements[this.elements.length - 1].position.set(position.x, position.y, position.z)
+    this.fellows.push(fellow)
+    this.fellows[this.fellows.length - 1].position.set(position.x, position.y, position.z)
     this.scene.add(fellow)
   }
 
   removeFellow (fellow) {
     this.scene.remove(fellow)
-    this.elements = this.elements.filter((el) => el.id !== fellow.id)
+    this.fellows = this.fellows.filter((el) => el.id !== fellow.id)
   }
 
   searchFellow (x, y) {
-    return this.elements.filter((el) => Math.floor(el.position.x = Math.floor(x)) && Math.floor(el.position.y) === Math.floor(y))
+    return this.fellows.filter((el) => Math.floor(el.position.x = Math.floor(x)) && Math.floor(el.position.y) === Math.floor(y))
   }
 
   raycastEvent () {
     window.addEventListener('mousemove', function (e) {
       const mouse = {
         x: (e.clientX / this.renderer.domElement.clientWidth) * 2 - 1,
-        y: -(e.clientY / this.renderer.domElement.clientHeight) * 2 + 1
+        y: (e.clientY / this.renderer.domElement.clientHeight) * 2 - 1
       }
       this.raycaster.setFromCamera(mouse, this.camera)
+      const intersected = this.raycaster.intersectObjects(this.fellows)
 
-      let intersected = []
-      let i = 0
-      while (i < this.elements.length && intersected.length === 0) {
-        intersected = this.raycaster.intersectObject(this.elements[i++].body)
-      }
-      i--
-      const curFellow = this.elements[i]
       if (intersected.length > 0) {
-        utils.mousewin('Fellow #' + i,
-          'color <b>' + utils.virg(curFellow.ADN.morphology.color, 2) + '</b><br/>hunger <b>' + utils.virg(curFellow.hunger) + '</b><br/>desire <b>' + utils.virg(curFellow.desire) + '</b>',
-          e.clientX, e.clientY)
-      } else {
-        utils.mousewin('close')
+        if (intersected.length > 0) {
+          utils.mousewin('Hello', intersected[0].position.x + ', ' + intersected[0].position.y + ', ' + intersected[0].position.z, e.clientX, e.clientY)
+        } else {
+          utils.mousewin('close')
+        }
       }
     }.bind(this))
   }

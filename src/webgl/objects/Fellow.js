@@ -57,30 +57,91 @@ export default class Fellow extends Ressource {
     this.increaseDirection()
   }
 
-  findFocus (webgl) {
-    const others = webgl.getOthers(this)
+  getClosest (array) {
     const distances = []
-    others.forEach((element) => {
+    array.forEach((element) => {
       distances.push({ element: element, distance: this.position.distanceTo(element.position) })
     })
 
-    const closest = distances.reduce((prev, cur) => {
+    return distances.reduce((prev, cur) => {
       return prev.distance < cur.distance ? prev : cur
     }, +Infinity)
-    this.focus = closest
   }
 
-  move (webgl, ground) {
-    if ((this.desire >= 1 || this.hunger >= 1) && webgl.elements.length > 1) {
+  findFocus (webgl) {
+    if (this.hunger >= 1) {
+      if (webgl.fellows.length > 1) {
+        const diet = this.clamp(Math.random() * this.ADN.diet.carnivorous, 0, 1)
+        if (diet > 0.5) {
+          this.focus = this.getClosest(webgl.getOthers(this))
+        } else {
+          this.focus = this.getClosest(webgl.ground.vegetation)
+        }
+      } else {
+        this.focus = this.getClosest(webgl.ground.vegetation)
+      }
+    } else {
+      this.focus = this.getClosest(webgl.getOthers(this))
+    }
+  }
+
+  updateFocus (webgl) {
+    let findedFocus = null
+    if (this.focus.element.type === constants.RESSOURCES.TYPES.MEAT) {
+      findedFocus = webgl.fellows.find((fellow) => fellow.id === this.focus.element.id)
+    } else {
+      findedFocus = webgl.ground.vegetation.find((tree) => tree.id === this.focus.element.id)
+    }
+
+    if (findedFocus) {
+      this.focus = { element: findedFocus, distance: this.position.distanceTo(findedFocus.position) }
+    } else {
+      this.findFocus(webgl)
+    }
+  }
+
+  canFuck (webgl) {
+    return this.desire >= 1 && webgl.fellows.length > 1
+  }
+
+  canEat (webgl) {
+    return this.hunger >= 1 &&
+          ((this.ADN.diet.carnivorous < 1 && webgl.ground.vegetation.length > 1) ||
+          (this.ADN.diet.carnivorous === 1 && webgl.fellows.length > 1))
+  }
+
+  handleDesire (webgl) {
+    this.focus.element.desire = 0
+    this.desire = 0
+    if (this.ADN.canFuckWith(this.focus.element.ADN)) {
+      for (let i = 0; i < Math.floor(this.ADN.reproduction.litter * 10); i++) {
+        webgl.addFellow(new Fellow({ ADN: this.ADN.getADNFromReproductionWith(this.focus.element.ADN) }), this.position)
+      }
+    }
+    if (this.focus.element.hunger >= 1) {
+      this.focus.element.hunger = 0
+      webgl.removeFellow(this)
+      this.focus.element.focus = null
+    }
+    this.focus = null
+  }
+
+  handleHunger (webgl) {
+    this.hunger = 0
+    if (this.focus.element.type === constants.RESSOURCES.TYPES.MEAT) {
+      webgl.removeFellow(this.focus.element)
+    } else {
+      webgl.ground.removeTree(this.focus.element)
+    }
+    this.focus = null
+  }
+
+  move (webgl) {
+    if (this.canDesire() || this.canEat()) {
       if (!this.focus) {
         this.findFocus(webgl)
       } else {
-        const findedFocus = webgl.elements.find((element) => element.id === this.focus.element.id)
-        if (findedFocus) {
-          this.focus = { element: findedFocus, distance: this.position.distanceTo(findedFocus.position) }
-        } else {
-          this.findFocus(webgl)
-        }
+        this.updateFocus(webgl)
       }
       const deltaX = (this.focus.element.position.x - this.position.x)
       const deltaZ = (this.focus.element.position.z - this.position.z)
@@ -92,27 +153,9 @@ export default class Fellow extends Ressource {
       }
       if (this.position.distanceTo(this.focus.element.position) < (this.effectiveSize + this.focus.element.effectiveSize)) {
         if (this.desire >= 1) {
-          this.focus.element.desire = 0
-          this.desire = 0
-          if (this.ADN.canFuckWith(this.focus.element.ADN)) {
-            for (let i = 0; i < Math.floor(this.ADN.reproduction.litter * 10); i++) {
-              webgl.addFellow(new Fellow({ ADN: this.ADN.getADNFromReproductionWith(this.focus.element.ADN) }), this.position)
-              console.log('fellow né ')
-              console.log(this.ADN.getADNFromReproductionWith(this.focus.element.ADN))
-            }
-          }
-          if (this.focus.element.hunger >= 1) {
-            this.focus.element.hunger = 0
-            webgl.removeFellow(this)
-            this.focus.element.focus = null
-            console.log('fellow mort')
-          }
-          this.focus = null
+          this.handleDesire(webgl)
         } else if (this.hunger >= 1) {
-          this.hunger = 0
-          webgl.removeFellow(this.focus.element)
-          console.log('fellow mort')
-          this.focus = null
+          this.handleHunger(webgl)
         }
       }
     } else {
@@ -120,6 +163,6 @@ export default class Fellow extends Ressource {
       this.position.z += Math.sin(this.direction) * this.getSpeed()
     }
     this.clampPosition()
-    this.position.y = ground.getHeight(this.position.x, this.position.z) + this.effectiveSize * 0.5
+    this.position.y = webgl.ground.getHeight(this.position.x, this.position.z) + this.effectiveSize * 0.5
   }
 }

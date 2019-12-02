@@ -55,6 +55,7 @@ export default class Ground extends Object3D {
 
     this.add(new Sky())
 
+    this.vegetation = []
     for (let i = 0; i < 500; i++) {
       let x
       let y
@@ -70,7 +71,9 @@ export default class Ground extends Object3D {
       }
 
       const size = Math.abs(this.humidity.get(x, y) + 3)
-      this.add(new Vegetation({ size: size, position: new Vector3(x, this.getHeight(x, y), y), life: utils.randint(500, 1000), born: Math.floor(Math.random() * -500) }))
+      const veg = new Vegetation({ size: size, position: new Vector3(x, this.getHeight(x, y), y), life: utils.randint(500, 1000), born: Math.floor(Math.random() * -500) })
+      this.vegetation.push(veg)
+      this.add(veg)
     }
   }
 
