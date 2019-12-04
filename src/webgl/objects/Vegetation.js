@@ -22,10 +22,10 @@ export default class Vegetation extends Ressource {
     super(options)
 
     this.biome = options.biome
-    this.effectiveSize = 10
+    this.effectiveSize = this.size * 10
 
     this.life = options.life ? options.life : 100
-    this.born = options.born ? options.born : 0
+    this.born = options.born ? options.born : 1
     this.init()
     const materialTronc = new MeshStandardMaterial({ color: new Color(0xBB5533), roughness: 1 })
     const box = new BoxBufferGeometry(this.effectiveSize * 0.1, this.effectiveSize, this.effectiveSize * 0.1)
@@ -39,6 +39,8 @@ export default class Vegetation extends Ressource {
     tronc.position.y += this.effectiveSize * 0.5
     feuilles.position.y += this.effectiveSize
 
+    this.scale.set(0, 0, 0)
+
     this.add(tronc)
     this.add(feuilles)
 
@@ -48,14 +50,15 @@ export default class Vegetation extends Ressource {
   init () {
   }
 
-  update (time) {
-    const deltaTime = time - this.born
-    const deadTime = deltaTime - this.life
-    if (deltaTime < this.life) {
-      const scale = Math.sin(deltaTime / (this.life * (Math.PI))) * this.size
+  update () {
+    this.born += constants.TIME.SPEED
+    const deadTime = this.born - this.life
+
+    if (this.born < this.life) {
+      const scale = (this.born / this.life) * this.size
       this.scale.set(scale, scale, scale)
     } else if (deadTime < constants.RESSOURCES.VEGETATION.FALLING_TIME) {
-      this.rotateX((Math.PI / 2) / constants.RESSOURCES.VEGETATION.FALLING_TIME)
+      this.rotateX((Math.PI / 2) / (constants.RESSOURCES.VEGETATION.FALLING_TIME))
     } else {
       this.die()
     }

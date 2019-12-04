@@ -30,11 +30,11 @@ export default {
     },
     VEGETATION: {
       FALLING_TIME: 20,
-      CHILD_NUMBER: 3
+      MAX_TREES: 2000
     }
   },
   TIME: {
-    SPEED: 5.0
+    SPEED: 1.0
   },
   SUITS: {
     HEIGHT: [

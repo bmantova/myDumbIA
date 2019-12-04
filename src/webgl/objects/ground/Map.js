@@ -9,6 +9,9 @@ export default class Map {
     this.yHtab = []
     this.ampltab = []
 
+    this.mini = 0
+    this.maxi = 0
+
     this.init()
   }
 
@@ -22,7 +25,7 @@ export default class Map {
     }
   }
 
-  get (x, y) {
+  get (x, y, check = true) {
     // return Math.sin(x * 0.1) + Math.sin(x * 0.05) + Math.sin(y * 0.1) + Math.sin(y * 0.2)
 
     let h = 1
@@ -34,7 +37,19 @@ export default class Map {
         h += (Math.sin(x * this.xHtab[e * this.n + i] * e) * Math.sin(y * this.yHtab[e * this.n + i] * 100 * e)) * this.ampltab[e * this.n + i]
       }
     }
+    if (check) {
+      if (h > this.maxi) this.maxi = h
+      if (h < this.mini) this.mini = h
+    }
     return h / (this.max * this.n * this.exp)
+  }
+
+  getMax () {
+    return this.maxi
+  }
+
+  getMin () {
+    return this.mini
   }
 
   randfloat (a, b) {

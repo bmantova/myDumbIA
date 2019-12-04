@@ -111,22 +111,23 @@ export default class Ground extends Object3D {
     // this.rotateY(0.01)
     const timeMult = 0.01 * constants.TIME.SPEED
 
-    this.material.uniforms.uTime.value += timeMult
+    this.material.uniforms.uTime.value = time * timeMult
     this.material.uniforms.uDay.value = Math.sin(time * timeMult)
 
-    this.underMaterial.uniforms.uTime.value += timeMult
+    this.underMaterial.uniforms.uTime.value = time * timeMult
     this.underMaterial.uniforms.uDay.value = Math.sin(time * timeMult)
 
     this.children.forEach((child) => {
       if (child.update) {
         if (child.isAlive()) child.update(time * timeMult)
         else {
-          this.addVegetationFromParent(child, time)
+          this.addVegetationFromParent(child)
           this.remove(child)
         }
       }
     })
-    utils.debug('time', time)
+    utils.debug('time', time * constants.TIME.SPEED)
+    utils.debug('#trees', this.vegetation.length)
   }
 
   removeTree (elem) {
@@ -148,17 +149,17 @@ export default class Ground extends Object3D {
       essais++
     }
 
-    this.addVegetation(x, y)
+    this.addVegetation(x, y, Math.floor(Math.random() * 500))
   }
 
-  addVegetation (x, y) {
-    const veg = new Vegetation({ position: new Vector3(x, this.getHeight(x, y), y), life: utils.randint(500, 1000), born: Math.floor(Math.random() * -500), biome: this.getBiomeInfo(x, y) })
+  addVegetation (x, y, born = 1) {
+    const veg = new Vegetation({ position: new Vector3(x, this.getHeight(x, y), y), life: utils.randint(500, 1000), born: born, biome: this.getBiomeInfo(x, y) })
     this.vegetation.push(veg)
     this.add(veg)
   }
 
-  addVegetationFromParent (parent, time) {
-    const n = Math.round(utils.randint(0, constants.RESSOURCES.VEGETATION.FALLING_TIME))
+  addVegetationFromParent (parent) {
+    const n = Math.round(utils.randint(0, constants.RESSOURCES.VEGETATION.MAX_TREES / this.vegetation.length))
     for (let i = 0; i < n; i++) {
       const x = utils.limit(parent.position.x + utils.randfloat(0, parent.size), -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
       const y = utils.limit(parent.position.z + utils.randfloat(0, parent.size), -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
