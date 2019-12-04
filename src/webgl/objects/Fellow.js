@@ -12,7 +12,7 @@ export default class Fellow extends Ressource {
     this.desire = 0
     this.hunger = 0
     this.age = 0
-    this.suits = 0
+    this.suitsCoeff = 0
     this.direction = Math.random() * Math.PI * 2
     this.focus = null
     this.effectiveSize = this.ADN.morphology.size * 20
@@ -47,15 +47,15 @@ export default class Fellow extends Ressource {
     }
   }
 
-  updateSuits (webgl) {
-    // alert(webgl)
-    // const z = webgl.ground.getHeight(this.position.x, this.position.y)
-    // alert(z)
-    // this.suits = 3
+  updateSuitsCoeff (webgl) {
+    const biome = webgl.ground.getBiomeInfo(this.position.x, this.position.y)
+    this.suitsCoeff = this.ADN.getSuitsCoeff(biome)
+    console.log(this.suitsCoeff)
+    // alert('height :' + biome.height + 'humidity : ' + biome.humidity + 'temperature :' + biome.temperature)
   }
 
   increaseAge () {
-    this.age += (1 / this.ADN.capacity.longevity) * 0.00005 * constants.TIME.SPEED
+    this.age += ((1 / this.ADN.capacity.longevity) + this.suitsCoeff) * 0.00005 * constants.TIME.SPEED
   }
 
   increaseEffectiveSize () {
@@ -78,7 +78,7 @@ export default class Fellow extends Ressource {
     this.increaseHunger()
     this.increaseDesire()
     this.increaseDirection()
-    this.updateSuits(webgl)
+    this.updateSuitsCoeff(webgl)
     this.increaseAge()
     this.increaseEffectiveSize()
   }
