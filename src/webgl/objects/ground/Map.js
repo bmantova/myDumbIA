@@ -9,8 +9,8 @@ export default class Map {
     this.yHtab = []
     this.ampltab = []
 
-    this.mini = 0
-    this.maxi = 0
+    this.mini = -1
+    this.maxi = 1
 
     this.init()
   }
@@ -45,7 +45,7 @@ export default class Map {
   }
 
   mappedValue (x, y) {
-    return (this.get(x, y) + this.mini) / (this.maxi - this.mini)
+    return (this.get(x, y) - this.mini) / (this.maxi - this.mini)
   }
 
   getMax () {
