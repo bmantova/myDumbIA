@@ -30,7 +30,7 @@ export default {
     },
     VEGETATION: {
       FALLING_TIME: 20,
-      CHILD_NUMBER: 3
+      MAX_TREES: 2000
     }
   },
   TIME: {

@@ -13,8 +13,6 @@ html, body {
   color: white;
   background-color:rgba(0,0,0,0.6);
   border-radius: 0px 5px 0px 0px;
-  animation:fadeIn 1s ease;
-  /* CSS for debug */
 }
 #debug>div {
   border-bottom:1px solid #9995;
