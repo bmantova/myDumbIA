@@ -115,12 +115,10 @@ export default class Webgl {
 
     utils.debug('#fellows', this.fellows.length)
 
-    this.scene.children.forEach((child) => {
-      if (child.update) child.update(this.currentTime)
-    })
+    this.ground.update(this.currentTime++)
 
     this.fellows.forEach((element) => {
-      element.update()
+      element.update(this)
       element.move(this)
       element.handleDeath(this)
     })
