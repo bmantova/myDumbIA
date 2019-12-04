@@ -133,7 +133,7 @@ export default class Webgl {
     if (this.currentTime > this.previousTime + 80) {
       this.previousTime = this.currentTime
     }
-    // requestAnimationFrame(this.render)
+    requestAnimationFrame(this.render)
   }
 
   getOthers (element) {

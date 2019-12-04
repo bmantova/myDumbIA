@@ -50,8 +50,6 @@ export default class Fellow extends Ressource {
   updateSuitsCoeff (webgl) {
     const biome = webgl.ground.getBiomeInfo(this.position.x, this.position.y)
     this.suitsCoeff = this.ADN.getSuitsCoeff(biome)
-    console.log(this.suitsCoeff)
-    // alert('height :' + biome.height + 'humidity : ' + biome.humidity + 'temperature :' + biome.temperature)
   }
 
   increaseAge () {

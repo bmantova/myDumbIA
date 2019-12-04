@@ -23,7 +23,6 @@ export default class Vegetation extends Ressource {
 
     this.biome = options.biome
     this.effectiveSize = this.size * 10
-    console.log(this.biome)
 
     this.size = this.biome.humidity + this.biome.temperature + 1
 
