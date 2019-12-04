@@ -61,7 +61,9 @@ export default class Ground extends Object3D {
     for (let i = 0; i <= constants.GROUND.SUB; i++) {
       for (let j = 0; j <= constants.GROUND.SUB; j++) {
         const index = (i * (constants.GROUND.SUB + 1) + j) * 3 + 2
-        vertices[index] = this.height.get(j, i) * 10
+        vertices[index] = this.height.get(j, i, true) * 10
+        this.humidity.get(j, i, true)
+        this.temperature.get(j, i, true)
         if (i === 0 || j === 0 || i === constants.GROUND.SUB || j === constants.GROUND.SUB) {
           let h = this.height.get(j, i) * 10
           h = h > 0 ? h : 0
@@ -89,7 +91,7 @@ export default class Ground extends Object3D {
     this.add(new Sky())
 
     this.vegetation = []
-    for (let i = 0; i < 0; i++) {
+    for (let i = 0; i < 500; i++) {
       this.addRandomVegetation()
     }
   }
@@ -101,9 +103,9 @@ export default class Ground extends Object3D {
 
   getBiomeInfo (x, y) {
     return {
-      height: this.getHeight(x, y),
-      humidity: this.humidity.get(x, y),
-      temperature: this.temperature.get(x, y)
+      height: this.height.mappedValue(x, y),
+      humidity: this.humidity.mappedValue(x, y),
+      temperature: this.temperature.mappedValue(x, y)
     }
   }
 

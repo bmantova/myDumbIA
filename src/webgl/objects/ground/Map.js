@@ -25,7 +25,7 @@ export default class Map {
     }
   }
 
-  get (x, y, check = true) {
+  get (x, y, check = false) {
     // return Math.sin(x * 0.1) + Math.sin(x * 0.05) + Math.sin(y * 0.1) + Math.sin(y * 0.2)
 
     let h = 1
@@ -42,6 +42,10 @@ export default class Map {
       if (h < this.mini) this.mini = h
     }
     return h / (this.max * this.n * this.exp)
+  }
+
+  mappedValue (x, y) {
+    return (this.get(x, y) + this.mini) / (this.max - this.min)
   }
 
   getMax () {
