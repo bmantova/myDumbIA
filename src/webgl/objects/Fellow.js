@@ -4,6 +4,7 @@ import ADN from './ADN'
 import constants from 'utils/constants'
 import utils from 'utils/utils'
 
+/* TODO Mode Debug */
 export default class Fellow extends Ressource {
   constructor (options) {
     super(options)
@@ -11,6 +12,7 @@ export default class Fellow extends Ressource {
     this.desire = 0
     this.hunger = 0
     this.age = 0
+    this.suits = 0
     this.direction = Math.random() * Math.PI * 2
     this.focus = null
     this.effectiveSize = this.ADN.morphology.size * 20
@@ -19,6 +21,9 @@ export default class Fellow extends Ressource {
     const material = new MeshBasicMaterial({ color: new Color('hsl(' + Math.round(this.ADN.morphology.color * 360) + ' ,100%, 50%)') })
     this.body = new Mesh(geometry, material)
     this.add(this.body)
+
+    this.timer = 0
+    this.previous = 0
   }
 
   getSpeed () {
@@ -42,6 +47,13 @@ export default class Fellow extends Ressource {
     }
   }
 
+  updateSuits (webgl) {
+    // alert(webgl)
+    // const z = webgl.ground.getHeight(this.position.x, this.position.y)
+    // alert(z)
+    // this.suits = 3
+  }
+
   increaseAge () {
     this.age += (1 / this.ADN.capacity.longevity) * 0.00005 * constants.TIME.SPEED
   }
@@ -62,10 +74,11 @@ export default class Fellow extends Ressource {
     return v
   }
 
-  update () {
+  update (webgl) {
     this.increaseHunger()
     this.increaseDesire()
     this.increaseDirection()
+    this.updateSuits(webgl)
     this.increaseAge()
     this.increaseEffectiveSize()
   }
@@ -122,16 +135,6 @@ export default class Fellow extends Ressource {
     }
   }
 
-  canFuck (webgl) {
-    return this.desire >= 1 && webgl.fellows.length > 1
-  }
-
-  canEat (webgl) {
-    return this.hunger >= 1 &&
-          ((this.ADN.diet.carnivorous < 1 && webgl.ground.vegetation.length > 1) ||
-          (this.ADN.diet.carnivorous === 1 && webgl.fellows.length > 1))
-  }
-
   handleDesire (webgl) {
     this.handleReproduction(webgl)
     if (this.focus.element.hunger >= 1) {
@@ -181,6 +184,16 @@ export default class Fellow extends Ressource {
     }
   }
 
+  canFuck (webgl) {
+    return this.desire >= 1 && webgl.fellows.length > 1
+  }
+
+  canEat (webgl) {
+    return this.hunger >= 1 &&
+          ((this.ADN.diet.carnivorous < 1 && (webgl.ground.vegetation.length > 1 || webgl.fellows.length > 1)) ||
+          (this.ADN.diet.carnivorous === 1 && webgl.fellows.length > 1))
+  }
+
   move (webgl) {
     if (this.canFuck(webgl) || this.canEat(webgl)) {
       if (!this.focus) {
@@ -188,9 +201,7 @@ export default class Fellow extends Ressource {
       } else {
         this.updateFocus(webgl)
       }
-    }
 
-    if (this.focus && this.focus.element && this.focus !== 'undefined') {
       const deltaX = (this.focus.element.position.x - this.position.x)
       const deltaZ = (this.focus.element.position.z - this.position.z)
       if (deltaX !== 0) {

@@ -89,7 +89,7 @@ export default class Ground extends Object3D {
     this.add(new Sky())
 
     this.vegetation = []
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < 0; i++) {
       this.addRandomVegetation()
     }
   }
