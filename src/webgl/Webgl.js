@@ -45,7 +45,7 @@ export default class Webgl {
       50,
       window.innerWidth / window.innerHeight,
       0.1,
-      1000
+      2000
     )
     this.camera.position.set(0, 150, 400)
     this.scene.add(this.camera)
@@ -75,7 +75,7 @@ export default class Webgl {
     this.fellows = []
     for (let i = 0; i < 20; i++) {
       const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE }
-      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: Math.round(Math.random()) } }), type: constants.RESSOURCES.TYPES.MEAT }), position)
+      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: 0.0 } }), type: constants.RESSOURCES.TYPES.MEAT }), position)
     }
 
     /* FIN DEBUG AXEL */

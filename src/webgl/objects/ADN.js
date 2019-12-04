@@ -16,7 +16,7 @@ export default class ADN {
       longevity: options.capacity.longevity ? options.capacity.longevity : 0.5
     }
     this.reproduction = {
-      interval: options.reproduction.interval ? options.reproduction.interval : 0.3,
+      interval: options.reproduction.interval ? options.reproduction.interval : 0.1,
       litter: options.reproduction.litter ? options.reproduction.litter : 0.1
     }
     this.diet = {

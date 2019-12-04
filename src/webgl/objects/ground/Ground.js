@@ -1,4 +1,4 @@
-import { Object3D, PlaneBufferGeometry, RawShaderMaterial, Mesh/* , DoubleSide */, Vector3, BackSide } from 'three'
+import { Object3D, PlaneBufferGeometry, RawShaderMaterial, Mesh, Vector3, BackSide } from 'three'
 
 import constants from 'utils/constants'
 import utils from 'utils/utils'
@@ -8,7 +8,6 @@ import fragmentShader from './shaders/ground.fs'
 
 import underVertexShader from './shaders/under.vs'
 import underFragmentShader from './shaders/under.fs'
-
 import Map from './Map'
 import Vegetation from '../Vegetation'
 import Sky from '../sky/Sky.js'
@@ -59,14 +58,10 @@ export default class Ground extends Object3D {
     const vertices = this.geometry.attributes.position.array
     const verticesUnder = this.underGeometry.attributes.position.array
 
-    /* for (let i = 0; i < vertices.length; i++) {
-      vertices[i * 3 + 2] = this.height.get((i * 3) % (constants.GROUND.SUB + 1) + 3, Math.floor((i * 3) / (constants.GROUND.SUB + 1))) * 10
-    } */
-
     for (let i = 0; i <= constants.GROUND.SUB; i++) {
       for (let j = 0; j <= constants.GROUND.SUB; j++) {
         const index = (i * (constants.GROUND.SUB + 1) + j) * 3 + 2
-        vertices[(i * (constants.GROUND.SUB + 1) + j) * 3 + 2] = this.height.get(j, i) * 10
+        vertices[index] = this.height.get(j, i) * 10
         if (i === 0 || j === 0 || i === constants.GROUND.SUB || j === constants.GROUND.SUB) {
           let h = this.height.get(j, i) * 10
           h = h > 0 ? h : 0
@@ -94,24 +89,8 @@ export default class Ground extends Object3D {
     this.add(new Sky())
 
     this.vegetation = []
-    for (let i = 0; i < 1; i++) {
-      let x
-      let y
-      let essais = 0
-      let next = true
-      while (essais < 5 && next) {
-        x = utils.randfloat(-constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
-        y = utils.randfloat(-constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
-
-        if (this.getHeight(x, y) > 5) next = false
-
-        essais++
-      }
-
-      const size = Math.abs(this.humidity.get(x, y) + 3)
-      const veg = new Vegetation({ size: size, position: new Vector3(x, this.getHeight(x, y), y), life: utils.randint(500, 1000), born: Math.floor(Math.random() * -500) })
-      this.vegetation.push(veg)
-      this.add(veg)
+    for (let i = 0; i < 500; i++) {
+      this.addRandomVegetation()
     }
   }
 
@@ -130,7 +109,7 @@ export default class Ground extends Object3D {
 
   update (time) {
     // this.rotateY(0.01)
-    const timeMult = 0.01
+    const timeMult = 0.01 * constants.TIME.SPEED
 
     this.material.uniforms.uTime.value += timeMult
     this.material.uniforms.uDay.value = Math.sin(time * timeMult)
@@ -142,9 +121,7 @@ export default class Ground extends Object3D {
       if (child.update) {
         if (child.isAlive()) child.update(time * timeMult)
         else {
-          const x = utils.limit(child.position.x + utils.randfloat(0, child.size), -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
-          const y = utils.limit(child.position.z + utils.randfloat(0, child.size), -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
-          this.add(new Vegetation({ size: child.size + utils.randfloat(-1, 1), position: new Vector3(x, this.getHeight(x, y), y), life: child.life + utils.randfloat(-10, 10), born: time }))
+          this.addVegetationFromParent(child, time)
           this.remove(child)
         }
       }
@@ -155,5 +132,37 @@ export default class Ground extends Object3D {
   removeTree (elem) {
     this.remove(elem)
     this.vegetation = this.vegetation.filter((el) => el.id !== elem.id)
+  }
+
+  addRandomVegetation () {
+    let x
+    let y
+    let essais = 0
+    let next = true
+    while (essais < 5 && next) {
+      x = utils.randfloat(-constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
+      y = utils.randfloat(-constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
+
+      if (this.getHeight(x, y) > 5) next = false
+
+      essais++
+    }
+
+    this.addVegetation(x, y)
+  }
+
+  addVegetation (x, y) {
+    const veg = new Vegetation({ position: new Vector3(x, this.getHeight(x, y), y), life: utils.randint(500, 1000), born: Math.floor(Math.random() * -500), biome: this.getBiomeInfo(x, y) })
+    this.vegetation.push(veg)
+    this.add(veg)
+  }
+
+  addVegetationFromParent (parent, time) {
+    const n = Math.round(utils.randint(0, constants.RESSOURCES.VEGETATION.FALLING_TIME))
+    for (let i = 0; i < n; i++) {
+      const x = utils.limit(parent.position.x + utils.randfloat(0, parent.size), -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
+      const y = utils.limit(parent.position.z + utils.randfloat(0, parent.size), -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
+      this.addVegetation(x, y)
+    }
   }
 }

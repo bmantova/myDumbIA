@@ -22,20 +22,20 @@ export default class Fellow extends Ressource {
   }
 
   getSpeed () {
-    const speed = (this.ADN.morphology.wings + this.ADN.morphology.size - this.ADN.morphology.weight * 0.5) * 10
-    return speed > 0 ? speed : 0.01
+    const speed = (this.ADN.capacity.fly + this.ADN.morphology.size - this.ADN.morphology.weight * 0.5) * 10
+    return (speed > 0 ? speed : 0.01) * constants.TIME.SPEED
   }
 
   increaseHunger () {
-    this.hunger += (this.ADN.morphology.size + this.ADN.morphology.weight) * 0.005
+    this.hunger += (this.ADN.morphology.size + this.ADN.morphology.weight) * 0.005 * constants.TIME.SPEED
   }
 
   increaseDesire () {
-    this.desire += this.ADN.reproduction.interval * 0.005
+    this.desire += this.ADN.reproduction.interval * 0.005 * constants.TIME.SPEED
   }
 
   increaseDirection () {
-    this.direction += (Math.random() - 0.5) * 0.5
+    this.direction += (Math.random() - 0.5) * 0.5 * constants.TIME.SPEED
     if (Math.abs(this.position.x) >= constants.GROUND.SIZE / 2 ||
         Math.abs(this.position.z) >= constants.GROUND.SIZE / 2) {
       this.direction = -this.direction
@@ -43,7 +43,7 @@ export default class Fellow extends Ressource {
   }
 
   increaseAge () {
-    this.age += (1 / this.ADN.capacity.longevity) * 0.00005
+    this.age += (1 / this.ADN.capacity.longevity) * 0.00005 * constants.TIME.SPEED
   }
 
   increaseEffectiveSize () {

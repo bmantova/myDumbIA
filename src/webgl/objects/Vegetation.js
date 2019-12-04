@@ -7,7 +7,11 @@ import {
 } from 'three'
 
 /** Idée
- Algo génétique pour les plantes
+  Algo génétique pour les plantes
+*/
+
+/** TODO
+  Size en fonction du biome
 */
 import constants from 'utils/constants'
 
@@ -17,7 +21,8 @@ export default class Vegetation extends Ressource {
   constructor (options = {}) {
     super(options)
 
-    this.effectiveSize = this.size
+    this.biome = options.biome
+    this.effectiveSize = 10
 
     this.life = options.life ? options.life : 100
     this.born = options.born ? options.born : 0
