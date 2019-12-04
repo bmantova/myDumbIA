@@ -45,7 +45,7 @@ export default class Map {
   }
 
   mappedValue (x, y) {
-    return (this.get(x, y) + this.mini) / (this.max - this.min)
+    return (this.get(x, y) + this.mini) / (this.maxi - this.mini)
   }
 
   getMax () {
