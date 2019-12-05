@@ -53,12 +53,23 @@ export default class ADN {
     }, 0)
   }
 
+  deepRandomAverageObjects (obj1, obj2) {
+    return Object.keys(obj1).reduce((acc, key) => {
+      if (typeof obj2[key] === 'object') {
+        acc[key] = this.deepRandomAverageObjects(obj1[key], obj2[key])
+      } else if (Object.prototype.hasOwnProperty.call(obj2, key) && !isNaN(parseFloat(obj2[key]))) {
+        acc[key] = Math.random() > 0.5 ? obj1[key] : obj2[key]
+      }
+      return acc
+    }, {})
+  }
+
   deepAverageObjects (obj1, obj2) {
     return Object.keys(obj1).reduce((acc, key) => {
       if (typeof obj2[key] === 'object') {
         acc[key] = this.deepAverageObjects(obj1[key], obj2[key])
       } else if (Object.prototype.hasOwnProperty.call(obj2, key) && !isNaN(parseFloat(obj2[key]))) {
-        acc[key] = Math.random() > 0.5 ? obj1[key] : obj2[key]
+        acc[key] = (obj1[key] + obj2[key]) / 2
       }
       return acc
     }, {})
@@ -69,7 +80,7 @@ export default class ADN {
   }
 
   getADNFromReproductionWith (ADN) {
-    const ADNFromReproduction = this.deepAverageObjects(this.store, ADN)
+    const ADNFromReproduction = this.deepRandomAverageObjects(this.store, ADN)
     return this.geneticEvolution(ADNFromReproduction, ADNFromReproduction.capacity.adaptation)
   }
 
@@ -91,5 +102,45 @@ export default class ADN {
       }
       return acc
     }, {})
+  }
+
+  deepAbsSubObjects (obj1, obj2) {
+    return Object.keys(obj1).reduce((acc, key) => {
+      if (typeof obj2[key] === 'object') {
+        acc += this.deepAbsSubObjects(obj1[key], obj2[key])
+      } else if (Object.prototype.hasOwnProperty.call(obj2, key) && !isNaN(parseFloat(obj2[key]))) {
+        acc += Math.abs(obj1[key] - obj2[key])
+      }
+      return acc
+    }, 0)
+  }
+
+  findNbKey (obj) {
+    return Object.keys(obj).reduce((acc, key) => {
+      if (typeof obj[key] === 'object') {
+        acc += this.findNbKey(obj[key])
+      } else {
+        acc += 1
+      }
+      return acc
+    }, 0)
+  }
+
+  calculateSuitsCoeff (store, expectedADN) {
+    const nbKey = this.findNbKey(expectedADN)
+    const value = this.deepAbsSubObjects(store, expectedADN)
+    return value / nbKey
+  }
+
+  getSuitsCoeff (biome) {
+    const expectedADN = this.getExpectedADN(biome)
+    return this.calculateSuitsCoeff(this.store, expectedADN)
+  }
+
+  getExpectedADN (biome) {
+    const ADNHeight = constants.SUITS.HEIGHT.find((el) => el.max >= Math.round(biome.height * 100) / 100).ADN
+    const ADNTemperature = constants.SUITS.TEMPERATURE.find((el) => el.max >= Math.round(biome.temperature * 100) / 100).ADN
+    const ADNHumidity = constants.SUITS.HUMIDITY.find((el) => el.max >= Math.round(biome.humidity * 100) / 100).ADN
+    return this.deepAverageObjects(this.deepAverageObjects(ADNHeight, ADNTemperature), ADNHumidity)
   }
 }
