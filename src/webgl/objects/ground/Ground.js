@@ -33,6 +33,15 @@ export default class Ground extends Object3D {
         },
         uDay: {
           value: 0.0
+        },
+        uSunX: {
+          value: 0.0
+        },
+        uSunY: {
+          value: 0.0
+        },
+        uSunZ: {
+          value: 0.0
         }
       },
       vertexShader: vertexShader,
@@ -77,6 +86,8 @@ export default class Ground extends Object3D {
       }
     }
 
+    this.geometry.computeVertexNormals()
+
     this.plane = new Mesh(this.geometry, this.material)
     this.under = new Mesh(this.underGeometry, this.underMaterial)
 
@@ -88,7 +99,9 @@ export default class Ground extends Object3D {
     this.under.rotation.z = Math.PI
     this.add(this.under)
 
-    this.add(new Sky())
+    this.sky = new Sky()
+
+    this.add(this.sky)
 
     this.vegetation = []
     for (let i = 0; i < 500; i++) {
@@ -97,15 +110,60 @@ export default class Ground extends Object3D {
   }
 
   getHeight (x, y) {
+    const coords = this.getTrueHeightCoords(x, y)
+    return this.height.get(coords.x, coords.y) * 10
+  }
+
+  getTrueHeightCoords (x, y) {
     const ratio = (constants.GROUND.SUB) / constants.GROUND.SIZE
-    return this.height.get((x - constants.GROUND.SIZE * 0.5) * ratio, (y - constants.GROUND.SIZE * 0.5) * ratio) * 10
+    return { x: (x - constants.GROUND.SIZE * 0.5) * ratio, y: (y - constants.GROUND.SIZE * 0.5) * ratio }
   }
 
   getBiomeInfo (x, y) {
+    const coords = this.getTrueHeightCoords(x, y)
     return {
-      height: this.height.mappedValue(x, y),
+      height: this.height.mappedValue(coords.x, coords.y),
       humidity: this.humidity.mappedValue(x, y),
       temperature: this.temperature.mappedValue(x, y)
+    }
+  }
+
+  removeTree (elem) {
+    this.remove(elem)
+    this.vegetation = this.vegetation.filter((el) => el !== elem)
+  }
+
+  addRandomVegetation () {
+    let x
+    let y
+    let essais = 0
+    let next = true
+    while (essais < 3 && next) {
+      x = utils.randfloat(-constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
+      y = utils.randfloat(-constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
+
+      if (this.getHeight(x, y) > 5) next = false
+
+      essais++
+    }
+
+    this.addVegetation(x, y, Math.floor(Math.random() * 10000))
+  }
+
+  addVegetation (x, y, born = 1) {
+    const veg = new Vegetation({ position: new Vector3(x, this.getHeight(x, y), y), life: utils.randint(10000, 20000), born: born, biome: this.getBiomeInfo(x, y) })
+    this.vegetation.push(veg)
+    this.add(veg)
+  }
+
+  addVegetationFromParent (parent) {
+    const n = Math.round(utils.randint(0, constants.RESSOURCES.VEGETATION.MAX_TREES / this.vegetation.length))
+    const zone = parent.size * 5
+
+    for (let i = 0; i < n; i++) {
+      const x = utils.limit(parent.position.x + utils.randfloat(-zone, zone), -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
+      const y = utils.limit(parent.position.z + utils.randfloat(-zone, zone), -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
+      this.addVegetation(x, y)
     }
   }
 
@@ -119,53 +177,21 @@ export default class Ground extends Object3D {
     this.underMaterial.uniforms.uTime.value = time * timeMult
     this.underMaterial.uniforms.uDay.value = Math.sin(time * timeMult)
 
+    this.material.uniforms.uSunX.value = this.sky.sun.position.x
+    this.material.uniforms.uSunY.value = this.sky.sun.position.y
+    this.material.uniforms.uSunZ.value = this.sky.sun.position.z
+
     this.children.forEach((child) => {
       if (child.update) {
         if (child.isAlive()) child.update(time * timeMult)
         else {
           this.addVegetationFromParent(child)
-          this.remove(child)
+          this.removeTree(child)
         }
       }
     })
-    utils.debug('time', time * constants.TIME.SPEED)
+    // utils.debug('time', time * constants.TIME.SPEED)
+    utils.debug('day', Math.floor(time * timeMult * constants.TIME.SPEED / (Math.PI * 2)))
     utils.debug('#trees', this.vegetation.length)
-  }
-
-  removeTree (elem) {
-    this.remove(elem)
-    this.vegetation = this.vegetation.filter((el) => el.id !== elem.id)
-  }
-
-  addRandomVegetation () {
-    let x
-    let y
-    let essais = 0
-    let next = true
-    while (essais < 5 && next) {
-      x = utils.randfloat(-constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
-      y = utils.randfloat(-constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
-
-      if (this.getHeight(x, y) > 5) next = false
-
-      essais++
-    }
-
-    this.addVegetation(x, y, Math.floor(Math.random() * 500))
-  }
-
-  addVegetation (x, y, born = 1) {
-    const veg = new Vegetation({ position: new Vector3(x, this.getHeight(x, y), y), life: utils.randint(500, 1000), born: born, biome: this.getBiomeInfo(x, y) })
-    this.vegetation.push(veg)
-    this.add(veg)
-  }
-
-  addVegetationFromParent (parent) {
-    const n = Math.round(utils.randint(0, constants.RESSOURCES.VEGETATION.MAX_TREES / this.vegetation.length))
-    for (let i = 0; i < n; i++) {
-      const x = utils.limit(parent.position.x + utils.randfloat(0, parent.size), -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
-      const y = utils.limit(parent.position.z + utils.randfloat(0, parent.size), -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
-      this.addVegetation(x, y)
-    }
   }
 }

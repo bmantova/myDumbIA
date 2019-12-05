@@ -9,8 +9,8 @@ export default class Map {
     this.yHtab = []
     this.ampltab = []
 
-    this.mini = -1
-    this.maxi = 1
+    this.mini = false
+    this.maxi = false
 
     this.init()
   }
@@ -25,7 +25,7 @@ export default class Map {
     }
   }
 
-  get (x, y, check = false) {
+  get (x, y, check = true) {
     // return Math.sin(x * 0.1) + Math.sin(x * 0.05) + Math.sin(y * 0.1) + Math.sin(y * 0.2)
 
     let h = 1
@@ -37,11 +37,12 @@ export default class Map {
         h += (Math.sin(x * this.xHtab[e * this.n + i] * e) * Math.sin(y * this.yHtab[e * this.n + i] * 100 * e)) * this.ampltab[e * this.n + i]
       }
     }
+    const value = h / (this.max * this.n * this.exp)
     if (check) {
-      if (h > this.maxi) this.maxi = h
-      if (h < this.mini) this.mini = h
+      if (!this.maxi || value > this.maxi) this.maxi = value
+      if (!this.mini || value < this.mini) this.mini = value
     }
-    return h / (this.max * this.n * this.exp)
+    return value
   }
 
   mappedValue (x, y) {

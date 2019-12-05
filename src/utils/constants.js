@@ -29,12 +29,12 @@ export default {
       DELTA_MAX_DIFFERENCE: 5
     },
     VEGETATION: {
-      FALLING_TIME: 20,
+      FALLING_TIME: 200,
       MAX_TREES: 2000
     }
   },
   TIME: {
-    SPEED: 1.0
+    SPEED: 5.0
   },
   SUITS: {
     HEIGHT: [

@@ -1,5 +1,6 @@
 attribute vec3 position;
 attribute vec2 uv;
+attribute vec3 normal;
 
 uniform mat4 projectionMatrix;
 uniform mat4 modelViewMatrix;
@@ -8,10 +9,12 @@ uniform float uTime;
 varying vec3 pos;
 varying float time;
 varying float seaZ;
+varying vec3 vNormal;
 
 void main() {
   time = uTime;
   pos = position;
+  vNormal = normal;
   float z = position.z;
   seaZ = 0.0;
   if(z < -0.5) {

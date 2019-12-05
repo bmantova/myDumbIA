@@ -6,6 +6,10 @@ import constants from 'utils/constants'
 import vertexShader from './shaders/sky.vs'
 import fragmentShader from './shaders/sky.fs'
 
+import Cloud from './Cloud'
+
+/** TODO : nuages instaciés **/
+
 export default class Sky extends Object3D {
   constructor () {
     super()
@@ -52,6 +56,9 @@ export default class Sky extends Object3D {
 
     this.sphere = new Mesh(this.geometry, this.material)
     this.add(this.sphere)
+
+    this.cloud = new Cloud()
+    // this.add(this.cloud)
   }
 
   isAlive () {
@@ -70,13 +77,15 @@ export default class Sky extends Object3D {
     this.material.uniforms.uMoonY.value = this.moon.position.y
     this.material.uniforms.uMoonZ.value = this.moon.position.z
 
+    // this.cloud.update(time)
+
     this.sun.position.set(
       Math.cos(time) * (constants.GROUND.SIZE * 0.6),
       Math.sin(time) * (constants.GROUND.SIZE * 0.6),
-      Math.sin(time) * constants.GROUND.SIZE * Math.abs(Math.sin(time / 300)))
+      Math.sin(time) * constants.GROUND.SIZE * Math.abs(Math.sin(time / (365 / Math.PI / 4))))
     this.moon.position.set(
       -Math.cos(time) * (constants.GROUND.SIZE * 0.6),
       -Math.sin(time) * (constants.GROUND.SIZE * 0.6),
-      -Math.sin(time) * constants.GROUND.SIZE * Math.abs(Math.sin(time / 300)))
+      -Math.sin(time) * constants.GROUND.SIZE * Math.abs(Math.sin(time / (365 / Math.PI / 4))))
   }
 }

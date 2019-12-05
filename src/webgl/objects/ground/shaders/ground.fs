@@ -3,7 +3,12 @@ precision highp float;
 uniform float uDay;
 varying vec3 pos;
 varying float time;
+varying vec3 vNormal;
 varying float seaZ;
+
+uniform float uSunX;
+uniform float uSunY;
+uniform float uSunZ;
 
 /* float clamp(floatv, a, b) {
 	if(v > b) return b
@@ -17,17 +22,17 @@ void main() {
   float b = 0.0;
 
   float z = pos.z;// + sin(time * 0.1) * 2.0;
-  if(z < -7.0) { // Deep Sea
+  if(z + uDay * 0.8 < -7.0) { // Deep Sea
   	r = 0.0;
   	g = 0.1;
   	b = 0.3;
   }
-  else if(z < -3.0) { // Middle Sea
+  else if(z + uDay * 0.4 < -3.0) { // Middle Sea
   	r = 0.05;
   	g = 0.1;
   	b = 0.5;
   }
-  else if(z < 0.0) { // Sea near of the cost
+  else if(z + uDay * 0.2 < 0.0) { // Sea near of the cost
   	r = 0.2;
   	g = 0.3;
   	b = 0.9;
@@ -63,14 +68,15 @@ void main() {
   	b = 0.9;
   }
 
+  float sunLight = floor(dot(normalize(vec3(-uSunX,uSunY,uSunZ)), vNormal.xzy) * 2.0) * 0.03;
+
   float waveSeaColor = 0.0;
   if(seaZ < -0.15) waveSeaColor = -0.1;
   else if(seaZ > 0.15) waveSeaColor = 0.1;
 
-  r = (r + waveSeaColor) * (uDay * 0.4 + 0.6);
-  g = (g + waveSeaColor) * (uDay * 0.4 + 0.6);
-  b = (b + waveSeaColor) * (uDay * 0.4 + 0.6);
+  r = (r + waveSeaColor) * (uDay * 0.2 + 0.4) + (sunLight);
+  g = (g + waveSeaColor) * (uDay * 0.2 + 0.4) + (sunLight);
+  b = (b + waveSeaColor) * (uDay * 0.2 + 0.4) + (sunLight);
 
   gl_FragColor = vec4(r, g, b, 1.0);
-  // gl_FragColor = vec4((1.0 - pos.z) *.05, .1 - abs(pos.z*.001), pos.z*.05, 1.0);
 }
