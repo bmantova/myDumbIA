@@ -103,18 +103,27 @@ export default class Fellow extends Ressource {
 
   findFocus (webgl) {
     if (this.hunger >= 1) {
-      if (webgl.fellows.length > 1) {
-        const diet = this.clamp(Math.random() * this.ADN.diet.carnivorous, 0, 1)
+      if (webgl.fellows.length !== 0) {
+        const diet = this.clamp((Math.random() * this.ADN.diet.carnivorous), 0, 1)
         if (diet > 0.5 || webgl.ground.vegetation.length === 0) {
           this.focus = this.getClosest(webgl.getOthers(this))
         } else {
           this.focus = this.getClosest(webgl.ground.vegetation)
         }
       } else {
-        this.focus = this.getClosest(webgl.ground.vegetation)
+        if (webgl.ground.vegetation.length !== 0) {
+          this.focus = this.getClosest(webgl.ground.vegetation)
+        } else {
+          this.focus = null
+        }
       }
     } else {
-      this.focus = this.getClosest(this.ejectUnfuckableEx(webgl.getOthers(this)))
+      const others = this.ejectUnfuckableEx(webgl.getOthers(this))
+      if (others.length !== 0) {
+        this.focus = this.getClosest(others)
+      } else {
+        this.focus = null
+      }
     }
   }
 
@@ -155,14 +164,15 @@ export default class Fellow extends Ressource {
 
   handleBirth (webgl) {
     for (let i = 0; i < Math.floor(this.ADN.reproduction.litter * 10); i++) {
-      webgl.addFellow(new Fellow({ ADN: this.ADN.getADNFromReproductionWith(this.focus.element.ADN) }), this.position)
+      const newADN = this.ADN.getADNFromReproductionWith(this.focus.element.ADN)
+      webgl.addFellow(new Fellow({ ADN: newADN }), this.position)
     }
   }
 
   handleHunger (webgl) {
     this.hunger = 0
     if (this.focus.element.type === constants.RESSOURCES.TYPES.MEAT) {
-      if (this.focus.element.desire >= 1) {
+      if (this.focus.element.desire >= 1 || this.desire >= 1) {
         this.handleReproduction(webgl)
       }
       webgl.removeFellow(this.focus.element)
@@ -187,9 +197,7 @@ export default class Fellow extends Ressource {
   }
 
   canEat (webgl) {
-    return this.hunger >= 1 &&
-          ((this.ADN.diet.carnivorous < 1 && (webgl.ground.vegetation.length > 1 || webgl.fellows.length > 1)) ||
-          (this.ADN.diet.carnivorous === 1 && webgl.fellows.length > 1))
+    return this.hunger >= 1 && (webgl.ground.vegetation.length > 0 || webgl.fellows.length > 1)
   }
 
   move (webgl) {
@@ -200,15 +208,20 @@ export default class Fellow extends Ressource {
         this.updateFocus(webgl)
       }
 
-      const deltaX = (this.focus.element.position.x - this.position.x)
-      const deltaZ = (this.focus.element.position.z - this.position.z)
-      if (deltaX !== 0) {
-        this.position.x += (deltaX / Math.abs(deltaX)) * this.getSpeed()
+      if (this.focus) {
+        const deltaX = (this.focus.element.position.x - this.position.x)
+        const deltaZ = (this.focus.element.position.z - this.position.z)
+        if (deltaX !== 0) {
+          this.position.x += (deltaX / Math.abs(deltaX)) * this.getSpeed()
+        }
+        if (deltaZ !== 0) {
+          this.position.z += (deltaZ / Math.abs(deltaZ)) * this.getSpeed()
+        }
+        this.handleCollision(webgl)
+      } else {
+        this.position.x += Math.cos(this.direction) * this.getSpeed()
+        this.position.z += Math.sin(this.direction) * this.getSpeed()
       }
-      if (deltaZ !== 0) {
-        this.position.z += (deltaZ / Math.abs(deltaZ)) * this.getSpeed()
-      }
-      this.handleCollision(webgl)
     } else {
       this.position.x += Math.cos(this.direction) * this.getSpeed()
       this.position.z += Math.sin(this.direction) * this.getSpeed()

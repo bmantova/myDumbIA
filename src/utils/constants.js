@@ -26,7 +26,7 @@ export default {
       MEAT: 'meat'
     },
     REPRODUCTION: {
-      DELTA_MAX_DIFFERENCE: 5
+      DELTA_MAX_DIFFERENCE: 3.5
     },
     VEGETATION: {
       FALLING_TIME: 200,
