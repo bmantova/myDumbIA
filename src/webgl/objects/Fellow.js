@@ -21,7 +21,7 @@ export default class Fellow extends Ressource {
     this.suitsCoeff = 0
     this.direction = Math.random() * Math.PI * 2
     this.focus = null
-    this.effectiveSize = this.ADN.morphology.size * 20
+    this.effectiveSize = this.ADN.morphology.size
     this.unfuckableEx = []
 
     const material = new RawShaderMaterial({
@@ -39,6 +39,7 @@ export default class Fellow extends Ressource {
 
     if (options.object) {
       this.body = options.object.clone()
+      this.object = options.obejct
       const self = this
       this.body.traverse((el) => {
         if (el.isMesh) {
@@ -47,7 +48,7 @@ export default class Fellow extends Ressource {
         }
       })
     } else {
-      const geometry = options.geometry ? options.geometry : new BoxGeometry(this.effectiveSize, this.effectiveSize, this.effectiveSize)
+      const geometry = new BoxGeometry(this.effectiveSize, this.effectiveSize, this.effectiveSize)
       this.body = new Mesh(geometry, material)
     }
     this.add(this.body)
@@ -57,7 +58,7 @@ export default class Fellow extends Ressource {
   }
 
   getSpeed () {
-    const speed = (this.ADN.capacity.fly + this.ADN.morphology.size - this.ADN.morphology.weight * 0.5) * 10
+    const speed = (this.ADN.capacity.fly + this.ADN.morphology.size - this.ADN.morphology.weight * 0.5)
     return (speed > 0 ? speed : 0.01) * constants.TIME.SPEED
   }
 
@@ -70,7 +71,7 @@ export default class Fellow extends Ressource {
   }
 
   increaseDirection () {
-    this.direction += (Math.random() - 0.05) * 0.05 * constants.TIME.SPEED
+    this.direction += (Math.random() - 0.5) * 0.5 * constants.TIME.SPEED
     if (Math.abs(this.position.x) >= constants.GROUND.SIZE / 2 ||
         Math.abs(this.position.z) >= constants.GROUND.SIZE / 2) {
       this.direction = -this.direction
@@ -198,7 +199,7 @@ export default class Fellow extends Ressource {
   handleBirth (webgl) {
     for (let i = 0; i < Math.floor(this.ADN.reproduction.litter * 10); i++) {
       const newADN = this.ADN.getADNFromReproductionWith(this.focus.element.ADN)
-      webgl.addFellow(new Fellow({ ADN: newADN, object: this.object }), this.position)
+      webgl.addFellow(new Fellow({ ADN: newADN, object: this.body }), this.position)
     }
   }
 
