@@ -73,7 +73,7 @@ export default class Webgl {
     adns.push(second)
 
     this.fellows = []
-    for (let i = 0; i < 0; i++) {
+    for (let i = 0; i < 2; i++) {
       const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE }
       this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: 0.0 } }), type: constants.RESSOURCES.TYPES.MEAT }), position)
     }
@@ -172,8 +172,8 @@ export default class Webgl {
       }
 
       if (intersected.length > 0) {
-        const cur = this.fellows[i--]
-        utils.mousewin('Fellow #' + i, cur.toString(), e.clientX, e.clientY)
+        const cur = this.fellows[i - 1]
+        if (cur) utils.mousewin('Fellow #' + i, cur.toString(), e.clientX, e.clientY)
       } else {
         utils.mousewin('close')
       }

@@ -82,10 +82,10 @@ export default class Sky extends Object3D {
     this.sun.position.set(
       Math.cos(time) * (constants.GROUND.SIZE * 0.6),
       Math.sin(time) * (constants.GROUND.SIZE * 0.6),
-      Math.sin(time) * constants.GROUND.SIZE * Math.abs(Math.sin(time / (365 / Math.PI / 4))))
+      Math.sin(time) * constants.GROUND.SIZE * 0.6 * Math.abs(Math.sin(time / (365 / Math.PI / 4))))
     this.moon.position.set(
       -Math.cos(time) * (constants.GROUND.SIZE * 0.6),
       -Math.sin(time) * (constants.GROUND.SIZE * 0.6),
-      -Math.sin(time) * constants.GROUND.SIZE * Math.abs(Math.sin(time / (365 / Math.PI / 4))))
+      -Math.sin(time) * constants.GROUND.SIZE * 0.6 * Math.abs(Math.sin(time / (365 / Math.PI / 4))))
   }
 }

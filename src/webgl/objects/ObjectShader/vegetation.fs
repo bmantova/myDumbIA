@@ -15,9 +15,9 @@ void main() {
   float g = uV;
   float b = uB;
 
-  r = (r) * (uDay * 0.4 + 0.6) + vNormal.y * 0.3;
-  g = (g) * (uDay * 0.4 + 0.6) + vNormal.y * 0.3;
-  b = (b) * (uDay * 0.4 + 0.6) + vNormal.y * 0.3;
+  r = (r) * (uDay * 0.4 + 0.6) + vNormal.y * 0.3 * (uDay + 1.0) * 0.5;
+  g = (g) * (uDay * 0.4 + 0.6) + vNormal.y * 0.3 * (uDay + 1.0) * 0.5;
+  b = (b) * (uDay * 0.4 + 0.6) + vNormal.y * 0.3 * (uDay + 1.0) * 0.5;
 
   gl_FragColor = vec4(r, g, b, 1.0);
 }
