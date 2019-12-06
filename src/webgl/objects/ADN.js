@@ -76,7 +76,6 @@ export default class ADN {
   }
 
   canFuckWith (ADN) {
-    console.log(this.deepAbsSubObjects(this.store, ADN))
     return this.deepAbsSubObjects(this.store, ADN) < constants.RESSOURCES.REPRODUCTION.DELTA_MAX_DIFFERENCE
   }
 
