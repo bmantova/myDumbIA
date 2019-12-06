@@ -12,7 +12,7 @@ export default class ADN {
       swim: options.capacity.swim ? options.capacity.swim : 0,
       breathing: options.capacity.breathing ? options.capacity.breathing : 0.1,
       fly: options.capacity.fly ? options.capacity.fly : 0,
-      adaptation: options.capacity.adaptation ? options.capacity.adaptation : 1,
+      adaptation: options.capacity.adaptation ? options.capacity.adaptation : 0.5,
       longevity: options.capacity.longevity ? options.capacity.longevity : 0.5
     }
     this.reproduction = {
@@ -76,12 +76,14 @@ export default class ADN {
   }
 
   canFuckWith (ADN) {
-    return this.deepSumObjects(this.store, ADN) < constants.RESSOURCES.REPRODUCTION.DELTA_MAX_DIFFERENCE
+    console.log(this.deepAbsSubObjects(this.store, ADN))
+    return this.deepAbsSubObjects(this.store, ADN) < constants.RESSOURCES.REPRODUCTION.DELTA_MAX_DIFFERENCE
   }
 
   getADNFromReproductionWith (ADN) {
     const ADNFromReproduction = this.deepRandomAverageObjects(this.store, ADN)
-    return this.geneticEvolution(ADNFromReproduction, ADNFromReproduction.capacity.adaptation)
+    const afterEvolution = this.geneticEvolution(ADNFromReproduction, ADNFromReproduction.capacity.adaptation)
+    return afterEvolution
   }
 
   clamp (value, max = 1, min = 0) {
