@@ -29,6 +29,10 @@ export default class Ressource extends Object3D {
     this.alive = false
   }
 
+  getSpeed () {
+    return 0
+  }
+
   init () {
   }
 

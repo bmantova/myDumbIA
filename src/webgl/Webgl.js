@@ -3,7 +3,9 @@ import {
   PerspectiveCamera,
   WebGLRenderer,
   Color,
-  Raycaster
+  Raycaster,
+  LoadingManager,
+  RawShaderMaterial
 } from 'three'
 
 import {
@@ -23,6 +25,10 @@ import utils from 'utils/utils'
 import ADN from 'objects/ADN'
 import Fellow from './objects/Fellow'
 import constants from 'utils/constants'
+import { OBJLoader } from './loader/OBJLoader.js'
+
+import fellowVertexShader from './objects/ObjectShader/fellow.vs'
+import fellowFragmentShader from './objects/ObjectShader/fellow.fs'
 
 export default class Webgl {
   constructor ($parent) {
@@ -65,34 +71,9 @@ export default class Webgl {
 
     this.ground = new Ground()
 
-    /* DEBUT DEBUG AXEL */
-    const adns = []
-    const first = new ADN()
-    const second = new ADN()
-    adns.push(first)
-    adns.push(second)
-
-    this.fellows = []
-    for (let i = 0; i < 20; i++) {
-      const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE }
-      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: 0.0 } }), type: constants.RESSOURCES.TYPES.MEAT }), position)
-    }
-
-    /* FIN DEBUG AXEL */
-
-    this.scene.add(this.ground)
-
-    this.initObjects()
-    this.raycastEvent()
-
-    this.onResize()
-    this.render()
-
-    // if you don't want to hear the music, but keep analysing it, set 'shutup' to 'true'!
-    // audio.start({ live: false, shutup: false, showPreview: false, debug: true })
-    // audio.onBeat.add(this.onBeat)
-
     window.addEventListener('resize', this.onResize, false)
+
+    this.loadObj()
   }
 
   onResize () {
@@ -102,8 +83,58 @@ export default class Webgl {
     this.camera.updateProjectionMatrix()
   }
 
-  initObjects () {
-    /* *** */
+  init (obj) {
+    this.fellowGeometry = obj
+
+    this.fellows = []
+    for (let i = 0; i < 20; i++) {
+      const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE }
+      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: 0.0 } }), type: constants.RESSOURCES.TYPES.MEAT, object: this.fellowObj }), position)
+    }
+
+    this.scene.add(this.ground)
+
+    this.raycastEvent()
+    console.log(this.fellowObj)
+
+    this.onResize()
+    this.render()
+  }
+
+  loadObj () {
+    const material = new RawShaderMaterial({
+      uniforms: {
+        uDay: {
+          value: 0.0
+        },
+        uColor: {
+          value: 0.0
+        }
+      },
+      vertexShader: fellowVertexShader,
+      fragmentShader: fellowFragmentShader
+    })
+
+    let object
+    const self = this
+    const loadModel = () => {
+      object.traverse((child) => {
+        if (child.isMesh) child.material = material
+      })
+      self.fellowObj = object
+      self.init()
+    }
+    const manager = new LoadingManager(loadModel)
+    const loader = new OBJLoader(manager)
+
+    const onError = () => {}
+    const onProgress = () => {}
+
+    loader.load('../../assets/fellow.obj', function (obj) {
+      object = obj
+    }, onProgress, onError)
+
+    return object
   }
 
   render () {
@@ -123,11 +154,6 @@ export default class Webgl {
       element.handleDeath(this)
     })
 
-    // this.objects.update()
-    // this.ground.update()
-
-    // this.lights.update(this.currentTime)
-    // this.renderer.render( this.scene, this.camera )
     this.composer.render()
     this.stats.end()
     if (this.currentTime > this.previousTime + 80) {

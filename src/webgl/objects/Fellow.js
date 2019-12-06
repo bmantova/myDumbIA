@@ -4,7 +4,11 @@ import ADN from './ADN'
 import constants from 'utils/constants'
 import utils from 'utils/utils'
 
-/* TODO Mode Debug */
+/* TODO
+  - Mode Debug
+  - Maladies
+  - Direction des fellows
+*/
 export default class Fellow extends Ressource {
   constructor (options) {
     super(options)
@@ -17,9 +21,17 @@ export default class Fellow extends Ressource {
     this.focus = null
     this.effectiveSize = this.ADN.morphology.size * 20
     this.unfuckableEx = []
-    const geometry = new BoxGeometry(this.effectiveSize, this.effectiveSize, this.effectiveSize)
-    const material = new MeshBasicMaterial({ color: new Color('hsl(' + Math.round(this.ADN.morphology.color * 360) + ' ,100%, 50%)') })
-    this.body = new Mesh(geometry, material)
+    if (options.object) {
+      this.body = options.object.clone()
+      const self = this
+      this.body.traverse((el) => {
+        if (el.material) el.material.uniforms.uColor.value = self.ADN.morphology.color
+      })
+    } else {
+      const geometry = options.geometry ? options.geometry : new BoxGeometry(this.effectiveSize, this.effectiveSize, this.effectiveSize)
+      const material = new MeshBasicMaterial({ color: new Color('hsl(' + Math.round(this.ADN.morphology.color * 360) + ' ,100%, 50%)') })
+      this.body = new Mesh(geometry, material)
+    }
     this.add(this.body)
 
     this.timer = 0
@@ -40,7 +52,7 @@ export default class Fellow extends Ressource {
   }
 
   increaseDirection () {
-    this.direction += (Math.random() - 0.5) * 0.5 * constants.TIME.SPEED
+    this.direction += (Math.random() - 0.05) * 0.05 * constants.TIME.SPEED
     if (Math.abs(this.position.x) >= constants.GROUND.SIZE / 2 ||
         Math.abs(this.position.z) >= constants.GROUND.SIZE / 2) {
       this.direction = -this.direction
@@ -79,6 +91,9 @@ export default class Fellow extends Ressource {
     this.updateSuitsCoeff(webgl)
     this.increaseAge()
     this.increaseEffectiveSize()
+    this.body.traverse((el) => {
+      if (el.material) el.material.uniforms.uColor.value = Math.sin(webgl.currentTime * 0.01)
+    })
   }
 
   getClosest (array) {
@@ -165,7 +180,7 @@ export default class Fellow extends Ressource {
   handleBirth (webgl) {
     for (let i = 0; i < Math.floor(this.ADN.reproduction.litter * 10); i++) {
       const newADN = this.ADN.getADNFromReproductionWith(this.focus.element.ADN)
-      webgl.addFellow(new Fellow({ ADN: newADN }), this.position)
+      webgl.addFellow(new Fellow({ ADN: newADN, object: this.object }), this.position)
     }
   }
 
@@ -183,7 +198,7 @@ export default class Fellow extends Ressource {
   }
 
   handleCollision (webgl) {
-    if (this.position.distanceTo(this.focus.element.position) < (this.effectiveSize + this.focus.element.effectiveSize)) {
+    if (this.position.distanceTo(this.focus.element.position) < (this.effectiveSize + this.focus.element.effectiveSize + this.getSpeed() + this.focus.element.getSpeed())) {
       if (this.hunger >= 1) {
         this.handleHunger(webgl)
       } else if (this.desire >= 1) {
@@ -225,6 +240,7 @@ export default class Fellow extends Ressource {
     } else {
       this.position.x += Math.cos(this.direction) * this.getSpeed()
       this.position.z += Math.sin(this.direction) * this.getSpeed()
+      this.rotation.y = this.direction + Math.PI / 2
     }
     this.clampPosition()
     this.position.y = webgl.ground.getHeight(this.position.x, this.position.z) + this.effectiveSize

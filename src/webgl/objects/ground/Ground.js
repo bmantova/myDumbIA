@@ -168,7 +168,6 @@ export default class Ground extends Object3D {
   }
 
   update (time) {
-    // this.rotateY(0.01)
     const timeMult = 0.01 * constants.TIME.SPEED
 
     this.material.uniforms.uTime.value = time * timeMult

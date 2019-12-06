@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 /**
  * @author mrdoob / http://mrdoob.com/
  */
@@ -17,7 +19,7 @@ import {
 	Points,
 	PointsMaterial,
 	VertexColors
-} from "../../../build/three.module.js";
+} from "three";
 
 var OBJLoader = ( function () {
 
