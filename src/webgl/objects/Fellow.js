@@ -1,13 +1,15 @@
 import Ressource from './Ressource'
-import { BoxGeometry, MeshBasicMaterial, Mesh, Color } from 'three'
+import { BoxGeometry, Mesh, RawShaderMaterial } from 'three'
 import ADN from './ADN'
 import constants from 'utils/constants'
 import utils from 'utils/utils'
 
+import fellowVertexShader from './ObjectShader/fellow.vs'
+import fellowFragmentShader from './ObjectShader/fellow.fs'
+
 /* TODO
   - Mode Debug
   - Maladies
-  - Direction des fellows
 */
 export default class Fellow extends Ressource {
   constructor (options) {
@@ -21,15 +23,31 @@ export default class Fellow extends Ressource {
     this.focus = null
     this.effectiveSize = this.ADN.morphology.size * 20
     this.unfuckableEx = []
+
+    const material = new RawShaderMaterial({
+      uniforms: {
+        uDay: {
+          value: 0.0
+        },
+        uColor: {
+          value: 0.0
+        }
+      },
+      vertexShader: fellowVertexShader,
+      fragmentShader: fellowFragmentShader
+    })
+
     if (options.object) {
       this.body = options.object.clone()
       const self = this
       this.body.traverse((el) => {
-        if (el.material) el.material.uniforms.uColor.value = self.ADN.morphology.color
+        if (el.isMesh) {
+          el.material = material
+          el.material.uniforms.uColor.value = self.ADN.morphology.color
+        }
       })
     } else {
       const geometry = options.geometry ? options.geometry : new BoxGeometry(this.effectiveSize, this.effectiveSize, this.effectiveSize)
-      const material = new MeshBasicMaterial({ color: new Color('hsl(' + Math.round(this.ADN.morphology.color * 360) + ' ,100%, 50%)') })
       this.body = new Mesh(geometry, material)
     }
     this.add(this.body)
@@ -92,7 +110,7 @@ export default class Fellow extends Ressource {
     this.increaseAge()
     this.increaseEffectiveSize()
     this.body.traverse((el) => {
-      if (el.material) el.material.uniforms.uColor.value = Math.sin(webgl.currentTime * 0.01)
+      if (el.material) el.material.uniforms.uDay.value = Math.sin(webgl.currentTime * 0.01 * constants.TIME.SPEED)
     })
   }
 
@@ -240,10 +258,10 @@ export default class Fellow extends Ressource {
     } else {
       this.position.x += Math.cos(this.direction) * this.getSpeed()
       this.position.z += Math.sin(this.direction) * this.getSpeed()
-      this.rotation.y = this.direction + Math.PI / 2
+      this.rotation.y = -this.direction - Math.PI / 2
     }
     this.clampPosition()
-    this.position.y = webgl.ground.getHeight(this.position.x, this.position.z) + this.effectiveSize
+    this.position.y = webgl.ground.getHeight(this.position.x, this.position.z)
   }
 
   handleDeath (webgl) {

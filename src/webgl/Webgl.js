@@ -4,8 +4,7 @@ import {
   WebGLRenderer,
   Color,
   Raycaster,
-  LoadingManager,
-  RawShaderMaterial
+  LoadingManager
 } from 'three'
 
 import {
@@ -26,9 +25,6 @@ import ADN from 'objects/ADN'
 import Fellow from './objects/Fellow'
 import constants from 'utils/constants'
 import { OBJLoader } from './loader/OBJLoader.js'
-
-import fellowVertexShader from './objects/ObjectShader/fellow.vs'
-import fellowFragmentShader from './objects/ObjectShader/fellow.fs'
 
 export default class Webgl {
   constructor ($parent) {
@@ -89,7 +85,7 @@ export default class Webgl {
     this.fellows = []
     for (let i = 0; i < 20; i++) {
       const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE }
-      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: 0.0 } }), type: constants.RESSOURCES.TYPES.MEAT, object: this.fellowObj }), position)
+      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: Math.random() } }), type: constants.RESSOURCES.TYPES.MEAT, object: this.fellowObj }), position)
     }
 
     this.scene.add(this.ground)
@@ -102,25 +98,9 @@ export default class Webgl {
   }
 
   loadObj () {
-    const material = new RawShaderMaterial({
-      uniforms: {
-        uDay: {
-          value: 0.0
-        },
-        uColor: {
-          value: 0.0
-        }
-      },
-      vertexShader: fellowVertexShader,
-      fragmentShader: fellowFragmentShader
-    })
-
     let object
     const self = this
     const loadModel = () => {
-      object.traverse((child) => {
-        if (child.isMesh) child.material = material
-      })
       self.fellowObj = object
       self.init()
     }
