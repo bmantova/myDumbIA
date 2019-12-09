@@ -12,7 +12,7 @@ import Map from './Map'
 import Vegetation from '../Vegetation'
 import Sky from '../sky/Sky'
 
-import MyLittlePlanet from '../myLittlePlanet/MyLittlePlanet'
+// import MyLittlePlanet from '../myLittlePlanet/MyLittlePlanet'
 // import { OBJLoader } from './loader/OBJLoader.js'
 
 /* Chutes d'eau */
@@ -105,7 +105,7 @@ export default class Ground extends Object3D {
 
     this.add(this.sky)
 
-    this.add(new MyLittlePlanet())
+    // this.add(new MyLittlePlanet())
 
     this.vegetation = []
     for (let i = 0; i < 500; i++) {
