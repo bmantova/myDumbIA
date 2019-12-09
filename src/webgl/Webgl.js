@@ -23,6 +23,7 @@ import utils from 'utils/utils'
 
 import ADN from 'objects/ADN'
 import Fellow from './objects/Fellow'
+import FellowModel from './objects/FellowModel'
 import constants from 'utils/constants'
 import { OBJLoader } from './loader/OBJLoader.js'
 
@@ -83,15 +84,16 @@ export default class Webgl {
     this.fellowGeometry = obj
 
     this.fellows = []
-    for (let i = 0; i < 20; i++) {
+    this.fellowModel = new FellowModel({ object: this.fellowObj })
+    console.log(this.fellowModel)
+    for (let i = 0; i < 10; i++) {
       const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE }
-      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: Math.random() } }), type: constants.RESSOURCES.TYPES.MEAT, object: this.fellowObj }), position)
+      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: Math.random() } }), type: constants.RESSOURCES.TYPES.MEAT, object: this.fellowModel.body }), position)
     }
 
     this.scene.add(this.ground)
 
     this.raycastEvent()
-    console.log(this.fellowObj)
 
     this.onResize()
     this.render()

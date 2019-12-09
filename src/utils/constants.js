@@ -34,7 +34,7 @@ export default {
     }
   },
   TIME: {
-    SPEED: 30.0
+    SPEED: 5.0
   },
   SUITS: {
     HEIGHT: [

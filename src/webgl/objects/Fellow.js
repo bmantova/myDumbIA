@@ -36,10 +36,49 @@ export default class Fellow extends Ressource {
       vertexShader: fellowVertexShader,
       fragmentShader: fellowFragmentShader
     })
-
     if (options.object) {
       this.body = options.object.clone()
-      this.object = options.obejct
+      this.object = options.object
+      /* this.body.children.forEach((child) => {
+        switch (child.name) {
+          case 'body_Cube.001':
+            // child.scale.set(this.ADN.morphology.weight, this.ADN.morphology.weight, this.ADN.morphology.weight)
+            break
+          case 'rightLeg_Cube.002':
+            child.scale.set(this.ADN.morphology.legs + 0.001, this.ADN.morphology.legs + 0.001, this.ADN.morphology.legs + 0.001)
+            break
+          case 'tail_Cube.003':
+            child.scale.set(this.ADN.morphology.tail, this.ADN.morphology.tail, this.ADN.morphology.tail)
+            break
+          case 'rightArm_Cube.004':
+            child.scale.set(this.ADN.morphology.arms, this.ADN.morphology.arms, this.ADN.morphology.arms)
+            break
+          case 'neck_Cube.005':
+            child.scale.set(this.ADN.morphology.neck + 0.001, this.ADN.morphology.neck + 0.001, this.ADN.morphology.neck + 0.001)
+            break
+          case 'head_Cube.006':
+            child.scale.set((1 / (this.ADN.morphology.neck + 0.001)) * this.ADN.morphology.head, (1 / (this.ADN.morphology.neck + 0.001)) * this.ADN.morphology.head, (1 / (this.ADN.morphology.neck + 0.001)) * this.ADN.morphology.head)
+            break
+          case 'leftFoot_Cube.008':
+            child.scale.set((1 / (this.ADN.morphology.legs + 0.001)) * this.ADN.morphology.feet, (1 / (this.ADN.morphology.legs + 0.001)) * this.ADN.morphology.feet, (1 / (this.ADN.morphology.legs + 0.001)) * this.ADN.morphology.feet)
+            break
+          case 'rightWing_Cube.009':
+            child.scale.set(this.ADN.capacity.fly, this.ADN.capacity.fly, this.ADN.capacity.fly)
+            break
+          case 'leftWing_Cube.010':
+            child.scale.set(this.ADN.capacity.fly, this.ADN.capacity.fly, this.ADN.capacity.fly)
+            break
+          case 'leftArm_Cube.011':
+            child.scale.set(this.ADN.morphology.arms, this.ADN.morphology.arms, this.ADN.morphology.arms)
+            break
+          case 'leftLeg_Cube.012':
+            child.scale.set(this.ADN.morphology.legs + 0.001, this.ADN.morphology.legs + 0.001, this.ADN.morphology.legs + 0.001)
+            break
+          case 'rightFoot_Cube.013':
+            child.scale.set((1 / (this.ADN.morphology.legs + 0.001)) * this.ADN.morphology.feet, (1 / (this.ADN.morphology.legs + 0.001)) * this.ADN.morphology.feet, (1 / (this.ADN.morphology.legs + 0.001)) * this.ADN.morphology.feet)
+            break
+        }
+      }) */
       const self = this
       this.body.traverse((el) => {
         if (el.isMesh) {
@@ -268,7 +307,7 @@ export default class Fellow extends Ressource {
   handleDeath (webgl) {
     if (this.hunger >= 2 || this.age >= 1) {
       webgl.removeFellow(this)
-      console.log('mort vieillesse')
+      console.log('mort vieillesse ou de faim')
     }
   }
 

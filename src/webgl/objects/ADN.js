@@ -11,7 +11,7 @@ export default class ADN {
       sight: options.capacity.sight ? options.capacity.sight : 0.1,
       swim: options.capacity.swim ? options.capacity.swim : 0,
       breathing: options.capacity.breathing ? options.capacity.breathing : 0.1,
-      fly: options.capacity.fly ? options.capacity.fly : 0,
+      fly: options.capacity.fly ? options.capacity.fly : 0, // WINGS
       adaptation: options.capacity.adaptation ? options.capacity.adaptation : 0.5,
       longevity: options.capacity.longevity ? options.capacity.longevity : 0.5
     }
@@ -23,15 +23,16 @@ export default class ADN {
       carnivorous: options.reproduction.carnivorous ? options.reproduction.carnivorous : 0
     }
     this.morphology = {
-      size: options.morphology.size ? options.morphology.size : 0.1,
-      weight: options.morphology.weight ? options.morphology.weight : 0.1,
-      head: options.morphology.head ? options.morphology.head : 0,
-      neck: options.morphology.neck ? options.morphology.neck : 0,
+      size: options.morphology.size ? options.morphology.size : 0.1, // GLOBAL
+      weight: options.morphology.weight ? options.morphology.weight : 0.1, // POIDS
+      head: options.morphology.head ? options.morphology.head : 0, // TETE
+      neck: options.morphology.neck ? options.morphology.neck : 0, // COU
       fur: options.morphology.fur ? options.morphology.fur : 0,
       arms: options.morphology.arms ? options.morphology.arms : 0,
-      legs: options.morphology.legs ? options.morphology.legs : 0,
+      legs: options.morphology.legs ? options.morphology.legs : 0, // JAMBES
       feet: options.morphology.feet ? options.morphology.feet : 0,
-      color: options.morphology.color ? options.morphology.color : 0.5
+      color: options.morphology.color ? options.morphology.color : 0.5,
+      tail: options.morphology.tail ? options.morphology.tail : 0.2 // QUEUE
     }
 
     this.store = {
