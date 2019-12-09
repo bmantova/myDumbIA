@@ -32,7 +32,7 @@ export default class ADN {
       legs: options.morphology.legs ? options.morphology.legs : 0, // JAMBES
       feet: options.morphology.feet ? options.morphology.feet : 0,
       color: options.morphology.color ? options.morphology.color : 0.5,
-      tail: options.morphology.tail ? options.morphology.tail : 0.2 // QUEUE
+      tail: options.morphology.tail ? options.morphology.tail : 0 // QUEUE
     }
 
     this.store = {

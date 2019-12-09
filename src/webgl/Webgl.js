@@ -88,7 +88,7 @@ export default class Webgl {
     console.log(this.fellowModel)
     for (let i = 0; i < 10; i++) {
       const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE }
-      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: Math.random() } }), type: constants.RESSOURCES.TYPES.MEAT, object: this.fellowModel.body }), position)
+      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: Math.random() } }), type: constants.RESSOURCES.TYPES.MEAT, object: this.fellowModel }), position)
     }
 
     this.scene.add(this.ground)
