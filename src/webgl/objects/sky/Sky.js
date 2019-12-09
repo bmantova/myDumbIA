@@ -8,7 +8,7 @@ import fragmentShader from './shaders/sky.fs'
 
 import Cloud from './Cloud'
 
-/** TODO : nuages instaciés **/
+/** TODO : nuages instanciés **/
 
 export default class Sky extends Object3D {
   constructor () {

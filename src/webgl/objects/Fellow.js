@@ -52,6 +52,13 @@ export default class Fellow extends Ressource {
       this.body = new Mesh(geometry, material)
     }
     this.add(this.body)
+    this.body.children.forEach((el) => {
+      if (el.name === 'head_Cube.006') {
+        el.scale.set(10, 10, 10)
+      } else if (el.name === 'neck_Cube.005') {
+        // el.scale.set(5, 5, 5)
+      }
+    })
 
     this.timer = 0
     this.previous = 0
