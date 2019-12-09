@@ -90,6 +90,7 @@ export default class Fellow extends Ressource {
       const geometry = new BoxGeometry(this.effectiveSize, this.effectiveSize, this.effectiveSize)
       this.body = new Mesh(geometry, material)
     }
+    this.body.getObjectByName('rightWing_Cube.009').scale.set(5, 5, 5)
     this.add(this.body)
 
     this.timer = 0
