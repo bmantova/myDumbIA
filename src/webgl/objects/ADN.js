@@ -11,7 +11,7 @@ export default class ADN {
       sight: options.capacity.sight ? options.capacity.sight : 0.1,
       swim: options.capacity.swim ? options.capacity.swim : 0,
       breathing: options.capacity.breathing ? options.capacity.breathing : 0.1,
-      fly: options.capacity.fly ? options.capacity.fly : 0, // WINGS
+      fly: options.capacity.fly ? options.capacity.fly : 0.5, // WINGS
       adaptation: options.capacity.adaptation ? options.capacity.adaptation : 0.5,
       longevity: options.capacity.longevity ? options.capacity.longevity : 0.5
     }
@@ -20,7 +20,7 @@ export default class ADN {
       litter: options.reproduction.litter ? options.reproduction.litter : 0.1
     }
     this.diet = {
-      carnivorous: options.reproduction.carnivorous ? options.reproduction.carnivorous : 0
+      carnivorous: options.diet.carnivorous ? options.diet.carnivorous : 0.5
     }
     this.morphology = {
       size: options.morphology.size ? options.morphology.size : 0.1, // GLOBAL
@@ -31,7 +31,7 @@ export default class ADN {
       arms: options.morphology.arms ? options.morphology.arms : 0,
       legs: options.morphology.legs ? options.morphology.legs : 0, // JAMBES
       feet: options.morphology.feet ? options.morphology.feet : 0,
-      color: options.morphology.color ? options.morphology.color : 0.5,
+      color: options.morphology.color ? options.morphology.color : 0,
       tail: options.morphology.tail ? options.morphology.tail : 0 // QUEUE
     }
 

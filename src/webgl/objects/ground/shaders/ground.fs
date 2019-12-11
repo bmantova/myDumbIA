@@ -1,4 +1,4 @@
-precision highp float;
+precision mediump float;
 
 uniform float uDay;
 varying vec3 pos;
@@ -74,9 +74,11 @@ void main() {
   if(seaZ < -0.15) waveSeaColor = -0.1;
   else if(seaZ > 0.15) waveSeaColor = 0.1;
 
-  r = (r + waveSeaColor) * (uDay * 0.2 + 0.4) + (sunLight);
-  g = (g + waveSeaColor) * (uDay * 0.2 + 0.4) + (sunLight);
-  b = (b + waveSeaColor) * (uDay * 0.2 + 0.4) + (sunLight);
+  float mult = (uDay * 0.2 + 0.4) + (sunLight);
+
+  r = (r + waveSeaColor) * mult;
+  g = (g + waveSeaColor) * mult;
+  b = (b + waveSeaColor) * mult;
 
   gl_FragColor = vec4(r, g, b, 1.0);
 }

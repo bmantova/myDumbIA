@@ -1,14 +1,7 @@
-precision highp float;
+precision lowp float;
 
 uniform float uDay;
 varying vec3 pos;
-varying float time;
-
-/* float clamp(floatv, a, b) {
-	if(v > b) return b
-	if(v < a) return a
-	return v
-} */
 
 void main() {
   float r = 0.0;
@@ -43,11 +36,7 @@ void main() {
     b = 0.0;
   }
 
+  float mult = (uDay * 0.4 + 0.6);
 
-  r = r * (uDay * 0.4 + 0.6);
-  g = g * (uDay * 0.4 + 0.6);
-  b = b * (uDay * 0.4 + 0.6);
-
-  gl_FragColor = vec4(r, g, b, 1.0);
-  // gl_FragColor = vec4((1.0 - pos.z) *.05, .1 - abs(pos.z*.001), pos.z*.05, 1.0);
+  gl_FragColor = vec4(vec3(r, g, b) * mult, 1.0);
 }

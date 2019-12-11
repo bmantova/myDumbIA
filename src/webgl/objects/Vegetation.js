@@ -41,9 +41,6 @@ export default class Vegetation extends Ressource {
         uDay: {
           value: 0.0
         },
-        uSeason: {
-          value: 0.0
-        },
         uR: {
           value: 0.0
         },
@@ -68,7 +65,7 @@ export default class Vegetation extends Ressource {
     if (this.biome.height > 0.6) { // Sapins
       const box = new BoxBufferGeometry(this.effectiveSize * 0.1, this.effectiveSize, this.effectiveSize * 0.1)
 
-      const feuillesGeom = new ConeBufferGeometry(this.effectiveSize * 0.5, this.effectiveSize * 1.5, 5, 1)
+      const feuillesGeom = new ConeBufferGeometry(this.effectiveSize * 0.5, this.effectiveSize * 1.5, 3, 1)
 
       tronc = new Mesh(box, materialTronc)
       feuilles = new Mesh(feuillesGeom, this.materialFeuilles)
@@ -127,18 +124,31 @@ export default class Vegetation extends Ressource {
     this.materialFeuilles.uniforms.uB.value = b / 255
     this.materialFeuilles.uniforms.uType.value = type
 
+    this.lastChild = this.born
+
     this.rotateY(Math.random() * Math.PI * 2)
   }
 
   init () {
   }
 
+  get canHaveChild () {
+    if (this.lastChild > constants.RESSOURCES.VEGETATION.SEED_EVERY && Math.random() > 0.5) {
+      return true
+    }
+    return false
+  }
+
+  haveChild () {
+    this.lastChild = 0
+  }
+
   update (time) {
+    this.lastChild++
     this.born += constants.TIME.SPEED
     const deadTime = this.born - this.life
 
     this.materialFeuilles.uniforms.uDay.value = Math.sin(time)
-    this.materialFeuilles.uniforms.uSeason.value = Math.abs(Math.sin(time / 365))
 
     if (this.born < this.life) {
       const scale = (this.born / this.life) * this.size

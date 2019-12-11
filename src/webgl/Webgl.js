@@ -20,6 +20,7 @@ import createComposer from './postfx/Composer'
 import createLight from './objects/Lights'
 
 import utils from 'utils/utils'
+import TimeScale from 'utils/timescale'
 
 import ADN from 'objects/ADN'
 import Fellow from './objects/Fellow'
@@ -50,7 +51,7 @@ export default class Webgl {
       0.1,
       2000
     )
-    this.camera.position.set(0, 150, 400)
+    this.camera.position.set(500, 100, 400)
     this.scene.add(this.camera)
     this.scene.background = new Color(0x111)
 
@@ -70,6 +71,8 @@ export default class Webgl {
 
     window.addEventListener('resize', this.onResize, false)
 
+    this.ts = new TimeScale()
+
     this.loadObj()
   }
 
@@ -86,9 +89,9 @@ export default class Webgl {
     this.fellows = []
     this.fellowModel = new FellowModel({ object: this.fellowObj })
     console.log(this.fellowModel)
-    for (let i = 0; i < 10; i++) {
-      const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE }
-      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: Math.random() } }), type: constants.RESSOURCES.TYPES.MEAT, object: this.fellowModel }), position)
+    for (let i = 0; i < constants.FELLOW.INITIAL_NUMBER; i++) {
+      const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE * 0.2, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE * 0.2 }
+      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: 0.5 } }), type: constants.RESSOURCES.TYPES.MEAT, object: this.fellowModel }), position)
     }
 
     this.scene.add(this.ground)
@@ -122,7 +125,7 @@ export default class Webgl {
   render () {
     this.stats.begin()
 
-    this.currentTime++
+    this.currentTime += constants.TIME.SPEED
 
     this.controls.update()
 
@@ -176,7 +179,7 @@ export default class Webgl {
       let i = 0
       let intersected = []
       while (i < this.fellows.length && intersected.length === 0) {
-        intersected = this.raycaster.intersectObject(this.fellows[i++].body)
+        intersected = this.raycaster.intersectObject(this.fellows[i++].body.body)
       }
 
       if (intersected.length > 0) {

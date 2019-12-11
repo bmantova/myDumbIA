@@ -1,19 +1,13 @@
 /* factory */
-import { datGui } from 'utils/debug'
+// import { datGui } from 'utils/debug'
 import { BloomEffect, EffectComposer, EffectPass, RenderPass } from 'postprocessing'
 import { Clock } from 'three'
 
 export default function createComposer (scene, camera, renderer) {
-  const params = {
-    scale: 1,
-    threshold: 0,
-    granularity: 10
-  }
-
   const clock = new Clock()
 
-  const bloomEffect = new BloomEffect({ resolutionScale: 1.0 })
-  bloomEffect.luminanceMaterial.threshold = params.threshold
+  const bloomEffect = new BloomEffect({ resolutionScale: 0.5 })
+  bloomEffect.luminanceMaterial.threshold = 0
   const effectComposer = new EffectComposer(renderer)
 
   const effectPass = new EffectPass(camera, bloomEffect)
@@ -24,9 +18,9 @@ export default function createComposer (scene, camera, renderer) {
   effectComposer.addPass(new RenderPass(scene, camera))
   effectComposer.addPass(effectPass)
 
-  addGui()
+  // addGui()
 
-  function addGui () {
+  /* function addGui () {
     const folder = datGui.addFolder('Composer')
     folder.add(params, 'scale').min(0).max(1).onChange((value) => {
       bloomEffect.scale = value
@@ -40,7 +34,7 @@ export default function createComposer (scene, camera, renderer) {
     //     pixelationEffect.setGranularity(value)
     //   })
     // }
-  }
+  } */
 
   function render () {
     effectComposer.render(clock.getDelta())
