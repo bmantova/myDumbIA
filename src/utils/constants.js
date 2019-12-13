@@ -30,11 +30,16 @@ export default {
     },
     VEGETATION: {
       FALLING_TIME: 200,
-      MAX_TREES: 2000
+      MAX_TREES: 2000,
+      SEED_EVERY: 50,
+      MAX_LIFE: 5000
     }
   },
+  FELLOW: {
+    INITIAL_NUMBER: 200
+  },
   TIME: {
-    SPEED: 20
+    SPEED: 2.0
   },
   SUITS: {
     HEIGHT: [

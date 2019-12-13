@@ -151,11 +151,11 @@ export default class Ground extends Object3D {
       essais++
     }
 
-    this.addVegetation(x, y, Math.floor(Math.random() * 10000))
+    this.addVegetation(x, y, Math.floor(Math.random() * constants.RESSOURCES.VEGETATION.MAX_LIFE / 2))
   }
 
   addVegetation (x, y, born = 1) {
-    const veg = new Vegetation({ position: new Vector3(x, this.getHeight(x, y), y), life: utils.randint(10000, 20000), born: born, biome: this.getBiomeInfo(x, y) })
+    const veg = new Vegetation({ position: new Vector3(x, this.getHeight(x, y), y), life: utils.randint(constants.RESSOURCES.VEGETATION.MAX_LIFE / 2, constants.RESSOURCES.VEGETATION.MAX_LIFE), born: born, biome: this.getBiomeInfo(x, y) })
     this.vegetation.push(veg)
     this.add(veg)
   }
@@ -172,12 +172,11 @@ export default class Ground extends Object3D {
   }
 
   update (time) {
-    const timeMult = 0.01 * constants.TIME.SPEED
+    const timeMult = 0.01
 
     this.material.uniforms.uTime.value = time * timeMult
     this.material.uniforms.uDay.value = Math.sin(time * timeMult)
 
-    this.underMaterial.uniforms.uTime.value = time * timeMult
     this.underMaterial.uniforms.uDay.value = Math.sin(time * timeMult)
 
     this.material.uniforms.uSunX.value = this.sky.sun.position.x
@@ -186,15 +185,20 @@ export default class Ground extends Object3D {
 
     this.children.forEach((child) => {
       if (child.update) {
-        if (child.isAlive()) child.update(time * timeMult)
-        else {
+        if (child.isAlive()) {
+          child.update(time * timeMult)
+          if (child.canHaveChild) {
+            child.haveChild()
+            this.addVegetationFromParent(child)
+          }
+        } else {
           this.addVegetationFromParent(child)
           this.removeTree(child)
         }
       }
     })
     // utils.debug('time', time * constants.TIME.SPEED)
-    utils.debug('day', Math.floor(time * timeMult * constants.TIME.SPEED / (Math.PI * 2)))
+    utils.debug('day', Math.floor(time * timeMult / (Math.PI * 2)))
     utils.debug('#trees', this.vegetation.length)
   }
 }

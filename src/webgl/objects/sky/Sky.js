@@ -6,7 +6,7 @@ import constants from 'utils/constants'
 import vertexShader from './shaders/sky.vs'
 import fragmentShader from './shaders/sky.fs'
 
-import Cloud from './Cloud'
+// import Cloud from './Cloud'
 
 /** TODO : nuages instanciés **/
 
@@ -57,7 +57,7 @@ export default class Sky extends Object3D {
     this.sphere = new Mesh(this.geometry, this.material)
     this.add(this.sphere)
 
-    this.cloud = new Cloud()
+    // this.cloud = new Cloud()
     // this.add(this.cloud)
   }
 
@@ -66,7 +66,6 @@ export default class Sky extends Object3D {
   }
 
   update (time) {
-    this.material.uniforms.uTime.value += time
     this.material.uniforms.uDay.value = Math.sin(time)
 
     this.material.uniforms.uSunX.value = this.sun.position.x

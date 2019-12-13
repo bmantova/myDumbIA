@@ -1,5 +1,4 @@
 attribute vec3 position;
-attribute vec2 uv;
 attribute vec3 normal;
 
 uniform mat4 projectionMatrix;
@@ -15,7 +14,7 @@ void main() {
   time = uTime;
   pos = position;
   vNormal = normal;
-  float z = position.z;
+  float z = pos.z;
   seaZ = 0.0;
   if(z < -0.5) {
   	seaZ = sin(position.x * 0.3 + time * 20.0 + cos(position.y)) * 0.4 * sin(position.x * position.y * 0.05) + cos(position.y * 0.4 + time * 20.0 + sin(position.x)) * 0.3 * cos(position.y * position.x * 0.05);

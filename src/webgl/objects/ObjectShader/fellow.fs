@@ -1,11 +1,10 @@
-precision highp float;
+precision mediump float;
 
 uniform float uDay;
 uniform float uColor;
 
-varying vec3 pos;
-varying float time;
 varying vec3 vNormal;
+varying float vFur;
 
 void main() {
   float r = 0.0;
@@ -25,9 +24,7 @@ void main() {
   	b = 1.0 - (uColor - 0.66) * 3.0;
   }
 
-  r = (r) * (uDay * 0.2 + 0.8) + vNormal.y * 0.3 * (uDay + 1.0) * 0.5;
-  g = (g) * (uDay * 0.2 + 0.8) + vNormal.y * 0.3 * (uDay + 1.0) * 0.5;
-  b = (b) * (uDay * 0.2 + 0.8) + vNormal.y * 0.3 * (uDay + 1.0) * 0.5;
+  float mult = (uDay * 0.2 + 0.8) * (vFur * 0.5 + 0.5) + vNormal.y * 0.3 * (uDay + 1.0) * 0.5;
 
-  gl_FragColor = vec4(r, g, b, 1.0);
+  gl_FragColor = vec4(vec3(r, g, b), 1.0);
 }

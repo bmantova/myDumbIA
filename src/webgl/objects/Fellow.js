@@ -10,6 +10,7 @@ import fellowFragmentShader from './ObjectShader/fellow.fs'
 /* TODO
   - Mode Debug
   - Maladies
+  - Direction focus
 */
 export default class Fellow extends Ressource {
   constructor (options) {
@@ -31,10 +32,14 @@ export default class Fellow extends Ressource {
         },
         uColor: {
           value: 0.0
+        },
+        uFur: {
+          value: this.ADN.morphology.fur
         }
       },
       vertexShader: fellowVertexShader,
-      fragmentShader: fellowFragmentShader
+      fragmentShader: fellowFragmentShader,
+      flatShading: false
     })
     if (options.object) {
       this.body = options.object.clone()
@@ -80,11 +85,12 @@ export default class Fellow extends Ressource {
 
     this.timer = 0
     this.previous = 0
+    this.timeSeed = utils.randint(0, 100)
   }
 
   getSpeed () {
-    const speed = (this.ADN.capacity.fly + this.ADN.morphology.size - this.ADN.morphology.weight * 0.5)
-    return (speed > 0 ? speed : 0.01) * constants.TIME.SPEED
+    const speed = (this.ADN.capacity.fly * 0.5 + this.ADN.morphology.size * 0.5 + this.ADN.morphology.legs * 0.5 - this.ADN.morphology.weight * 0.5)
+    return (speed > 0 ? speed : 0.005) * constants.TIME.SPEED
   }
 
   increaseHunger () {
@@ -96,7 +102,7 @@ export default class Fellow extends Ressource {
   }
 
   increaseDirection () {
-    this.direction += (Math.random() - 0.5) * 0.5 * constants.TIME.SPEED
+    this.direction += (Math.random() - 0.5) * 0.1 * constants.TIME.SPEED
     if (Math.abs(this.position.x) >= constants.GROUND.SIZE / 2 ||
         Math.abs(this.position.z) >= constants.GROUND.SIZE / 2) {
       this.direction = -this.direction
@@ -135,9 +141,11 @@ export default class Fellow extends Ressource {
     this.updateSuitsCoeff(webgl)
     this.increaseAge()
     this.increaseEffectiveSize()
+    this.animate(webgl)
     this.body.traverse((el) => {
-      if (el.material) el.material.uniforms.uDay.value = Math.sin(webgl.currentTime * 0.01 * constants.TIME.SPEED)
+      if (el.material) el.material.uniforms.uDay.value = Math.sin(webgl.currentTime * 0.01)
     })
+    this.timer++
   }
 
   getClosest (array) {
@@ -162,19 +170,15 @@ export default class Fellow extends Ressource {
 
   findFocus (webgl) {
     if (this.hunger >= 1) {
-      if (webgl.fellows.length !== 0) {
+      if (webgl.fellows.length !== 0 && webgl.ground.vegetation.length !== 0) {
         const diet = this.clamp((Math.random() * this.ADN.diet.carnivorous), 0, 1)
-        if (diet > 0.5 || webgl.ground.vegetation.length === 0) {
+        if (diet > 0.5) {
           this.focus = this.getClosest(webgl.getOthers(this))
         } else {
           this.focus = this.getClosest(webgl.ground.vegetation)
         }
       } else {
-        if (webgl.ground.vegetation.length !== 0) {
-          this.focus = this.getClosest(webgl.ground.vegetation)
-        } else {
-          this.focus = null
-        }
+        this.focus = null
       }
     } else {
       const others = this.ejectUnfuckableEx(webgl.getOthers(this))
@@ -267,7 +271,7 @@ export default class Fellow extends Ressource {
         this.updateFocus(webgl)
       }
 
-      if (this.focus) {
+      if (this.focus && this.focus.element) {
         const deltaX = (this.focus.element.position.x - this.position.x)
         const deltaZ = (this.focus.element.position.z - this.position.z)
         if (deltaX !== 0) {
@@ -277,9 +281,11 @@ export default class Fellow extends Ressource {
           this.position.z += (deltaZ / Math.abs(deltaZ)) * this.getSpeed()
         }
         this.handleCollision(webgl)
+        this.rotation.y = Math.atan(deltaZ / deltaX)
       } else {
         this.position.x += Math.cos(this.direction) * this.getSpeed()
         this.position.z += Math.sin(this.direction) * this.getSpeed()
+        this.rotation.y = -this.direction - Math.PI / 2
       }
     } else {
       this.position.x += Math.cos(this.direction) * this.getSpeed()
@@ -287,7 +293,26 @@ export default class Fellow extends Ressource {
       this.rotation.y = -this.direction - Math.PI / 2
     }
     this.clampPosition()
-    this.position.y = webgl.ground.getHeight(this.position.x, this.position.z)
+    this.position.y = webgl.ground.getHeight(this.position.x, this.position.z) - 2 + this.ADN.morphology.legs * 4
+  }
+
+  animate (webgl) {
+    const t = (webgl.currentTime + this.timeSeed) * 0.1
+    this.body.tail.rotation.y = Math.sin(t) * 0.2 * this.desire
+
+    this.body.leftLeg.rotation.x = Math.sin(t * this.getSpeed() * 3) * 0.5
+    this.body.rightLeg.rotation.x = Math.sin(t * this.getSpeed() * 3 + Math.PI) * 0.5
+
+    this.body.leftArm.rotation.x = Math.sin(t * this.getSpeed()) * 0.3
+    this.body.rightArm.rotation.x = Math.sin(t * this.getSpeed() + Math.PI) * 0.3
+
+    this.body.leftWing.rotation.z = Math.sin(t * 6 * (1 - this.ADN.capacity.fly)) * 0.5
+    this.body.rightWing.rotation.z = -Math.sin(t * 6 * (1 - this.ADN.capacity.fly)) * 0.5
+
+    this.body.neck.rotation.y = Math.sin(t * 2) * 0.2
+    this.body.head.rotation.z = Math.sin(t * 2) * 0.2
+
+    this.body.neck.rotation.x = Math.sin(t * 2) * 0.2 * this.hunger
   }
 
   handleDeath (webgl) {
