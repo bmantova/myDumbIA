@@ -68,9 +68,9 @@ void main() {
   if(seaZ < -0.15) waveSeaColor = -0.1;
   else if(seaZ > 0.15) waveSeaColor = 0.1;
 
-  r = (r + waveSeaColor) * (uDay * 0.2 + 0.4);
-  g = (g + waveSeaColor) * (uDay * 0.2 + 0.4);
-  b = (b + waveSeaColor) * (uDay * 0.2 + 0.4);
+  r = (r + waveSeaColor);
+  g = (g + waveSeaColor);
+  b = (b + waveSeaColor);
 
   gl_FragColor = vec4(r, g, b, 1.0);
 }

@@ -165,8 +165,8 @@ export default class Ground extends Object3D {
     const zone = parent.size * 50
 
     for (let i = 0; i < n; i++) {
-      const x = utils.loopLimit(parent.position.x + utils.randfloat(-zone, zone), -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
-      const y = utils.loopLimit(parent.position.z + utils.randfloat(-zone, zone), -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
+      const x = utils.loopLimit(parent.position.x + utils.randfloat(-zone, zone), 0, constants.GROUND.SIZE / 2)
+      const y = utils.loopLimit(parent.position.z + utils.randfloat(-zone, zone), 0, constants.GROUND.SIZE / 2)
       this.addVegetation(x, y)
     }
   }

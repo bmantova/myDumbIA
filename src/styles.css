@@ -213,3 +213,38 @@ button[disabled]{
 .returnIcon {
   width: 30px;
 }
+
+/* TIME SCALE */
+
+#time_scale {
+  position: fixed;
+  right: 0px;
+  bottom: 0px;
+  padding: 5px;
+  border-radius: 5px 0px 0px 0px;
+  background-color: rgba(0,0,0,0.5);
+  color: #AAA;
+  font-size: 13px;
+}
+#ts_cursor_container {
+  height:5px;
+  width:200px;
+  background-color:rgba(50,50,50,0.5);
+  border-radius:2px;
+  margin:10px;
+  cursor:pointer;
+}
+#ts_value {
+  color:white;
+  font-size:16px;
+}
+#ts_cursor {
+  background-color:white;
+  border-radius:5px;
+  position: relative;
+  left: 15px;
+  top:-20px;
+  width: 10px;
+  height: 10px;
+  cursor: pointer;
+}

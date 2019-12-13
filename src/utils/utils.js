@@ -11,12 +11,8 @@ export default {
     return v
   },
   loopLimit: (v, a, b) => {
-    // if (v < a || v > b) return a + v % (b - a)
-    let ret
-    if (v < a || v > b) ret = (v) % (b - a) + a
-    else ret = v
-    console.log(ret, v, a, b)
-    return ret
+    if (v < a || v > b) return (v) % (b - a) + a
+    return v
   },
   debug: (name, value = '') => {
     const className = name.replace(' ', '_')

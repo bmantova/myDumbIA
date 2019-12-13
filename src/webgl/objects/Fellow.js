@@ -245,11 +245,9 @@ export default class Fellow extends Ressource {
   }
 
   handleBirth (webgl) {
-    console.log('coucouc')
     const rand = Math.random()
     for (let i = 0; i < Math.floor(this.ADN.reproduction.litter * 10 * rand); i++) {
       const newADN = this.ADN.getADNFromReproductionWith(this.focus.element.ADN)
-      console.log('coucouc')
       webgl.addFellow(new Fellow({ ADN: newADN, object: this.body }), this.position)
     }
   }
