@@ -1,14 +1,6 @@
 import { Object3D, RawShaderMaterial, Mesh, IcosahedronBufferGeometry } from 'three'
-
-// import constants from 'utils/constants'
-// import utils from 'utils/utils'
-
 import vertexShader from './shaders/planet.vs'
 import fragmentShader from './shaders/planet.fs'
-
-// import { OBJLoader } from './loader/OBJLoader.js'
-
-/* Chutes d'eau */
 
 export default class MyLittlePlanet extends Object3D {
   constructor (size) {
@@ -44,7 +36,8 @@ export default class MyLittlePlanet extends Object3D {
     this.time++
     const timeMult = 0.01
 
-    this.rotation.y += 0.01
+    this.rotation.y += 0.001
+    this.rotation.x += 0.001
 
     this.material.uniforms.uTime.value = this.time * timeMult
     this.material.uniforms.uDay.value = Math.sin(this.time * timeMult)

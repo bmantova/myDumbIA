@@ -31,8 +31,8 @@ import Virus from './objects/Virus'
 
 export default class Webgl {
   constructor ($parent) {
+    this.mode = 'pause'
     this.currentTime = 0
-    this.previousTime = 0
     this.render = this.render.bind(this)
     this.onResize = this.onResize.bind(this)
 
@@ -118,32 +118,32 @@ export default class Webgl {
 
     loader.load('../../assets/fellow.obj', function (obj) {
       object = obj
+      document.querySelector('.playButton').disabled = false
     }, onProgress, onError)
 
     return object
   }
 
   render () {
-    this.stats.begin()
+    if (this.mode === 'run') {
+      this.stats.begin()
 
-    this.currentTime += constants.TIME.SPEED
+      this.currentTime += constants.TIME.SPEED
 
-    this.controls.update()
+      this.controls.update()
 
-    utils.debug('#fellows', this.fellows.length)
+      utils.debug('#fellows', this.fellows.length)
 
-    this.ground.update(this.currentTime++)
+      this.ground.update(this.currentTime++)
 
-    this.fellows.forEach((element) => {
-      element.update(this)
-      element.move(this)
-      element.handleDeath(this)
-    })
+      this.fellows.forEach((element) => {
+        element.update(this)
+        element.move(this)
+        element.handleDeath(this)
+      })
 
-    this.composer.render()
-    this.stats.end()
-    if (this.currentTime > this.previousTime + 80) {
-      this.previousTime = this.currentTime
+      this.composer.render()
+      this.stats.end()
     }
     requestAnimationFrame(this.render)
   }
@@ -193,5 +193,9 @@ export default class Webgl {
         utils.mousewin('close')
       }
     }.bind(this))
+  }
+
+  setMode (string) {
+    this.mode = string
   }
 }
