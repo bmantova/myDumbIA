@@ -162,11 +162,11 @@ export default class Ground extends Object3D {
 
   addVegetationFromParent (parent) {
     const n = Math.round(utils.randint(0, constants.RESSOURCES.VEGETATION.MAX_TREES / this.vegetation.length))
-    const zone = parent.size * 5
+    const zone = parent.size * 50
 
     for (let i = 0; i < n; i++) {
-      const x = utils.limit(parent.position.x + utils.randfloat(-zone, zone), -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
-      const y = utils.limit(parent.position.z + utils.randfloat(-zone, zone), -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
+      const x = utils.loopLimit(parent.position.x + utils.randfloat(-zone, zone), -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
+      const y = utils.loopLimit(parent.position.z + utils.randfloat(-zone, zone), -constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
       this.addVegetation(x, y)
     }
   }

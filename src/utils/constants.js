@@ -38,6 +38,9 @@ export default {
   FELLOW: {
     INITIAL_NUMBER: 200
   },
+  VIRUS: {
+    INITIAL_APPEAR: 0.02
+  },
   TIME: {
     SPEED: 2.0
   },

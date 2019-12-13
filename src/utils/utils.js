@@ -10,6 +10,14 @@ export default {
     if (v > b) return b
     return v
   },
+  loopLimit: (v, a, b) => {
+    // if (v < a || v > b) return a + v % (b - a)
+    let ret
+    if (v < a || v > b) ret = (v) % (b - a) + a
+    else ret = v
+    console.log(ret, v, a, b)
+    return ret
+  },
   debug: (name, value = '') => {
     const className = name.replace(' ', '_')
     if (document.getElementById('debug').getElementsByClassName(className).length > 0) {

@@ -3,7 +3,7 @@ import {
   RawShaderMaterial,
   Color,
   BoxBufferGeometry,
-  IcosahedronBufferGeometry,
+  SphereBufferGeometry,
   Mesh,
   ConeBufferGeometry
 } from 'three'
@@ -32,9 +32,9 @@ export default class Vegetation extends Ressource {
     this.born = options.born ? options.born : 1
     this.init()
 
-    let r = Math.max(0, Math.round(50 - this.biome.humidity * 50 + this.biome.temperature * 100 - this.biome.height * 100))
-    let v = Math.max(0, Math.round(255 - this.biome.humidity * 50 - this.biome.temperature * 50 - this.biome.height * 100))
-    let b = Math.max(0, Math.round(80 - this.biome.humidity * 40 - this.biome.temperature * 40 - this.biome.height * 100))
+    let r = Math.max(0, Math.round(50 - this.biome.humidity * 50 + this.biome.temperature * 150 - this.biome.height * 100))
+    let v = Math.max(0, Math.round(255 - this.biome.humidity * 100 - this.biome.temperature * 100 - this.biome.height * 100))
+    let b = Math.max(0, Math.round(80 - this.biome.humidity * 60 - this.biome.temperature * 60 - this.biome.height * 150))
 
     this.materialFeuilles = new RawShaderMaterial({
       uniforms: {
@@ -75,7 +75,7 @@ export default class Vegetation extends Ressource {
     } else if (this.biome.height > 0.5) { // Pins
       const box = new BoxBufferGeometry(this.effectiveSize * 0.1, this.effectiveSize, this.effectiveSize * 0.1)
 
-      const feuillesGeom = new IcosahedronBufferGeometry(this.effectiveSize * 0.5)
+      const feuillesGeom = new SphereBufferGeometry(this.effectiveSize * 0.5, 3, 3)
       feuillesGeom.scale(0.7, 2, 0.7)
 
       tronc = new Mesh(box, materialTronc)
@@ -87,7 +87,7 @@ export default class Vegetation extends Ressource {
     } else if (this.biome.height > 0.2) { // Normaux
       const box = new BoxBufferGeometry(this.effectiveSize * 0.1, this.effectiveSize, this.effectiveSize * 0.1)
 
-      const feuillesGeom = new IcosahedronBufferGeometry(this.effectiveSize * 0.5)
+      const feuillesGeom = new SphereBufferGeometry(this.effectiveSize * 0.5, 4, 4)
 
       tronc = new Mesh(box, materialTronc)
       feuilles = new Mesh(feuillesGeom, this.materialFeuilles)
@@ -96,7 +96,7 @@ export default class Vegetation extends Ressource {
       feuilles.position.y += this.effectiveSize
       type = 3
     } else if (this.biome.height > 0.1) { // coraux
-      const feuillesGeom = new IcosahedronBufferGeometry(this.effectiveSize * 0.3)
+      const feuillesGeom = new SphereBufferGeometry(this.effectiveSize * 0.3, 3, 4)
 
       r = (r + 150)
       v = Math.max(0, v - 150)
@@ -106,7 +106,7 @@ export default class Vegetation extends Ressource {
       feuilles.position.y += this.effectiveSize * 0.5
       type = 4
     } else { // algues
-      const feuillesGeom = new IcosahedronBufferGeometry(this.effectiveSize * 0.5)
+      const feuillesGeom = new SphereBufferGeometry(this.effectiveSize * 0.5, 3, 3)
       r = Math.max(0, r - 150)
       v = Math.max(0, v - 100)
       b = Math.max(0, b - 150)

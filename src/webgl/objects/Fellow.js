@@ -22,8 +22,10 @@ export default class Fellow extends Ressource {
     this.suitsCoeff = 0
     this.direction = Math.random() * Math.PI * 2
     this.focus = null
-    this.effectiveSize = this.ADN.morphology.size
+    this.effectiveSize = this.ADN.morphology.size * 0.1
     this.unfuckableEx = []
+    this.uneatableEx = []
+    this.virus = false
 
     const material = new RawShaderMaterial({
       uniforms: {
@@ -35,6 +37,9 @@ export default class Fellow extends Ressource {
         },
         uFur: {
           value: this.ADN.morphology.fur
+        },
+        uVirus: {
+          value: 0
         }
       },
       vertexShader: fellowVertexShader,
@@ -55,7 +60,7 @@ export default class Fellow extends Ressource {
       this.body.leftLeg.scale.set(legsSize, legsSize, legsSize)
       this.body.rightLeg.scale.set(legsSize, legsSize, legsSize)
 
-      const footSize = (1 / legsSize) * this.ADN.morphology.feet * 2 + 0.001
+      const footSize = this.ADN.morphology.feet * 2 + 0.001
       this.body.leftFoot.scale.set(footSize, footSize, footSize)
       this.body.rightFoot.scale.set(footSize, footSize, footSize)
 
@@ -89,16 +94,16 @@ export default class Fellow extends Ressource {
   }
 
   getSpeed () {
-    const speed = (this.ADN.capacity.fly * 0.5 + this.ADN.morphology.size * 0.5 + this.ADN.morphology.legs * 0.5 - this.ADN.morphology.weight * 0.5)
+    const speed = (this.ADN.capacity.fly * 0.5 + this.ADN.morphology.size * 0.5 + this.ADN.morphology.legs * 0.5 - this.ADN.morphology.weight * 0.5) * (Math.sin(this.age * Math.PI) + 0.2)
     return (speed > 0 ? speed : 0.005) * constants.TIME.SPEED
   }
 
   increaseHunger () {
-    this.hunger += (this.ADN.morphology.size + this.ADN.morphology.weight) * 0.005 * constants.TIME.SPEED
+    this.hunger += (this.ADN.morphology.size + this.ADN.morphology.weight) * 0.003 * constants.TIME.SPEED
   }
 
   increaseDesire () {
-    this.desire += this.ADN.reproduction.interval * 0.005 * constants.TIME.SPEED
+    this.desire += this.ADN.reproduction.interval * 0.003 * constants.TIME.SPEED
   }
 
   increaseDirection () {
@@ -115,7 +120,7 @@ export default class Fellow extends Ressource {
   }
 
   increaseAge () {
-    this.age += ((1 / this.ADN.capacity.longevity) + this.suitsCoeff) * 0.00005 * constants.TIME.SPEED
+    this.age += ((1 / this.ADN.capacity.longevity) + this.suitsCoeff + (this.virus ? this.virus.mortality : 0)) * 0.00005 * constants.TIME.SPEED
   }
 
   increaseEffectiveSize () {
@@ -151,7 +156,11 @@ export default class Fellow extends Ressource {
   getClosest (array) {
     const distances = []
     array.forEach((element) => {
-      distances.push({ element: element, distance: this.position.distanceTo(element.position) })
+      const dist = this.position.distanceTo(element.position)
+      if (element.type === constants.RESSOURCES.TYPES.MEAT && this.virus && !element.virus && dist < this.virus.distance && Math.random() < this.virus.transmission) {
+        element.catchVirus(this.virus)
+      }
+      distances.push({ element: element, distance: dist })
     })
 
     return distances.reduce((prev, cur) => {
@@ -168,12 +177,22 @@ export default class Fellow extends Ressource {
     })
   }
 
+  ejectUneatableEx (array) {
+    if (this.uneatableEx.length === 0) {
+      return array
+    }
+    return array.filter((e) => {
+      return !this.uneatableEx.includes(e)
+    })
+  }
+
   findFocus (webgl) {
     if (this.hunger >= 1) {
       if (webgl.fellows.length !== 0 && webgl.ground.vegetation.length !== 0) {
         const diet = this.clamp((Math.random() * this.ADN.diet.carnivorous), 0, 1)
+        const others = this.ejectUneatableEx(webgl.getOthers(this))
         if (diet > 0.5) {
-          this.focus = this.getClosest(webgl.getOthers(this))
+          this.focus = this.getClosest(others)
         } else {
           this.focus = this.getClosest(webgl.ground.vegetation)
         }
@@ -226,8 +245,11 @@ export default class Fellow extends Ressource {
   }
 
   handleBirth (webgl) {
-    for (let i = 0; i < Math.floor(this.ADN.reproduction.litter * 10); i++) {
+    console.log('coucouc')
+    const rand = Math.random()
+    for (let i = 0; i < Math.floor(this.ADN.reproduction.litter * 10 * rand); i++) {
       const newADN = this.ADN.getADNFromReproductionWith(this.focus.element.ADN)
+      console.log('coucouc')
       webgl.addFellow(new Fellow({ ADN: newADN, object: this.body }), this.position)
     }
   }
@@ -235,10 +257,14 @@ export default class Fellow extends Ressource {
   handleHunger (webgl) {
     this.hunger = 0
     if (this.focus.element.type === constants.RESSOURCES.TYPES.MEAT) {
-      if (this.focus.element.desire >= 1 || this.desire >= 1) {
+      /* if (this.focus.element.desire >= 1 || this.desire >= 1) {
         this.handleReproduction(webgl)
+      } */
+      if (!this.ADN.canFuckWith(this.focus.element.ADN)) {
+        webgl.removeFellow(this.focus.element)
+      } else {
+        this.uneatableEx.push(this.focus.element)
       }
-      webgl.removeFellow(this.focus.element)
     } else {
       webgl.ground.removeTree(this.focus.element)
     }
@@ -261,6 +287,15 @@ export default class Fellow extends Ressource {
 
   canEat (webgl) {
     return this.hunger >= 1 && (webgl.ground.vegetation.length > 0 || webgl.fellows.length > 1)
+  }
+
+  catchVirus (virus) {
+    this.body.traverse((el) => {
+      if (el.material) {
+        el.material.uniforms.uVirus.value = 1.0
+      }
+    })
+    this.virus = virus
   }
 
   move (webgl) {
@@ -328,6 +363,12 @@ export default class Fellow extends Ressource {
     str += '</b><br/>color<b>' + utils.virg(this.ADN.morphology.color, 2)
     str += '</b><br/>desire<b>' + utils.virg(this.desire)
     str += '</b><br/>hunger<b>' + utils.virg(this.hunger)
+    str += '</b><br/>adaptation<b>' + utils.virg(this.ADN.capacity.adaptation)
+    str += '</b><br/>fly<b>' + utils.virg(this.ADN.capacity.fly)
+    str += '</b><br/>diet<b>' + utils.virg(this.ADN.diet.carnivorous)
+    str += '</b><br/>longevity<b>' + utils.virg(this.ADN.capacity.longevity)
+    str += '</b><br/>speed<b>' + utils.virg(this.getSpeed())
+    str += '</b><br/>virus<b>' + (this.virus ? 'true' : 'false')
     return str
   }
 }
