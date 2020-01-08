@@ -1,9 +1,0 @@
-import constants from 'utils/constants'
-
-export default class Virus {
-  constructor (options = {}) {
-    this.mortality = options.mortality | 3
-    this.transmission = options.transmission | 0.8
-    this.distance = options.distance | 25
-  }
-}

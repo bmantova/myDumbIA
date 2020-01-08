@@ -8,9 +8,7 @@ import fellowVertexShader from './ObjectShader/fellow.vs'
 import fellowFragmentShader from './ObjectShader/fellow.fs'
 
 /* TODO
-  - Mode Debug
-  - Maladies
-  - Direction focus
+  - Vol
 */
 export default class Fellow extends Ressource {
   constructor (options) {
@@ -22,10 +20,11 @@ export default class Fellow extends Ressource {
     this.suitsCoeff = 0
     this.direction = Math.random() * Math.PI * 2
     this.focus = null
-    this.effectiveSize = this.ADN.morphology.size * 0.1
+    this.effectiveSize = this.ADN.morphology.size * 0.02
     this.unfuckableEx = []
     this.uneatableEx = []
     this.virus = false
+    this.flyingOffset = utils.randint(0, 1000)
 
     const material = new RawShaderMaterial({
       uniforms: {
@@ -94,8 +93,8 @@ export default class Fellow extends Ressource {
   }
 
   getSpeed () {
-    const speed = (this.ADN.capacity.fly * 0.5 + this.ADN.morphology.size * 0.5 + this.ADN.morphology.legs * 0.5 - this.ADN.morphology.weight * 0.5) * (Math.sin(this.age * Math.PI) + 0.2)
-    return (speed > 0 ? speed : 0.005) * constants.TIME.SPEED
+    const speed = (this.ADN.capacity.fly * 0.3 + this.ADN.morphology.size * 0.2 + this.ADN.morphology.legs * 0.2 - this.ADN.morphology.weight * 0.2) * (Math.sin(this.age * Math.PI) + 0.2)
+    return (speed > 0 ? speed : 0.002) * constants.TIME.SPEED
   }
 
   increaseHunger () {
@@ -103,7 +102,7 @@ export default class Fellow extends Ressource {
   }
 
   increaseDesire () {
-    this.desire += this.ADN.reproduction.interval * 0.003 * constants.TIME.SPEED
+    this.desire += this.ADN.reproduction.interval * 0.001 * constants.TIME.SPEED
   }
 
   increaseDirection () {
@@ -124,7 +123,7 @@ export default class Fellow extends Ressource {
   }
 
   increaseEffectiveSize () {
-    this.effectiveSize = this.age * this.ADN.morphology.size * 20 + 1
+    this.effectiveSize = this.age * this.ADN.morphology.size + 1
     this.body.scale.set(this.effectiveSize, this.effectiveSize, this.effectiveSize)
   }
 
@@ -147,6 +146,9 @@ export default class Fellow extends Ressource {
     this.increaseAge()
     this.increaseEffectiveSize()
     this.animate(webgl)
+    if (this.virus) {
+      this.getClosest(webgl.getOthers(this))
+    }
     this.body.traverse((el) => {
       if (el.material) el.material.uniforms.uDay.value = Math.sin(webgl.currentTime * 0.01)
     })
@@ -157,7 +159,7 @@ export default class Fellow extends Ressource {
     const distances = []
     array.forEach((element) => {
       const dist = this.position.distanceTo(element.position)
-      if (element.type === constants.RESSOURCES.TYPES.MEAT && this.virus && !element.virus && dist < this.virus.distance && Math.random() < this.virus.transmission) {
+      if (element.type === constants.RESSOURCES.TYPES.MEAT && (this.virus && !element.virus) && dist < this.virus.distance && Math.random() < this.virus.transmission) {
         element.catchVirus(this.virus)
       }
       distances.push({ element: element, distance: dist })
@@ -246,7 +248,8 @@ export default class Fellow extends Ressource {
 
   handleBirth (webgl) {
     const rand = Math.random()
-    for (let i = 0; i < Math.floor(this.ADN.reproduction.litter * 10 * rand); i++) {
+    const n = Math.round(this.ADN.reproduction.litter * 10 * rand)
+    for (let i = 0; i < n; i++) {
       const newADN = this.ADN.getADNFromReproductionWith(this.focus.element.ADN)
       webgl.addFellow(new Fellow({ ADN: newADN, object: this.body }), this.position)
     }
@@ -326,7 +329,11 @@ export default class Fellow extends Ressource {
       this.rotation.y = -this.direction - Math.PI / 2
     }
     this.clampPosition()
-    this.position.y = webgl.ground.getHeight(this.position.x, this.position.z) - 2 + this.ADN.morphology.legs * 4
+    this.position.y = webgl.ground.getHeight(this.position.x, this.position.z) - 2 + this.ADN.morphology.legs * 4// + (this.ADN.capacity.fly > 0 ? this.flyingTime(webgl.currentTime) * this.ADN.capacity.fly * 50 : 0)
+  }
+
+  flyingTime (t) {
+    return Math.abs(Math.sin(((t + this.flyingOffset) * 0.001) / this.ADN.capacity.fly))
   }
 
   animate (webgl) {
@@ -339,8 +346,13 @@ export default class Fellow extends Ressource {
     this.body.leftArm.rotation.x = Math.sin(t * this.getSpeed()) * 0.3
     this.body.rightArm.rotation.x = Math.sin(t * this.getSpeed() + Math.PI) * 0.3
 
-    this.body.leftWing.rotation.z = Math.sin(t * 6 * (1 - this.ADN.capacity.fly)) * 0.5
-    this.body.rightWing.rotation.z = -Math.sin(t * 6 * (1 - this.ADN.capacity.fly)) * 0.5
+    if (this.flyingTime(webgl.currentTime) % Math.PI > Math.PI / 2) {
+      this.body.leftWing.rotation.z = Math.sin(t * 6 * (1 - this.ADN.capacity.fly)) * 0.5
+      this.body.rightWing.rotation.z = -Math.sin(t * 6 * (1 - this.ADN.capacity.fly)) * 0.5
+    } else {
+      this.body.leftWing.rotation.z = 0
+      this.body.rightWing.rotation.z = 0
+    }
 
     this.body.neck.rotation.y = Math.sin(t * 2) * 0.2
     this.body.head.rotation.z = Math.sin(t * 2) * 0.2
@@ -366,7 +378,6 @@ export default class Fellow extends Ressource {
     str += '</b><br/>diet<b>' + utils.virg(this.ADN.diet.carnivorous)
     str += '</b><br/>longevity<b>' + utils.virg(this.ADN.capacity.longevity)
     str += '</b><br/>speed<b>' + utils.virg(this.getSpeed())
-    str += '</b><br/>virus<b>' + (this.virus ? 'true' : 'false')
     return str
   }
 }

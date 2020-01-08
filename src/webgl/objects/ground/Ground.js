@@ -108,8 +108,11 @@ export default class Ground extends Object3D {
     // this.add(new MyLittlePlanet())
 
     this.vegetation = []
-    for (let i = 0; i < 500; i++) {
-      this.addRandomVegetation()
+  }
+
+  initialBunchOfTrees (n = 500) {
+    for (let i = 0; i < n; i++) {
+      this.addRandomVegetation(constants.GROUND.SIZE * 0.1)
     }
   }
 
@@ -137,14 +140,14 @@ export default class Ground extends Object3D {
     this.vegetation = this.vegetation.filter((el) => el !== elem)
   }
 
-  addRandomVegetation () {
+  addRandomVegetation (size = constants.GROUND.SIZE) {
     let x
     let y
     let essais = 0
     let next = true
     while (essais < 3 && next) {
-      x = utils.randfloat(-constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
-      y = utils.randfloat(-constants.GROUND.SIZE / 2, constants.GROUND.SIZE / 2)
+      x = utils.randfloat(-size / 2, size / 2)
+      y = utils.randfloat(-size / 2, size / 2)
 
       if (this.getHeight(x, y) > 5) next = false
 
@@ -162,7 +165,7 @@ export default class Ground extends Object3D {
 
   addVegetationFromParent (parent) {
     const n = Math.round(utils.randint(0, constants.RESSOURCES.VEGETATION.MAX_TREES / this.vegetation.length))
-    const zone = parent.size * 50
+    const zone = parent.size * 10
 
     for (let i = 0; i < n; i++) {
       const x = utils.loopLimit(parent.position.x + utils.randfloat(-zone, zone), 0, constants.GROUND.SIZE / 2)

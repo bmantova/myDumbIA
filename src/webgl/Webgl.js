@@ -27,7 +27,7 @@ import Fellow from './objects/Fellow'
 import FellowModel from './objects/FellowModel'
 import constants from 'utils/constants'
 import { OBJLoader } from './loader/OBJLoader.js'
-import Virus from './objects/Virus'
+import Virus from './objects/Virus.js'
 
 export default class Webgl {
   constructor ($parent) {
@@ -90,10 +90,6 @@ export default class Webgl {
     this.fellows = []
     this.fellowModel = new FellowModel({ object: this.fellowObj })
     console.log(this.fellowModel)
-    for (let i = 0; i < constants.FELLOW.INITIAL_NUMBER; i++) {
-      const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE * 0.4, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE * 0.4 }
-      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: 0.5 } }), type: constants.RESSOURCES.TYPES.MEAT, object: this.fellowModel }), position)
-    }
 
     this.scene.add(this.ground)
 
@@ -101,6 +97,16 @@ export default class Webgl {
 
     this.onResize()
     this.render()
+
+    this.lifeSpark()
+  }
+
+  lifeSpark () {
+    for (let i = 0; i < constants.FELLOW.INITIAL_NUMBER; i++) {
+      const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE * 0.1, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE * 0.1 }
+      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: 0.5 } }), type: constants.RESSOURCES.TYPES.MEAT, object: this.fellowModel }), position)
+    }
+    this.ground.initialBunchOfTrees()
   }
 
   loadObj () {
@@ -134,6 +140,10 @@ export default class Webgl {
 
       utils.debug('#fellows', this.fellows.length)
 
+      if (this.fellows.length === 0) {
+        this.lifeSpark()
+      }
+
       this.ground.update(this.currentTime++)
 
       this.fellows.forEach((element) => {
@@ -155,7 +165,7 @@ export default class Webgl {
   }
 
   addFellow (fellow, position) {
-    if (Math.random() < constants.VIRUS.INITIAL_APPEAR) {
+    if (Math.random() < constants.VIRUS.INITIAL_APPEAR || fellow.virus) {
       fellow.catchVirus(new Virus())
     }
     this.fellows.push(fellow)

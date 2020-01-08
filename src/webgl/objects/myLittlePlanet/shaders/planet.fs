@@ -64,13 +64,11 @@ void main() {
   	b = 0.9;
   }
 
-  float waveSeaColor = 0.0;
-  if(seaZ < -0.15) waveSeaColor = -0.1;
-  else if(seaZ > 0.15) waveSeaColor = 0.1;
+  float shadow = (vNormal.x + vNormal.y) * 0.3;
 
-  r = (r + waveSeaColor);
-  g = (g + waveSeaColor);
-  b = (b + waveSeaColor);
+  r = (r + shadow);
+  g = (g + shadow);
+  b = (b + shadow);
 
   gl_FragColor = vec4(r, g, b, 1.0);
 }

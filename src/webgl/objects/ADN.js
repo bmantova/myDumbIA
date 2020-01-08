@@ -16,8 +16,8 @@ export default class ADN {
       longevity: options.capacity.longevity ? options.capacity.longevity : 0.5
     }
     this.reproduction = {
-      interval: options.reproduction.interval ? options.reproduction.interval : 0.1,
-      litter: options.reproduction.litter ? options.reproduction.litter : 0.5
+      interval: options.reproduction.interval ? options.reproduction.interval : 0.2,
+      litter: options.reproduction.litter ? options.reproduction.litter : 0.3
     }
     this.diet = {
       carnivorous: options.diet.carnivorous ? options.diet.carnivorous : 0.5
@@ -29,7 +29,7 @@ export default class ADN {
       neck: options.morphology.neck ? options.morphology.neck : 0, // COU
       fur: options.morphology.fur ? options.morphology.fur : 0,
       arms: options.morphology.arms ? options.morphology.arms : 0,
-      legs: options.morphology.legs ? options.morphology.legs : 0.2, // JAMBES
+      legs: options.morphology.legs ? options.morphology.legs : 0, // JAMBES
       feet: options.morphology.feet ? options.morphology.feet : 0,
       color: options.morphology.color ? options.morphology.color : 0,
       tail: options.morphology.tail ? options.morphology.tail : 0 // QUEUE

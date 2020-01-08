@@ -39,7 +39,7 @@ export default {
     INITIAL_NUMBER: 200
   },
   VIRUS: {
-    INITIAL_APPEAR: 0.02
+    INITIAL_APPEAR: 0.05
   },
   TIME: {
     SPEED: 2.0
