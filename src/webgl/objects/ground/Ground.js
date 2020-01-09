@@ -11,6 +11,7 @@ import underFragmentShader from './shaders/under.fs'
 import Map from './Map'
 import Vegetation from '../Vegetation'
 import Sky from '../sky/Sky'
+import Grid from '../../Grid'
 
 // import MyLittlePlanet from '../myLittlePlanet/MyLittlePlanet'
 // import { OBJLoader } from './loader/OBJLoader.js'
@@ -44,6 +45,15 @@ export default class Ground extends Object3D {
         },
         uSunZ: {
           value: 0.0
+        },
+        uHumidity: {
+          value: 0.0
+        },
+        uTemperature: {
+          value: 0.0
+        },
+        uHeight: {
+          value: 1.0
         }
       },
       vertexShader: vertexShader,
@@ -107,7 +117,8 @@ export default class Ground extends Object3D {
 
     // this.add(new MyLittlePlanet())
 
-    this.vegetation = []
+    this.grid = new Grid({ scene: this })
+    this.vegetation = this.grid.getAllUnits()
   }
 
   initialBunchOfTrees (n = 500) {
@@ -136,8 +147,8 @@ export default class Ground extends Object3D {
   }
 
   removeTree (elem) {
-    this.remove(elem)
-    this.vegetation = this.vegetation.filter((el) => el !== elem)
+    this.grid.removeUnit(elem)
+    this.vegetation = this.grid.getAllUnits()
   }
 
   addRandomVegetation (size = constants.GROUND.SIZE) {
@@ -159,8 +170,8 @@ export default class Ground extends Object3D {
 
   addVegetation (x, y, born = 1) {
     const veg = new Vegetation({ position: new Vector3(x, this.getHeight(x, y), y), life: utils.randint(constants.RESSOURCES.VEGETATION.MAX_LIFE / 2, constants.RESSOURCES.VEGETATION.MAX_LIFE), born: born, biome: this.getBiomeInfo(x, y) })
-    this.vegetation.push(veg)
-    this.add(veg)
+    this.grid.addUnit(veg, veg.position)
+    this.vegetation = this.grid.getAllUnits()
   }
 
   addVegetationFromParent (parent) {
@@ -203,5 +214,9 @@ export default class Ground extends Object3D {
     // utils.debug('time', time * constants.TIME.SPEED)
     utils.debug('day', Math.floor(time * timeMult / (Math.PI * 2)))
     utils.debug('#trees', this.vegetation.length)
+  }
+
+  getVegetation (elem) {
+    return this.grid.getOthers(elem, [])
   }
 }

@@ -25,6 +25,7 @@ export default class Fellow extends Ressource {
     this.uneatableEx = []
     this.virus = false
     this.flyingOffset = utils.randint(0, 1000)
+    this.gridPosition = { x: 0, y: 0 }
 
     const material = new RawShaderMaterial({
       uniforms: {
@@ -192,17 +193,17 @@ export default class Fellow extends Ressource {
     if (this.hunger >= 1) {
       if (webgl.fellows.length !== 0 && webgl.ground.vegetation.length !== 0) {
         const diet = this.clamp((Math.random() * this.ADN.diet.carnivorous), 0, 1)
-        const others = this.ejectUneatableEx(webgl.getOthers(this))
+        const others = webgl.getOthers(this, this.uneatableEx)
         if (diet > 0.5) {
           this.focus = this.getClosest(others)
         } else {
-          this.focus = this.getClosest(webgl.ground.vegetation)
+          this.focus = this.getClosest(webgl.ground.getVegetation(this))
         }
       } else {
         this.focus = null
       }
     } else {
-      const others = this.ejectUnfuckableEx(webgl.getOthers(this))
+      const others = webgl.getOthers(this, this.unfuckableEx)
       if (others.length !== 0) {
         this.focus = this.getClosest(others)
       } else {
@@ -212,15 +213,8 @@ export default class Fellow extends Ressource {
   }
 
   updateFocus (webgl) {
-    let findedFocus = null
-    if (this.focus.element.type === constants.RESSOURCES.TYPES.MEAT) {
-      findedFocus = webgl.fellows.find((fellow) => fellow.id === this.focus.element.id)
-    } else {
-      findedFocus = webgl.ground.vegetation.find((tree) => tree.id === this.focus.element.id)
-    }
-
-    if (findedFocus) {
-      this.focus = { element: findedFocus, distance: this.position.distanceTo(findedFocus.position) }
+    if (this.focus.element && this.focus.element.isAlive()) {
+      this.focus.distance = this.position.distanceTo(this.focus.element.position)
     } else {
       this.findFocus(webgl)
     }
@@ -330,6 +324,8 @@ export default class Fellow extends Ressource {
     }
     this.clampPosition()
     this.position.y = webgl.ground.getHeight(this.position.x, this.position.z) - 2 + this.ADN.morphology.legs * 4// + (this.ADN.capacity.fly > 0 ? this.flyingTime(webgl.currentTime) * this.ADN.capacity.fly * 50 : 0)
+
+    webgl.updatePosition(this)
   }
 
   flyingTime (t) {

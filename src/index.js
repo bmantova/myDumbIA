@@ -1,7 +1,7 @@
 
 import './styles.css'
 import Webgl from './webgl/Webgl'
-// import MapSimulator from './webgl/objects/mapSimulator/mapSimulator'
+import MapSimulator from './webgl/objects/mapSimulator/mapSimulator'
 import HomeScreen from './webgl/objects/HomeScreen'
 import SnapAnimations from './animations/SnapAnimations'
 import GsapAnimations from './animations/GsapAnimations'
@@ -42,4 +42,4 @@ returnButton.addEventListener('click', () => {
 })
 
 /* eslint-disable-next-line */
-// const mapSimulator = new MapSimulator(document.querySelector('#mapAbout'))
+const mapSimulator = new MapSimulator(document.querySelector('#mapAbout'))

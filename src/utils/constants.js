@@ -2,6 +2,7 @@ export default {
   GROUND: {
     SIZE: 500,
     SUB: 128,
+    SUB_ARRAY: 32,
     MAPS: {
       HEIGHT: {
         max: 0.06,

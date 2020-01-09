@@ -15,6 +15,7 @@ import Stats from 'stats.js'
 
 // import Objects from './objects/Objects'
 import Ground from './objects/ground/Ground'
+import Grid from './Grid'
 
 import createComposer from './postfx/Composer'
 import createLight from './objects/Lights'
@@ -27,7 +28,6 @@ import Fellow from './objects/Fellow'
 import FellowModel from './objects/FellowModel'
 import constants from 'utils/constants'
 import { OBJLoader } from './loader/OBJLoader.js'
-import Virus from './objects/Virus.js'
 
 export default class Webgl {
   constructor ($parent) {
@@ -69,6 +69,8 @@ export default class Webgl {
     $parent.appendChild(this.stats.dom)
 
     this.ground = new Ground()
+    this.grid = new Grid({ scene: this.scene })
+    this.fellows = this.grid.getAllUnits()
 
     window.addEventListener('resize', this.onResize, false)
 
@@ -87,9 +89,17 @@ export default class Webgl {
   init (obj) {
     this.fellowGeometry = obj
 
-    this.fellows = []
+    // this.fellows = []
     this.fellowModel = new FellowModel({ object: this.fellowObj })
     console.log(this.fellowModel)
+
+    for (let i = 0; i < constants.FELLOW.INITIAL_NUMBER; i++) {
+      const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE * 0.1, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE * 0.1 }
+      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: 0.5 } }), type: constants.RESSOURCES.TYPES.MEAT, object: this.fellowModel }), position)
+    }
+    // console.log(this.grid.sub)
+
+    this.ground.initialBunchOfTrees()
 
     this.scene.add(this.ground)
 
@@ -97,16 +107,6 @@ export default class Webgl {
 
     this.onResize()
     this.render()
-
-    this.lifeSpark()
-  }
-
-  lifeSpark () {
-    for (let i = 0; i < constants.FELLOW.INITIAL_NUMBER; i++) {
-      const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE * 0.1, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE * 0.1 }
-      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: 0.5 } }), type: constants.RESSOURCES.TYPES.MEAT, object: this.fellowModel }), position)
-    }
-    this.ground.initialBunchOfTrees()
   }
 
   loadObj () {
@@ -140,10 +140,6 @@ export default class Webgl {
 
       utils.debug('#fellows', this.fellows.length)
 
-      if (this.fellows.length === 0) {
-        this.lifeSpark()
-      }
-
       this.ground.update(this.currentTime++)
 
       this.fellows.forEach((element) => {
@@ -158,29 +154,24 @@ export default class Webgl {
     requestAnimationFrame(this.render)
   }
 
-  getOthers (element) {
-    return this.fellows.filter((e) => {
-      return e.id !== element.id
-    })
+  getOthers (element, toEject) {
+    return this.grid.getOthers(element, toEject)
   }
 
   addFellow (fellow, position) {
-    if (Math.random() < constants.VIRUS.INITIAL_APPEAR || fellow.virus) {
-      fellow.catchVirus(new Virus())
-    }
-    this.fellows.push(fellow)
-    this.fellows[this.fellows.length - 1].position.set(position.x, position.y, position.z)
-    this.scene.add(fellow)
+    this.grid.addUnit(fellow, position)
+    this.updateAllFellows()
   }
 
   removeFellow (fellow) {
-    this.scene.remove(fellow)
-    this.fellows = this.fellows.filter((el) => el.id !== fellow.id)
+    fellow.die()
+    this.grid.removeUnit(fellow)
+    this.updateAllFellows()
   }
 
-  searchFellow (x, y) {
+  /* searchFellow (x, y) {
     return this.fellows.filter((el) => Math.floor(el.position.x = Math.floor(x)) && Math.floor(el.position.y) === Math.floor(y))
-  }
+  } */
 
   raycastEvent () {
     window.addEventListener('mousemove', function (e) {
@@ -207,5 +198,13 @@ export default class Webgl {
 
   setMode (string) {
     this.mode = string
+  }
+
+  updateAllFellows () {
+    this.fellows = this.grid.getAllUnits()
+  }
+
+  updatePosition (fellow) {
+    this.grid.updatePosition(fellow)
   }
 }

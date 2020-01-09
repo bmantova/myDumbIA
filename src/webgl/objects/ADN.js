@@ -12,7 +12,7 @@ export default class ADN {
       swim: options.capacity.swim ? options.capacity.swim : 0,
       breathing: options.capacity.breathing ? options.capacity.breathing : 0.1,
       fly: options.capacity.fly ? options.capacity.fly : 0, // WINGS
-      adaptation: options.capacity.adaptation ? options.capacity.adaptation : 1,
+      adaptation: options.capacity.adaptation ? options.capacity.adaptation : 0.5,
       longevity: options.capacity.longevity ? options.capacity.longevity : 0.5
     }
     this.reproduction = {
@@ -20,7 +20,7 @@ export default class ADN {
       litter: options.reproduction.litter ? options.reproduction.litter : 0.3
     }
     this.diet = {
-      carnivorous: options.diet.carnivorous ? options.diet.carnivorous : 0.5
+      carnivorous: options.diet.carnivorous ? options.diet.carnivorous : 0
     }
     this.morphology = {
       size: options.morphology.size ? options.morphology.size : 0.1, // GLOBAL
@@ -98,6 +98,7 @@ export default class ADN {
         const rand = Math.random()
         if (rand < adaptationCoeff) {
           acc[key] = this.clamp(ADN[key] + (rand - 0.5) * adaptationCoeff * 0.1)
+          console.log(acc[key], ADN[key])
         } else {
           acc[key] = ADN[key]
         }

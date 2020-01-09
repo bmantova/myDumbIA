@@ -197,11 +197,11 @@ button[disabled]{
 }
 
 #mapAbout {
-  width:100%;
   height:100%;
   display:flex;
   flex-direction: column;
   align-items: center;
+  position:relative;
 }
 
 .returnButton {
@@ -247,4 +247,9 @@ button[disabled]{
   width: 10px;
   height: 10px;
   cursor: pointer;
+}
+
+#datGui {
+  position:absolute;
+  right:0;
 }
