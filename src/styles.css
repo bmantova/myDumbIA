@@ -158,6 +158,8 @@ button[disabled]{
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background: rgb(212, 188, 155);
+  color: rgb(139,69,19);
 }
 
 .appearAnimation {
@@ -201,7 +203,25 @@ button[disabled]{
   display:flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   position:relative;
+}
+
+.predation, .adn {
+  text-align: center;
+}
+
+#About .title {
+  font-size:18px;
+  font-weight: bold;
+}
+
+.adn .title {
+  margin-top: 10px;
+}
+
+#About .description {
+  margin-bottom: 10px;
 }
 
 .returnButton {
@@ -212,6 +232,12 @@ button[disabled]{
 
 .returnIcon {
   width: 30px;
+}
+
+#datGui {
+  position:absolute;
+  right:0;
+  top: 80px;
 }
 
 /* TIME SCALE */
@@ -247,9 +273,4 @@ button[disabled]{
   width: 10px;
   height: 10px;
   cursor: pointer;
-}
-
-#datGui {
-  position:absolute;
-  right:0;
 }
