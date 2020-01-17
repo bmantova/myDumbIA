@@ -31,13 +31,13 @@ export default {
     },
     VEGETATION: {
       FALLING_TIME: 200,
-      MAX_TREES: 2000,
+      MAX_TREES: 1000,
       SEED_EVERY: 50,
       MAX_LIFE: 5000
     }
   },
   FELLOW: {
-    INITIAL_NUMBER: 200
+    INITIAL_NUMBER: 50
   },
   VIRUS: {
     INITIAL_APPEAR: 0.05
