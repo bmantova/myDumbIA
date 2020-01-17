@@ -11,6 +11,7 @@ export default class Ressource extends Object3D {
     this.density = options.density ? options.density : 1
     this.size = options.size ? options.size : 1
     this.alive = true
+    this.gridPosition = { x: 0, y: 0 }
 
     this.type = options.type ? options.type : constants.RESSOURCES.TYPES.VEGETATION
 

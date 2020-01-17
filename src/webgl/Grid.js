@@ -8,6 +8,8 @@ export default class Grid {
     this.scene = options.scene
     this.propagationMatrix = [[1, 1, 1], [1, 0, 1], [1, 1, 1]]
 
+    this.length = 0
+
     for (let i = 0; i < this.sub.length; i++) {
       this.sub[i] = new Array(constants.GROUND.SUB_ARRAY)
       for (let j = 0; j < constants.GROUND.SUB_ARRAY; j++) {
@@ -20,34 +22,11 @@ export default class Grid {
     return this.sub.flat(3)
   }
 
-  getAdjIndexes (position) {
-    const coords = this.getIndexes(position)
-    const up = coords.x - 1
-    const down = coords.x + 1
-    const left = coords.y - 1
-    const right = coords.y + 1
-
-    const adj = []
-    if (up > -1) {
-      adj.push({ x: up, y: coords.y })
-    }
-    if (down < constants.GROUND.SUB_ARRAY) {
-      adj.push({ x: down, y: coords.y })
-    }
-    if (left > -1) {
-      adj.push({ x: coords.x, y: left })
-    }
-    if (right < constants.GROUND.SUB_ARRAY) {
-      adj.push({ x: coords.x, y: right })
-    }
-    return adj
-  }
-
   getIndexes (position) {
     const offset = constants.GROUND.SUB_ARRAY / 2
     return {
-      x: Math.floor((position.x / constants.GROUND.SIZE) * constants.GROUND.SUB_ARRAY + offset),
-      y: Math.floor((position.y / constants.GROUND.SIZE) * constants.GROUND.SUB_ARRAY + offset)
+      x: utils.limit(Math.floor((position.x / constants.GROUND.SIZE) * constants.GROUND.SUB_ARRAY + offset), 0, 32),
+      y: utils.limit(Math.floor((position.z / constants.GROUND.SIZE) * constants.GROUND.SUB_ARRAY + offset), 0, 32)
     }
   }
 
@@ -57,12 +36,29 @@ export default class Grid {
     unit.position.set(position.x, position.y, position.z)
     unit.gridPosition = coords
     this.scene.add(unit)
+    this.length++
   }
 
   removeUnit (unit) {
-    this.scene.remove(unit)
     const coords = this.getIndexes(unit.position)
+    const tp = this.findTruePosition(unit)
+    if (coords.x !== tp.x || coords.y !== tp.y) alert('coords:' + coords.x + ', ' + coords.y + '; tp:' + tp.x + ', ' + tp.y + '; unit' + unit.gridPosition.x + ', ' + unit.gridPosition.y + '; ' + unit.type)
+
     this.sub[coords.x][coords.y] = this.sub[coords.x][coords.y].filter((el) => el.id !== unit.id)
+
+    this.scene.remove(unit)
+    this.length--
+  }
+
+  findTruePosition (unit) { // Parcours dans toutes les cases de la grid
+    for (let i = 0; i < this.sub.length; i++) {
+      for (let j = 0; j < this.sub[i].length; j++) {
+        const res = this.sub[i][j].filter((el) => el.id === unit.id)
+        if (res.length >= 1) return { x: i, y: j }
+      }
+    }
+    console.log('unknow unit ', unit)
+    return { x: false, y: false }
   }
 
   updatePosition (unit) {

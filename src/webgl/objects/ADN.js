@@ -12,7 +12,7 @@ export default class ADN {
       swim: options.capacity.swim ? options.capacity.swim : 0,
       breathing: options.capacity.breathing ? options.capacity.breathing : 0.1,
       fly: options.capacity.fly ? options.capacity.fly : 0, // WINGS
-      adaptation: options.capacity.adaptation ? options.capacity.adaptation : 0.5,
+      adaptation: options.capacity.adaptation ? options.capacity.adaptation : 1,
       longevity: options.capacity.longevity ? options.capacity.longevity : 0.5
     }
     this.reproduction = {
@@ -32,7 +32,9 @@ export default class ADN {
       legs: options.morphology.legs ? options.morphology.legs : 0, // JAMBES
       feet: options.morphology.feet ? options.morphology.feet : 0,
       color: options.morphology.color ? options.morphology.color : 0,
-      tail: options.morphology.tail ? options.morphology.tail : 0 // QUEUE
+      tail: options.morphology.tail ? options.morphology.tail : 0, // QUEUE
+      nLegs: options.morphology.nLegs ? options.morphology.nLegs : 0.25, // NUMBER OF LEGS
+      nArms: options.morphology.nArms ? options.morphology.nArms : 0.25 // NUMBER OF ARMS
     }
 
     this.store = {
@@ -98,7 +100,6 @@ export default class ADN {
         const rand = Math.random()
         if (rand < adaptationCoeff) {
           acc[key] = this.clamp(ADN[key] + (rand - 0.5) * adaptationCoeff * 0.1)
-          console.log(acc[key], ADN[key])
         } else {
           acc[key] = ADN[key]
         }
