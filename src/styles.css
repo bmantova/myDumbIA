@@ -160,6 +160,7 @@ button[disabled]{
   justify-content: center;
   background: rgb(212, 188, 155);
   color: rgb(139,69,19);
+  overflow-y: scroll;
 }
 
 .appearAnimation {
