@@ -98,7 +98,6 @@ export default class ADN {
         const rand = Math.random()
         if (rand < adaptationCoeff) {
           acc[key] = this.clamp(ADN[key] + (rand - 0.5) * adaptationCoeff * 0.1)
-          console.log(acc[key], ADN[key])
         } else {
           acc[key] = ADN[key]
         }
