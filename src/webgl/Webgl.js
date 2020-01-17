@@ -70,7 +70,7 @@ export default class Webgl {
 
     this.ground = new Ground()
     this.grid = new Grid({ scene: this.scene })
-    this.fellows = this.grid.getAllUnits()
+    this.updateAllFellows()
 
     window.addEventListener('resize', this.onResize, false)
 
@@ -139,6 +139,7 @@ export default class Webgl {
       this.controls.update()
 
       utils.debug('#fellows', this.fellows.length)
+      utils.debug('#gridLength', this.grid.length)
 
       this.ground.update(this.currentTime++)
 
@@ -160,11 +161,14 @@ export default class Webgl {
 
   addFellow (fellow, position) {
     this.grid.addUnit(fellow, position)
+    console.log('addFel')
     this.updateAllFellows()
   }
 
   removeFellow (fellow) {
+    if (fellow.type === constants.RESSOURCES.TYPES.VEGETATION) alert('errrororor')
     fellow.die()
+    console.log('rmFel')
     this.grid.removeUnit(fellow)
     this.updateAllFellows()
   }

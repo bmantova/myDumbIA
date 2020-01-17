@@ -25,7 +25,8 @@ export default class Fellow extends Ressource {
     this.uneatableEx = []
     this.virus = false
     this.flyingOffset = utils.randint(0, 1000)
-    this.gridPosition = { x: 0, y: 0 }
+
+    this.type = constants.RESSOURCES.TYPES.MEAT
 
     const material = new RawShaderMaterial({
       uniforms: {
@@ -56,17 +57,43 @@ export default class Fellow extends Ressource {
       const headSize = (1 / neckSize) * this.ADN.morphology.head * 2 + 0.001
       this.body.head.scale.set(headSize, headSize, headSize)
 
-      const legsSize = this.ADN.morphology.legs * 2 + 0.001
+      const legsSize = this.ADN.morphology.legs * 2 + 0.001 * (this.ADN.morphology.nLegs <= 0.25 ? 0 : 1)
       this.body.leftLeg.scale.set(legsSize, legsSize, legsSize)
       this.body.rightLeg.scale.set(legsSize, legsSize, legsSize)
 
-      const footSize = this.ADN.morphology.feet * 2 + 0.001
-      this.body.leftFoot.scale.set(footSize, footSize, footSize)
-      this.body.rightFoot.scale.set(footSize, footSize, footSize)
+      this.otherLegs = []
+      for (let i = 0; i < Math.floor(4 * this.ADN.morphology.nLegs) - 1; i++) {
+        const lLeg = this.body.leftLeg.clone()
+        const rLeg = this.body.rightLeg.clone()
 
-      const armsSize = this.ADN.morphology.arms * 2 + 0.001
+        this.otherLegs.push(lLeg)
+        this.otherLegs.push(rLeg)
+
+        rLeg.position.set(0, i * 0.2, -i * 0.5)
+        lLeg.position.set(0, i * 0.2, -i * 0.5)
+
+        this.body.body.add(lLeg)
+        this.body.body.add(rLeg)
+      }
+
+      const armsSize = this.ADN.morphology.arms * 2 + 0.001 * (this.ADN.morphology.nArms <= 0.25 ? 0 : 1)
       this.body.leftArm.scale.set(armsSize, armsSize, armsSize)
       this.body.rightArm.scale.set(armsSize, armsSize, armsSize)
+
+      this.otherArms = []
+      for (let i = 0; i < Math.floor(4 * this.ADN.morphology.nArms) - 1; i++) {
+        const lArm = this.body.leftArm.clone()
+        const rArm = this.body.rightArm.clone()
+
+        this.otherArms.push(lArm)
+        this.otherArms.push(rArm)
+
+        rArm.position.set(0, i * 0.2, -i * 0.5)
+        lArm.position.set(0, i * 0.2, -i * 0.5)
+
+        this.body.body.add(lArm)
+        this.body.body.add(rArm)
+      }
 
       const tailSize = this.ADN.morphology.tail * 2 + 0.001
       this.body.tail.scale.set(tailSize, tailSize, tailSize)
@@ -140,20 +167,22 @@ export default class Fellow extends Ressource {
   }
 
   update (webgl) {
-    this.increaseHunger()
-    this.increaseDesire()
-    this.increaseDirection()
-    this.updateSuitsCoeff(webgl)
-    this.increaseAge()
-    this.increaseEffectiveSize()
-    this.animate(webgl)
-    if (this.virus) {
-      this.getClosest(webgl.getOthers(this))
+    if (this.isAlive()) {
+      this.increaseHunger()
+      this.increaseDesire()
+      this.increaseDirection()
+      this.updateSuitsCoeff(webgl)
+      this.increaseAge()
+      this.increaseEffectiveSize()
+      this.animate(webgl)
+      if (this.virus) {
+        this.getClosest(webgl.getOthers(this))
+      }
+      this.body.traverse((el) => {
+        if (el.material) el.material.uniforms.uDay.value = Math.sin(webgl.currentTime * 0.01)
+      })
+      this.timer++
     }
-    this.body.traverse((el) => {
-      if (el.material) el.material.uniforms.uDay.value = Math.sin(webgl.currentTime * 0.01)
-    })
-    this.timer++
   }
 
   getClosest (array) {
@@ -192,7 +221,7 @@ export default class Fellow extends Ressource {
   findFocus (webgl) {
     if (this.hunger >= 1) {
       if (webgl.fellows.length !== 0 && webgl.ground.vegetation.length !== 0) {
-        const diet = this.clamp((Math.random() * this.ADN.diet.carnivorous), 0, 1)
+        const diet = this.clamp((Math.random() * this.ADN.diet.carnivorous), 0, 1) // le random à revoir
         const others = webgl.getOthers(this, this.uneatableEx)
         if (diet > 0.5) {
           this.focus = this.getClosest(others)
@@ -250,17 +279,15 @@ export default class Fellow extends Ressource {
   }
 
   handleHunger (webgl) {
-    this.hunger = 0
     if (this.focus.element.type === constants.RESSOURCES.TYPES.MEAT) {
-      /* if (this.focus.element.desire >= 1 || this.desire >= 1) {
-        this.handleReproduction(webgl)
-      } */
       if (!this.ADN.canFuckWith(this.focus.element.ADN)) {
+        this.hunger = 0
         webgl.removeFellow(this.focus.element)
       } else {
         this.uneatableEx.push(this.focus.element)
       }
-    } else {
+    } else if (this.focus.element.type === constants.RESSOURCES.TYPES.VEGETATION) {
+      this.hunger = 0
       webgl.ground.removeTree(this.focus.element)
     }
     this.focus = null
@@ -294,38 +321,40 @@ export default class Fellow extends Ressource {
   }
 
   move (webgl) {
-    if (this.canFuck(webgl) || this.canEat(webgl)) {
-      if (!this.focus) {
-        this.findFocus(webgl)
-      } else {
-        this.updateFocus(webgl)
-      }
+    if (this.isAlive()) {
+      if ((this.canFuck(webgl) || this.canEat(webgl))) {
+        if (!this.focus) {
+          this.findFocus(webgl)
+        } else {
+          this.updateFocus(webgl)
+        }
 
-      if (this.focus && this.focus.element) {
-        const deltaX = (this.focus.element.position.x - this.position.x)
-        const deltaZ = (this.focus.element.position.z - this.position.z)
-        if (deltaX !== 0) {
-          this.position.x += (deltaX / Math.abs(deltaX)) * this.getSpeed()
+        if (this.focus && this.focus.element) {
+          const deltaX = (this.focus.element.position.x - this.position.x)
+          const deltaZ = (this.focus.element.position.z - this.position.z)
+          if (deltaX !== 0) {
+            this.position.x += (deltaX / Math.abs(deltaX)) * this.getSpeed()
+          }
+          if (deltaZ !== 0) {
+            this.position.z += (deltaZ / Math.abs(deltaZ)) * this.getSpeed()
+          }
+          this.handleCollision(webgl)
+          this.rotation.y = Math.atan(deltaZ / deltaX)
+        } else {
+          this.position.x += Math.cos(this.direction) * this.getSpeed()
+          this.position.z += Math.sin(this.direction) * this.getSpeed()
+          this.rotation.y = -this.direction - Math.PI / 2
         }
-        if (deltaZ !== 0) {
-          this.position.z += (deltaZ / Math.abs(deltaZ)) * this.getSpeed()
-        }
-        this.handleCollision(webgl)
-        this.rotation.y = Math.atan(deltaZ / deltaX)
       } else {
         this.position.x += Math.cos(this.direction) * this.getSpeed()
         this.position.z += Math.sin(this.direction) * this.getSpeed()
         this.rotation.y = -this.direction - Math.PI / 2
       }
-    } else {
-      this.position.x += Math.cos(this.direction) * this.getSpeed()
-      this.position.z += Math.sin(this.direction) * this.getSpeed()
-      this.rotation.y = -this.direction - Math.PI / 2
-    }
-    this.clampPosition()
-    this.position.y = webgl.ground.getHeight(this.position.x, this.position.z) - 2 + this.ADN.morphology.legs * 4// + (this.ADN.capacity.fly > 0 ? this.flyingTime(webgl.currentTime) * this.ADN.capacity.fly * 50 : 0)
+      this.clampPosition()
+      this.position.y = webgl.ground.getHeight(this.position.x, this.position.z) - 2 + this.ADN.morphology.legs * 4// + (this.ADN.capacity.fly > 0 ? this.flyingTime(webgl.currentTime) * this.ADN.capacity.fly * 50 : 0)
 
-    webgl.updatePosition(this)
+      webgl.updatePosition(this)
+    }
   }
 
   flyingTime (t) {
@@ -339,16 +368,19 @@ export default class Fellow extends Ressource {
     this.body.leftLeg.rotation.x = Math.sin(t * this.getSpeed() * 3) * 0.5
     this.body.rightLeg.rotation.x = Math.sin(t * this.getSpeed() * 3 + Math.PI) * 0.5
 
+    for (let i = 0; i < this.otherLegs.length; i++) {
+      this.otherLegs[i].rotation.x = Math.sin(t * this.getSpeed() * 3 + (i % 2 === 0 ? 0 : Math.PI) + i * 0.5) * 0.5
+    }
+
     this.body.leftArm.rotation.x = Math.sin(t * this.getSpeed()) * 0.3
     this.body.rightArm.rotation.x = Math.sin(t * this.getSpeed() + Math.PI) * 0.3
 
-    if (this.flyingTime(webgl.currentTime) % Math.PI > Math.PI / 2) {
-      this.body.leftWing.rotation.z = Math.sin(t * 6 * (1 - this.ADN.capacity.fly)) * 0.5
-      this.body.rightWing.rotation.z = -Math.sin(t * 6 * (1 - this.ADN.capacity.fly)) * 0.5
-    } else {
-      this.body.leftWing.rotation.z = 0
-      this.body.rightWing.rotation.z = 0
+    for (let i = 0; i < this.otherArms.length; i++) {
+      this.otherArms[i].rotation.x = Math.sin(t * this.getSpeed() * 3 + (i % 2 === 0 ? 0 : Math.PI) + i * 0.5) * 0.5
     }
+
+    this.body.leftWing.rotation.z = Math.sin(t * 6 * (1 - this.ADN.capacity.fly)) * 0.5
+    this.body.rightWing.rotation.z = -Math.sin(t * 6 * (1 - this.ADN.capacity.fly)) * 0.5
 
     this.body.neck.rotation.y = Math.sin(t * 2) * 0.2
     this.body.head.rotation.z = Math.sin(t * 2) * 0.2
@@ -357,7 +389,7 @@ export default class Fellow extends Ressource {
   }
 
   handleDeath (webgl) {
-    if (this.hunger >= 2 || this.age >= 1) {
+    if (this.isAlive() && (this.hunger >= 2 || this.age >= 1)) {
       webgl.removeFellow(this)
       console.log('mort vieillesse ou de faim')
     }

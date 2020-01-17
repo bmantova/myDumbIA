@@ -32,19 +32,12 @@ export default class FellowModel extends Object3D {
     this.leftWing.parent = this.body
     this.rightWing.parent = this.body
 
-    this.leftLeg = this.getObjectByName('leftLeg_Cube.012')
+    this.leftLeg = this.getObjectByName('leftLeg_Cube.025')
     this.leftLeg.position.set(0, -0.1, 0.8)
-    this.rightLeg = this.getObjectByName('rightLeg_Cube.002')
+    this.rightLeg = this.getObjectByName('rightLeg_Cube.024')
     this.rightLeg.position.set(0, -0.1, 0.8)
     this.leftLeg.parent = this.body
     this.rightLeg.parent = this.body
-
-    this.leftFoot = this.getObjectByName('leftFoot_Cube.008')
-    this.leftFoot.position.set(-1, -2.5, -0.6)
-    this.rightFoot = this.getObjectByName('rightFoot_Cube.013')
-    this.rightFoot.position.set(1, -2.5, -0.6)
-    this.leftFoot.parent = this.leftLeg
-    this.rightFoot.parent = this.rightLeg
   }
 
   clone () {
