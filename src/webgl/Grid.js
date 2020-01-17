@@ -1,4 +1,5 @@
 import constants from 'utils/constants'
+import utils from 'utils/utils'
 // import Fellow from './objects/Fellow'
 
 export default class Grid {
@@ -84,9 +85,11 @@ export default class Grid {
     const potentialTargets = []
 
     let n = 0
-    while (potentialTargets.length === 0 && n < constants.GROUND.SUB_ARRAY + 1) {
-      for (let i = 0; i < mapMatrix.length; i++) {
-        for (let j = 0; j < mapMatrix[i].length; j++) {
+    while (potentialTargets.length === 0 && n <= constants.GROUND.SUB_ARRAY) {
+      const begin = utils.limit(element.gridPosition.x - n, 0, constants.GROUND.SUB_ARRAY - 1)
+      const end = utils.limit(element.gridPosition.x + n, 0, constants.GROUND.SUB_ARRAY - 1)
+      for (let i = begin; i <= end; i++) {
+        for (let j = begin; j <= end; j++) {
           if (mapMatrix[i][j] === 1) {
             potentialTargets.push(this.sub[i][j].filter((e) => {
               return (e.id !== element.id) && !toEject.includes(e)

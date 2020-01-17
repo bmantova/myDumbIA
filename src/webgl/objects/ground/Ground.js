@@ -121,7 +121,7 @@ export default class Ground extends Object3D {
     this.vegetation = this.grid.getAllUnits()
   }
 
-  initialBunchOfTrees (n = 500) {
+  initialBunchOfTrees (n = 200) {
     for (let i = 0; i < n; i++) {
       this.addRandomVegetation(constants.GROUND.SIZE * 0.1)
     }
