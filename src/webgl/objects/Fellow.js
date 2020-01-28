@@ -189,9 +189,9 @@ export default class Fellow extends Ressource {
     const distances = []
     array.forEach((element) => {
       const dist = this.position.distanceTo(element.position)
-      if (element.type === constants.RESSOURCES.TYPES.MEAT && (this.virus && !element.virus) && dist < this.virus.distance && Math.random() < this.virus.transmission) {
+      /* if (element.type === constants.RESSOURCES.TYPES.MEAT && (this.virus && !element.virus) && dist < this.virus.distance && Math.random() < this.virus.transmission) {
         element.catchVirus(this.virus)
-      }
+      } */
       distances.push({ element: element, distance: dist })
     })
 
@@ -251,11 +251,6 @@ export default class Fellow extends Ressource {
 
   handleDesire (webgl) {
     this.handleReproduction(webgl)
-    if (this.focus.element.hunger >= 1) {
-      this.focus.element.hunger = 0
-      webgl.removeFellow(this)
-      this.focus.element.focus = null
-    }
     this.focus = null
   }
 
@@ -282,6 +277,7 @@ export default class Fellow extends Ressource {
     if (this.focus.element.type === constants.RESSOURCES.TYPES.MEAT) {
       if (!this.ADN.canFuckWith(this.focus.element.ADN)) {
         this.hunger = 0
+        console.log('eatFel')
         webgl.removeFellow(this.focus.element)
       } else {
         this.uneatableEx.push(this.focus.element)

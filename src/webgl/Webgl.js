@@ -139,7 +139,6 @@ export default class Webgl {
       this.controls.update()
 
       utils.debug('#fellows', this.fellows.length)
-      utils.debug('#gridLength', this.grid.length)
 
       this.ground.update(this.currentTime++)
 
@@ -167,9 +166,8 @@ export default class Webgl {
 
   removeFellow (fellow) {
     if (fellow.type === constants.RESSOURCES.TYPES.VEGETATION) alert('errrororor')
-    fellow.die()
-    console.log('rmFel')
     this.grid.removeUnit(fellow)
+    fellow.die()
     this.updateAllFellows()
   }
 

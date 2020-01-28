@@ -147,6 +147,7 @@ export default class Ground extends Object3D {
   }
 
   removeTree (elem) {
+    elem.die()
     this.grid.removeUnit(elem)
     this.vegetation = this.grid.getAllUnits()
   }
@@ -214,7 +215,6 @@ export default class Ground extends Object3D {
     // utils.debug('time', time * constants.TIME.SPEED)
     utils.debug('day', Math.floor(time * timeMult / (Math.PI * 2)))
     utils.debug('#trees', this.vegetation.length)
-    utils.debug('#treesGridLen', this.grid.length)
   }
 
   getVegetation (elem) {
