@@ -41,6 +41,9 @@ export default class Grid {
 
   removeUnit (unit) {
     const coords = this.getIndexes(unit.position)
+    console.log(unit.position)
+    console.log(coords)
+    console.log('test')
     const tp = this.findTruePosition(unit)
     if (coords.x !== tp.x || coords.y !== tp.y) alert('coords:' + coords.x + ', ' + coords.y + '; tp:' + tp.x + ', ' + tp.y + '; unit' + unit.gridPosition.x + ', ' + unit.gridPosition.y + '; ' + unit.type)
 
