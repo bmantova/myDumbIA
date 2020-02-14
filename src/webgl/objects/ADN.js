@@ -1,4 +1,5 @@
 import constants from 'utils/constants'
+import utils from 'utils/utils'
 
 export default class ADN {
   constructor (options = { capacity: {}, reproduction: {}, morphology: {} }) {
@@ -16,8 +17,8 @@ export default class ADN {
       longevity: options.capacity.longevity ? options.capacity.longevity : 0.5
     }
     this.reproduction = {
-      interval: options.reproduction.interval ? options.reproduction.interval : 0.2,
-      litter: options.reproduction.litter ? options.reproduction.litter : 0.3
+      interval: options.reproduction.interval ? options.reproduction.interval : 0.4,
+      litter: options.reproduction.litter ? options.reproduction.litter : 0.4
     }
     this.diet = {
       carnivorous: options.diet.carnivorous ? options.diet.carnivorous : 0
@@ -146,5 +147,16 @@ export default class ADN {
     const ADNTemperature = constants.SUITS.TEMPERATURE.find((el) => el.max >= Math.round(biome.temperature * 100) / 100).ADN
     const ADNHumidity = constants.SUITS.HUMIDITY.find((el) => el.max >= Math.round(biome.humidity * 100) / 100).ADN
     return this.deepAverageObjects(this.deepAverageObjects(ADNHeight, ADNTemperature), ADNHumidity)
+  }
+
+  toString () {
+    let str = ''
+    for (const type in this.store) {
+      str += '<h2>' + type + '</h2>'
+      for (const key in this.store[type]) {
+        str += '<p>' + key + '<b>' + utils.virg(this.store[type][key], 3) + '</b></p>'
+      }
+    }
+    return str
   }
 }

@@ -28,6 +28,15 @@ import Fellow from './objects/Fellow'
 import FellowModel from './objects/FellowModel'
 import constants from 'utils/constants'
 import { OBJLoader } from './loader/OBJLoader.js'
+import Virus from 'objects/Virus.js'
+
+/* TODO
+
+ *** INTÉRACTIONS UTILISATEUR ***
+  - Laisser le choix de l'ADN de base à l'utilisateur
+  - Permettre de lancer un virus
+
+*/
 
 export default class Webgl {
   constructor ($parent) {
@@ -52,7 +61,7 @@ export default class Webgl {
       0.1,
       2000
     )
-    this.camera.position.set(500, 100, 400)
+    this.camera.position.set(-20, 15, 20)
     this.scene.add(this.camera)
     this.scene.background = new Color(0x111)
 
@@ -76,7 +85,16 @@ export default class Webgl {
 
     this.ts = new TimeScale()
 
+    this.renderEnabled = true
+    this.running = true
+    this.tries = 0
+    this.best = 0
+
+    this.clicked = false
+    this.isWatched = false
+
     this.loadObj()
+    this.keyEvents()
   }
 
   onResize () {
@@ -89,24 +107,31 @@ export default class Webgl {
   init (obj) {
     this.fellowGeometry = obj
 
-    // this.fellows = []
     this.fellowModel = new FellowModel({ object: this.fellowObj })
-    console.log(this.fellowModel)
-
-    for (let i = 0; i < constants.FELLOW.INITIAL_NUMBER; i++) {
-      const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE * 0.1, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE * 0.1 }
-      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: 0.5 } }), type: constants.RESSOURCES.TYPES.MEAT, object: this.fellowModel }), position)
-    }
-    // console.log(this.grid.sub)
-
-    this.ground.initialBunchOfTrees()
 
     this.scene.add(this.ground)
 
+    this.sparkOfLife()
+
     this.raycastEvent()
+    this.clickEvent()
 
     this.onResize()
     this.render()
+  }
+
+  sparkOfLife () {
+    this.best = Math.max(this.best, this.ground.day)
+    this.currentTime = 0
+    for (let i = 0; i < constants.FELLOW.INITIAL_NUMBER; i++) {
+      const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE * 0.05, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE * 0.05 }
+      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: 0.5 } }), type: constants.RESSOURCES.TYPES.MEAT, object: this.fellowModel }), position)
+    }
+
+    this.ground.initialBunchOfTrees()
+    this.tries++
+    utils.debug('#try', this.tries)
+    utils.debug('best trie', this.best)
   }
 
   loadObj () {
@@ -134,21 +159,34 @@ export default class Webgl {
     if (this.mode === 'run') {
       this.stats.begin()
 
-      this.currentTime += constants.TIME.SPEED
-
       this.controls.update()
 
-      utils.debug('#fellows', this.fellows.length)
+      if (this.running) {
+        this.currentTime += constants.TIME.SPEED
 
-      this.ground.update(this.currentTime++)
+        utils.debug('#fellows', this.fellows.length)
+        this.ground.update(this.currentTime, this.camera.position)
 
-      this.fellows.forEach((element) => {
-        element.update(this)
-        element.move(this)
-        element.handleDeath(this)
-      })
+        let nVirus = 0
 
-      this.composer.render()
+        this.fellows.forEach((element) => {
+          element.update(this, this.camera.position)
+          element.move(this)
+          element.handleDeath(this)
+          if (element.virus) nVirus++
+        })
+
+        utils.debug('#sick', nVirus)
+
+        if (this.fellows.length === 0) {
+          this.sparkOfLife()
+        }
+        if (this.isWatched && Math.floor(this.currentTime / constants.TIME.SPEED) % 20 === 0) {
+          this.isWatched.updateInfo()
+        }
+      }
+
+      if (this.renderEnabled) this.composer.render()
       this.stats.end()
     }
     requestAnimationFrame(this.render)
@@ -159,8 +197,9 @@ export default class Webgl {
   }
 
   addFellow (fellow, position) {
+    if (Math.random() <= constants.VIRUS.INITIAL_APPEAR) fellow.catchVirus(new Virus())
     this.grid.addUnit(fellow, position)
-    console.log('addFel')
+    // console.log('addFel')
     this.updateAllFellows()
   }
 
@@ -191,10 +230,17 @@ export default class Webgl {
 
       if (intersected.length > 0) {
         const cur = this.fellows[i - 1]
-        if (cur) utils.mousewin('Fellow #' + i, cur.toString(), e.clientX, e.clientY)
+        if (cur) {
+          if (this.clicked) {
+            cur.displayInfo()
+            this.isWatched = cur
+          }
+          utils.mousewin('Fellow #' + i, cur.toString(), e.clientX, e.clientY)
+        }
       } else {
         utils.mousewin('close')
       }
+      this.clicked = false
     }.bind(this))
   }
 
@@ -208,5 +254,31 @@ export default class Webgl {
 
   updatePosition (fellow) {
     this.grid.updatePosition(fellow)
+  }
+
+  keyEvents () {
+    window.addEventListener('keyup', (e) => {
+      // alert(e.keyCode)
+      switch (e.keyCode) {
+        case 72: // h
+          this.renderEnabled = !this.renderEnabled
+          break
+        case 32: // SPACE
+          this.running = !this.running
+          break
+      }
+    })
+  }
+
+  clickEvent () {
+    const self = this
+
+    window.addEventListener('click', function () {
+      self.clicked = true
+    })
+    document.getElementById('info').addEventListener('click', function () {
+      document.getElementById('info').style.animation = '0.5s hide forwards'
+      this.isWatched = false
+    })
   }
 }

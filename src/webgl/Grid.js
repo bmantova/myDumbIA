@@ -25,8 +25,8 @@ export default class Grid {
   getIndexes (position) {
     const offset = constants.GROUND.SUB_ARRAY / 2
     return {
-      x: utils.limit(Math.floor((position.x / constants.GROUND.SIZE) * constants.GROUND.SUB_ARRAY + offset), 0, 32),
-      y: utils.limit(Math.floor((position.z / constants.GROUND.SIZE) * constants.GROUND.SUB_ARRAY + offset), 0, 32)
+      x: utils.limit(Math.floor((position.x / constants.GROUND.SIZE) * constants.GROUND.SUB_ARRAY + offset), 0, constants.GROUND.SUB_ARRAY - 1),
+      y: utils.limit(Math.floor((position.z / constants.GROUND.SIZE) * constants.GROUND.SUB_ARRAY + offset), 0, constants.GROUND.SUB_ARRAY - 1)
     }
   }
 
@@ -40,11 +40,10 @@ export default class Grid {
   }
 
   removeUnit (unit) {
-    const coords = this.getIndexes(unit.position)
-    const tp = this.findTruePosition(unit)
-    if (coords.x !== tp.x || coords.y !== tp.y) alert('tp:' + tp.x + ', ' + tp.y + '; unit' + unit.gridPosition.x + ', ' + unit.gridPosition.y + '; pos' + Math.floor(unit.position.x) + ', ' + Math.floor(unit.position.z))
+    // const coords = this.getIndexes(unit.position)
+    // if (coords.x !== tp.x || coords.y !== tp.y) alert('tp:' + tp.x + ', ' + tp.y + '; unit' + unit.gridPosition.x + ', ' + unit.gridPosition.y + '; pos' + Math.floor(unit.position.x) + ', ' + Math.floor(unit.position.z))
 
-    this.sub[coords.x][coords.y] = this.sub[coords.x][coords.y].filter((el) => el.id !== unit.id)
+    this.sub[unit.gridPosition.x][unit.gridPosition.y] = this.sub[unit.gridPosition.x][unit.gridPosition.y].filter((el) => el.id !== unit.id)
 
     this.scene.remove(unit)
     this.length--
@@ -69,7 +68,11 @@ export default class Grid {
     }
   }
 
-  getOthers (element, toEject) {
+  empty () {
+
+  }
+
+  getOthers (element, toEject = []) {
     const mapMatrix = new Array(constants.GROUND.SUB_ARRAY)
     for (let i = 0; i < mapMatrix.length; i++) {
       mapMatrix[i] = new Array(constants.GROUND.SUB_ARRAY)

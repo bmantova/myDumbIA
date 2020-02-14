@@ -26,6 +26,8 @@ export default class Ground extends Object3D {
     this.humidity = new Map(constants.GROUND.MAPS.HUMIDITY)
     this.temperature = new Map(constants.GROUND.MAPS.TEMPERATURE)
 
+    this.day = 0
+
     this.geometry = new PlaneBufferGeometry(constants.GROUND.SIZE, constants.GROUND.SIZE, constants.GROUND.SUB, constants.GROUND.SUB)
     this.underGeometry = new PlaneBufferGeometry(constants.GROUND.SIZE, constants.GROUND.SIZE, constants.GROUND.SUB, constants.GROUND.SUB)
 
@@ -121,7 +123,11 @@ export default class Ground extends Object3D {
     this.vegetation = this.grid.getAllUnits()
   }
 
-  initialBunchOfTrees (n = 200) {
+  initialBunchOfTrees (n = 100) {
+    while (this.vegetation.length > 0) {
+      this.removeTree(this.vegetation[0])
+    }
+
     for (let i = 0; i < n; i++) {
       this.addRandomVegetation(constants.GROUND.SIZE * 0.1)
     }
@@ -152,6 +158,10 @@ export default class Ground extends Object3D {
     this.vegetation = this.grid.getAllUnits()
   }
 
+  eatTree (elem) {
+    elem.eat()
+  }
+
   addRandomVegetation (size = constants.GROUND.SIZE) {
     let x
     let y
@@ -177,7 +187,7 @@ export default class Ground extends Object3D {
 
   addVegetationFromParent (parent) {
     const n = Math.round(utils.randint(0, constants.RESSOURCES.VEGETATION.MAX_TREES / this.vegetation.length))
-    const zone = parent.size * 10
+    const zone = parent.size * 15
 
     for (let i = 0; i < n; i++) {
       const x = utils.loopLimit(parent.position.x + utils.randfloat(-zone, zone), 0, constants.GROUND.SIZE / 2)
@@ -186,7 +196,7 @@ export default class Ground extends Object3D {
     }
   }
 
-  update (time) {
+  update (time, posCam) {
     const timeMult = 0.01
 
     this.material.uniforms.uTime.value = time * timeMult
@@ -198,7 +208,24 @@ export default class Ground extends Object3D {
     this.material.uniforms.uSunY.value = this.sky.sun.position.y
     this.material.uniforms.uSunZ.value = this.sky.sun.position.z
 
-    this.children.forEach((child) => {
+    const curPart = Math.floor(((this.vegetation.length) / constants.RESSOURCES.VEGETATION.SPLIT_UPDATE) * (time % constants.RESSOURCES.VEGETATION.SPLIT_UPDATE))
+
+    for (let i = 0; i < (this.vegetation.length / constants.RESSOURCES.VEGETATION.SPLIT_UPDATE) && curPart + i < this.vegetation.length; i++) {
+      const child = this.vegetation[curPart + i]
+      if (child.update) {
+        if (child.isAlive()) {
+          child.update(time * timeMult, posCam)
+          if (child.canHaveChild) {
+            child.haveChild()
+            this.addVegetationFromParent(child)
+          }
+        } else {
+          this.addVegetationFromParent(child)
+          this.removeTree(child)
+        }
+      }
+    }
+    /* this.children.forEach((child) => {
       if (child.update) {
         if (child.isAlive()) {
           child.update(time * timeMult)
@@ -211,9 +238,11 @@ export default class Ground extends Object3D {
           this.removeTree(child)
         }
       }
-    })
+    }) */
+    this.sky.update(time * timeMult)
     // utils.debug('time', time * constants.TIME.SPEED)
-    utils.debug('day', Math.floor(time * timeMult / (Math.PI * 2)))
+    this.day = Math.floor(time * timeMult / (Math.PI * 2))
+    utils.debug('day', this.day)
     utils.debug('#trees', this.vegetation.length)
   }
 

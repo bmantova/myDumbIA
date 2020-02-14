@@ -30,17 +30,19 @@ export default {
       DELTA_MAX_DIFFERENCE: 3.5
     },
     VEGETATION: {
-      FALLING_TIME: 200,
-      MAX_TREES: 1000,
-      SEED_EVERY: 50,
-      MAX_LIFE: 5000
+      FALLING_TIME: 50,
+      MAX_TREES: 600,
+      SEED_EVERY: 200,
+      MAX_LIFE: 10000,
+      SPLIT_UPDATE: 4
     }
   },
   FELLOW: {
     INITIAL_NUMBER: 50
   },
   VIRUS: {
-    INITIAL_APPEAR: 0.05
+    INITIAL_APPEAR: 0.01,
+    BEST_VIRUS: 0
   },
   TIME: {
     SPEED: 2.0
