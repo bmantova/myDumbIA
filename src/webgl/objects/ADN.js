@@ -16,6 +16,7 @@ export default class ADN {
       adaptation: options.capacity.adaptation ? options.capacity.adaptation : 1,
       longevity: options.capacity.longevity ? options.capacity.longevity : 0.5
     }
+
     this.reproduction = {
       interval: options.reproduction.interval ? options.reproduction.interval : 0.4,
       litter: options.reproduction.litter ? options.reproduction.litter : 0.4
