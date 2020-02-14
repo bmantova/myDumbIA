@@ -31,7 +31,6 @@ export default class ADN {
       fur: options.morphology.fur ? options.morphology.fur : 0,
       arms: options.morphology.arms ? options.morphology.arms : 0,
       legs: options.morphology.legs ? options.morphology.legs : 0, // JAMBES
-      feet: options.morphology.feet ? options.morphology.feet : 0,
       color: options.morphology.color ? options.morphology.color : 0,
       tail: options.morphology.tail ? options.morphology.tail : 0, // QUEUE
       nLegs: options.morphology.nLegs ? options.morphology.nLegs : 0.25, // NUMBER OF LEGS
