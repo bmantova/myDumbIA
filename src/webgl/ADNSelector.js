@@ -16,6 +16,7 @@ export default class ADNSelector {
   iterateOverADN (obj) {
     return Object.keys(obj).reduce((acc, key) => {
       if (typeof obj[key] === 'object') {
+        this.addTitle(key)
         this.iterateOverADN(obj[key])
       } else if (Object.prototype.hasOwnProperty.call(obj, key) && !isNaN(parseFloat(obj[key]))) {
         this.addCursor(key, obj[key])
@@ -40,5 +41,12 @@ export default class ADNSelector {
 
   updateChosenADN (name, value) {
     this.chosenADN.setParameters(name, value)
+  }
+
+  addTitle (name) {
+    const title = document.createElement('div')
+    title.classList.add('selectorCategoryTitle')
+    title.innerHTML = name
+    this.parent.appendChild(title)
   }
 }
