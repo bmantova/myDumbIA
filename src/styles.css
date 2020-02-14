@@ -373,6 +373,7 @@ button[disabled]{
   justify-content:center;
   height:80%;
   transition: all 0.5s;
+  margin-top: -150%;
 }
 
 #ADNCursors {
