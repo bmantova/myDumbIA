@@ -1,5 +1,5 @@
 import ADN from './objects/ADN'
-// import Cursor from 'utils/cursor'
+import Cursor from 'utils/cursor'
 
 export default class ADNSelector {
   constructor ($parent) {
@@ -25,7 +25,7 @@ export default class ADNSelector {
   }
 
   addCursor (name, value) {
-    // this.cursors.push(new Cursor(name, value))
+    this.cursors.push(new Cursor(name, value))
   }
 
   drawSelectorCard () {
