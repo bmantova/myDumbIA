@@ -1,20 +1,21 @@
 // import constants from './constants'
-// import utils from 'utils/utils'
+import utils from 'utils/utils'
 
 export default class Cursor {
-  constructor (name, value = 50, min = 0, max = 100) {
+  constructor (name, value = 0, min = 0, max = 100, virg = 0) {
     this.name = name
-    this.value = value
+    this.val = value
     this.min = min
     this.max = max
+    this.left = 0
 
     this.DOM = document.createElement('div')
-    this.DOM.classlist.add('cursor_dom')
+    this.DOM.classList.add('cursor_dom')
     this.DOM.id = 'cursor_' + name
-    this.DOM.innerHTML = name
+    this.DOM.innerHTML = name + ' '
 
     this.value = document.createElement('span')
-    this.value.classlist.add('cursor_value')
+    this.value.classList.add('cursor_value')
     this.value.innerHTML = value
 
     this.DOM.appendChild(this.value)
@@ -29,7 +30,12 @@ export default class Cursor {
 
     this.container.appendChild(this.cursor)
 
-    this.elem.addEventListener('mousedown', (e) => {
+    this.update = function (val) {}
+
+    this.down = false
+
+    const self = this
+    this.DOM.addEventListener('mousedown', (e) => {
       self.down = true
     })
     window.addEventListener('mouseup', (e) => {
@@ -41,6 +47,7 @@ export default class Cursor {
     this.container.addEventListener('click', (e) => {
       self.updateY(e.clientX)
     })
+    this.setLeft(0)
   }
 
   setMin (val) {
@@ -53,5 +60,36 @@ export default class Cursor {
 
   setUpdate (func) {
     this.update = func
+  }
+
+  setVirg (v) {
+    this.virg = v
+  }
+
+  updateY (x) {
+    const w = parseInt(this.container.offsetWidth)
+
+    let offsetLeft = 0
+    let node = this.container
+
+    while (node.id !== 'Play') {
+      offsetLeft += node.offsetLeft
+      node = node.parentNode
+    }
+
+    this.setLeft(x - offsetLeft)
+    this.updateValue((this.left / w) * (this.max - this.min) + this.min)
+
+    this.update(this.val)
+  }
+
+  updateValue (val) {
+    this.val = val
+    this.value.innerHTML = utils.virg(this.val, this.virg)
+  }
+
+  setLeft (left) {
+    this.left = utils.limit(left, 0, this.container.offsetWidth)
+    this.cursor.style.left = this.left + 'px'
   }
 }
