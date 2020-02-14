@@ -46,6 +46,13 @@ export default class ADN {
     }
   }
 
+  setParameters (name, value) {
+    if (name in this.capacity) this.capacity[name] = value
+    if (name in this.reproduction) this.reproduction[name] = value
+    if (name in this.diet) this.diet[name] = value
+    if (name in this.morphology) this.morphology[name] = value
+  }
+
   deepSumObjects (obj1, obj2) {
     return Object.keys(obj1).reduce((acc, key) => {
       if (typeof obj2[key] === 'object') {

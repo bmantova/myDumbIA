@@ -4,12 +4,12 @@ import Cursor from 'utils/cursor'
 export default class ADNSelector {
   constructor ($parent) {
     this.parent = document.querySelector('#' + $parent)
-    this.defaultADN = new ADN()
+    this.chosenADN = new ADN()
     this.cursors = []
   }
 
   init () {
-    this.iterateOverADN(this.defaultADN.store)
+    this.iterateOverADN(this.chosenADN.store)
     this.drawSelectorCard()
   }
 
@@ -25,12 +25,19 @@ export default class ADNSelector {
   }
 
   addCursor (name, value) {
-    this.cursors.push(new Cursor(name, value))
+    const cursor = new Cursor(name, value * 100)
+    const self = this
+    cursor.setUpdate((value) => { self.updateChosenADN(name, value / 100) })
+    this.cursors.push(cursor)
   }
 
   drawSelectorCard () {
     for (let i = 0; i < this.cursors.length; i++) {
       this.parent.appendChild(this.cursors[i].DOM)
     }
+  }
+
+  updateChosenADN (name, value) {
+    this.chosenADN.setParameters(name, value)
   }
 }

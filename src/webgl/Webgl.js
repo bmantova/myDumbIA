@@ -23,7 +23,6 @@ import createLight from './objects/Lights'
 import utils from 'utils/utils'
 import TimeScale from 'utils/timescale'
 
-import ADN from 'objects/ADN'
 import Fellow from './objects/Fellow'
 import FellowModel from './objects/FellowModel'
 import constants from 'utils/constants'
@@ -39,8 +38,9 @@ import Virus from 'objects/Virus.js'
 */
 
 export default class Webgl {
-  constructor ($parent) {
+  constructor (props) {
     this.mode = 'pause'
+    this.startingADN = props.startingADN
     this.currentTime = 0
     this.render = this.render.bind(this)
     this.onResize = this.onResize.bind(this)
@@ -51,7 +51,7 @@ export default class Webgl {
     this.renderer.setClearColor(0x333333, 1)
     this.renderer.preserveDrawingBuffer = true
 
-    $parent.appendChild(this.renderer.domElement)
+    props.parent.appendChild(this.renderer.domElement)
 
     this.scene = new Scene()
 
@@ -75,7 +75,7 @@ export default class Webgl {
 
     this.stats = new Stats()
     this.stats.showPanel(0)
-    $parent.appendChild(this.stats.dom)
+    props.parent.appendChild(this.stats.dom)
 
     this.ground = new Ground()
     this.grid = new Grid({ scene: this.scene })
@@ -111,8 +111,6 @@ export default class Webgl {
 
     this.scene.add(this.ground)
 
-    this.sparkOfLife()
-
     this.raycastEvent()
     this.clickEvent()
 
@@ -123,9 +121,10 @@ export default class Webgl {
   sparkOfLife () {
     this.best = Math.max(this.best, this.ground.day)
     this.currentTime = 0
+    console.log(this.startingADN)
     for (let i = 0; i < constants.FELLOW.INITIAL_NUMBER; i++) {
       const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE * 0.05, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE * 0.05 }
-      this.addFellow(new Fellow({ ADN: new ADN({ morphology: { color: 0.5 } }), type: constants.RESSOURCES.TYPES.MEAT, object: this.fellowModel }), position)
+      this.addFellow(new Fellow({ ADN: this.startingADN, type: constants.RESSOURCES.TYPES.MEAT, object: this.fellowModel }), position)
     }
 
     this.ground.initialBunchOfTrees()

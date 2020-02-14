@@ -8,7 +8,10 @@ import GsapAnimations from './animations/GsapAnimations'
 import ADNSelector from './webgl/ADNSelector'
 
 /* eslint-disable-next-line */
-const webgl = new Webgl(document.querySelector('#Play'))
+const adnSelector = new ADNSelector('ADNCursors')
+adnSelector.init()
+
+const webgl = new Webgl({ parent: document.querySelector('#Play'), startingADN: adnSelector.chosenADN })
 webgl.setMode('pause')
 
 /* eslint-disable-next-line */
@@ -25,6 +28,7 @@ const playButton = document.querySelector('.playButton')
 playButton.addEventListener('click', () => {
   document.querySelector('#Play').classList.add('appearAnimation')
   webgl.setMode('run')
+  webgl.sparkOfLife()
 })
 
 const aboutButton = document.querySelector('.aboutButton')
@@ -54,5 +58,3 @@ closeADNCursorsButton.addEventListener('click', () => {
 
 /* eslint-disable-next-line */
 const mapSimulator = new MapSimulator(document.querySelector('#mapAbout'))
-const adnSelector = new ADNSelector('ADNCursors')
-adnSelector.init()
