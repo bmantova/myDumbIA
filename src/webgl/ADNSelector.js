@@ -6,7 +6,6 @@ export default class ADNSelector {
     this.parent = document.querySelector('#' + $parent)
     this.defaultADN = new ADN()
     this.cursors = []
-    this.init()
   }
 
   init () {

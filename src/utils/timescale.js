@@ -1,6 +1,6 @@
 import constants from './constants'
 import utils from './utils'
-import Cursor from './cursor'
+// import Cursor from './cursor'
 
 export default class TimeScale {
   constructor () {
@@ -11,8 +11,8 @@ export default class TimeScale {
     this.cursor = document.getElementById('ts_cursor')
     this.value = document.getElementById('ts_value')
 
-    const cursor = new Cursor('timescale')
-    cursor.setMax(5)
+    // const cursor = new Cursor('timescale')
+    // cursor.setMax(5)
 
     this.down = false
     const self = this

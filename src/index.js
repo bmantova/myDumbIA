@@ -5,6 +5,7 @@ import MapSimulator from './webgl/objects/mapSimulator/mapSimulator'
 import HomeScreen from './webgl/objects/HomeScreen'
 import SnapAnimations from './animations/SnapAnimations'
 import GsapAnimations from './animations/GsapAnimations'
+import ADNSelector from './webgl/ADNSelector'
 
 /* eslint-disable-next-line */
 const webgl = new Webgl(document.querySelector('#Play'))
@@ -41,5 +42,17 @@ returnButton.addEventListener('click', () => {
   gsapAnimations.pause()
 })
 
+const openADNCursorsButton = document.querySelector('#openADNCursorsButton')
+openADNCursorsButton.addEventListener('click', () => {
+  document.querySelector('#ADNCursors').style.marginTop = '0%'
+})
+
+const closeADNCursorsButton = document.querySelector('#closeADNCursorsButton')
+closeADNCursorsButton.addEventListener('click', () => {
+  document.querySelector('#ADNCursors').style.marginTop = '-80%'
+})
+
 /* eslint-disable-next-line */
 const mapSimulator = new MapSimulator(document.querySelector('#mapAbout'))
+const adnSelector = new ADNSelector('ADNCursors')
+adnSelector.init()

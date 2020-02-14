@@ -29,7 +29,6 @@ import FellowModel from './objects/FellowModel'
 import constants from 'utils/constants'
 import { OBJLoader } from './loader/OBJLoader.js'
 import Virus from 'objects/Virus.js'
-import ADNSelector from './ADNSelector.js'
 
 /* TODO
 
@@ -96,8 +95,6 @@ export default class Webgl {
 
     this.loadObj()
     this.keyEvents()
-
-    this.ADNSelector = new ADNSelector('ADNCursors')
   }
 
   onResize () {
