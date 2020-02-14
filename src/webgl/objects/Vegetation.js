@@ -154,7 +154,7 @@ export default class Vegetation extends Ressource {
     const deadTime = this.born - this.life
     this.quantity = utils.limit(this.quantity + 0.0001, 0, 1)
 
-    if (posCam.distanceTo(this.position) < Math.min(40 * this.effectiveSize + 40, 400)) {
+    if (posCam.distanceTo(this.position) < Math.min(40 * this.effectiveSize + 100, 500)) {
       this.materialFeuilles.uniforms.uDay.value = Math.sin(time)
       if (!this.visible) this.visible = true
     } else if (this.visible) {
