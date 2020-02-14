@@ -49,7 +49,7 @@ openADNCursorsButton.addEventListener('click', () => {
 
 const closeADNCursorsButton = document.querySelector('#closeADNCursorsButton')
 closeADNCursorsButton.addEventListener('click', () => {
-  document.querySelector('#ADNCursors').style.marginTop = '-80%'
+  document.querySelector('#ADNCursors').style.marginTop = '-100%'
 })
 
 /* eslint-disable-next-line */
