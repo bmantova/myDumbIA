@@ -189,14 +189,18 @@ button[disabled]{
   height:100%;
   width:100%;
   z-index:9999998;
-  background-color:white;
   display:flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgb(212, 188, 155);
-  color: rgb(139,69,19);
+  background-color: rgba(0,0,0,0.8);
+  color: white;
   overflow-y: scroll;
+}
+
+.firstpart {
+  display:flex;
+  width:100%;
 }
 
 .appearAnimation {
@@ -251,20 +255,37 @@ button[disabled]{
 #About .title {
   font-size:18px;
   font-weight: bold;
+  margin:5px;
 }
 
-.adn .title {
-  margin-top: 10px;
+.adn, .predation {
+  width:50%;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#mapAbout {
+  width:100%;
 }
 
 #About .description {
-  margin-bottom: 10px;
+  width:300px;
+}
+
+#mapAbout .description {
+  width:auto;
+  margin-bottom:5px;
 }
 
 .returnButton {
   position: absolute;
   top: 20px;
   left: 20px;
+}
+
+.returnButton:hover .returnIcon {
+  transform: scale(0.95);
 }
 
 .returnIcon {
@@ -274,7 +295,7 @@ button[disabled]{
 #datGui {
   position:absolute;
   right:0;
-  top: 80px;
+  top: 30%;
 }
 
 /* TIME SCALE */
@@ -337,13 +358,14 @@ button[disabled]{
 
 #openADNCursorsButton {
   text-align: center;
-  width:150px;
+  width:100px;
   padding:12px;
+  font-size:13px;
   margin-top:20px;
-  background-color: #DDD;
-  opacity: 0.7;
+  background-color: #333;
+  opacity: 0.8;
   margin:auto;
-  color:#333;
+  color:#DDD;
   border-radius:15px;
   cursor:pointer;
   transition: 0.5s;
@@ -351,6 +373,15 @@ button[disabled]{
 
 #openADNCursorsButton:hover {
   opacity: 0.9;
+}
+
+#openADNCursorsButton img {
+  transform:rotate(0deg);
+  transition: all 0.5s;
+}
+
+#openADNCursorsButton:hover img {
+  transform:rotate(180deg);
 }
 
 #closeADNCursorsButton {
