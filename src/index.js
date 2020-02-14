@@ -48,12 +48,12 @@ returnButton.addEventListener('click', () => {
 
 const openADNCursorsButton = document.querySelector('#openADNCursorsButton')
 openADNCursorsButton.addEventListener('click', () => {
-  document.querySelector('#ADNCursors').style.marginTop = '0%'
+  document.querySelector('#ADNCursorsContainer').style.marginTop = '0%'
 })
 
 const closeADNCursorsButton = document.querySelector('#closeADNCursorsButton')
 closeADNCursorsButton.addEventListener('click', () => {
-  document.querySelector('#ADNCursors').style.marginTop = '-100%'
+  document.querySelector('#ADNCursorsContainer').style.marginTop = '-150%'
 })
 
 /* eslint-disable-next-line */

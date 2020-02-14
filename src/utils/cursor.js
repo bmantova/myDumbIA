@@ -54,7 +54,7 @@ export default class Cursor {
   }
 
   init () {
-    this.setLeft((this.val / this.range) * this.getWidth())
+    this.setLeft((this.val / this.range) * (this.getWidth() - 10))
   }
 
   setMin (val) {
