@@ -9,6 +9,8 @@ export default class Cursor {
     this.max = max
     this.left = 0
 
+    this.range = this.max - this.min
+
     this.DOM = document.createElement('div')
     this.DOM.classList.add('cursor_dom')
     this.DOM.id = 'cursor_' + name
@@ -49,10 +51,10 @@ export default class Cursor {
       self.updateY(e.clientX)
     })
     this.setLeft(0)
+  }
 
-    this.DOM.addEventListener('build', function () {
-      alert('coucuo')
-    })
+  init () {
+    this.setLeft((this.val / this.range) * this.getWidth())
   }
 
   setMin (val) {
@@ -91,7 +93,7 @@ export default class Cursor {
     }
 
     this.setLeft(x - offsetLeft)
-    this.updateValue((this.left / w) * (this.max - this.min) + this.min)
+    this.updateValue((this.left / w) * this.range + this.min)
 
     this.update(this.val)
   }

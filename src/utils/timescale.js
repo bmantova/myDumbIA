@@ -6,8 +6,9 @@ export default class TimeScale {
   constructor () {
     this.elem = document.getElementById('time_scale')
 
-    const cursor = new Cursor('timescale')
+    const cursor = new Cursor('timescale', 2)
     this.elem.appendChild(cursor.DOM)
+    cursor.init()
     cursor.setVirg(1)
     cursor.setUpdate((val) => {
       const ratio = val / 100
