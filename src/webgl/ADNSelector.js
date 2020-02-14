@@ -34,6 +34,7 @@ export default class ADNSelector {
   drawSelectorCard () {
     for (let i = 0; i < this.cursors.length; i++) {
       this.parent.appendChild(this.cursors[i].DOM)
+      this.cursors[i].init()
     }
   }
 
