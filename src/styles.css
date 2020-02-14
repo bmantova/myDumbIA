@@ -272,7 +272,10 @@ button[disabled]{
   color: #AAA;
   font-size: 13px;
 }
-#ts_cursor_container {
+.cursor_dom {
+
+}
+.cursor_container {
   height:5px;
   width:200px;
   background-color:rgba(50,50,50,0.5);
@@ -280,16 +283,16 @@ button[disabled]{
   margin:10px;
   cursor:pointer;
 }
-#ts_value {
+.cursor_value {
   color:white;
   font-size:16px;
 }
-#ts_cursor {
+.cursor {
   background-color:white;
   border-radius:5px;
   position: relative;
   left: 15px;
-  top:-20px;
+  top:-2px;
   width: 10px;
   height: 10px;
   cursor: pointer;
