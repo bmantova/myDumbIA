@@ -2,7 +2,7 @@
 import utils from 'utils/utils'
 
 export default class Cursor {
-  constructor (name, value = 0, min = 0, max = 100, virg = 0) {
+  constructor (name, value = 0, width = '80%', min = 0, max = 100, virg = 0) {
     this.name = name
     this.val = value
     this.min = min
@@ -12,6 +12,7 @@ export default class Cursor {
     this.DOM = document.createElement('div')
     this.DOM.classList.add('cursor_dom')
     this.DOM.id = 'cursor_' + name
+    this.DOM.style.width = width
     this.DOM.innerHTML = name + ' '
 
     this.value = document.createElement('span')
@@ -66,13 +67,17 @@ export default class Cursor {
     this.virg = v
   }
 
+  getWidth () {
+    return parseInt(this.container.offsetWidth) - parseInt(this.cursor.offsetWidth)
+  }
+
   updateY (x) {
-    const w = parseInt(this.container.offsetWidth)
+    const w = this.getWidth()
 
     let offsetLeft = 0
     let node = this.container
 
-    while (node.id !== 'Play') {
+    while (node.id !== 'Play' && node.id !== 'ADNCursorsContainer') {
       offsetLeft += node.offsetLeft
       node = node.parentNode
     }
@@ -89,7 +94,7 @@ export default class Cursor {
   }
 
   setLeft (left) {
-    this.left = utils.limit(left, 0, this.container.offsetWidth)
+    this.left = utils.limit(left, 0, this.getWidth())
     this.cursor.style.left = this.left + 'px'
   }
 }
