@@ -1,3 +1,21 @@
+@keyframes show {
+  0% {
+    margin-right:-40%;
+  }
+  100% {
+    margin-right:0%;
+  }
+}
+
+@keyframes hide {
+  0% {
+    margin-right:0%;
+  }
+  100% {
+    margin-right:-40%;
+  }
+}
+
 html, body {
   padding:0px;
   margin:0px;
@@ -16,7 +34,8 @@ html, body {
 }
 #debug>div {
   border-bottom:1px solid #9995;
-  padding: 10px;
+  padding: 6px;
+  font-size:14px;
 }
 .res_title {
   color: #AAA;
@@ -274,4 +293,36 @@ button[disabled]{
   width: 10px;
   height: 10px;
   cursor: pointer;
+}
+
+#info {
+  background-color:#0007;
+  padding:10px;
+  position:fixed;
+  top:0px;
+  right:0px;
+  width:20%;
+  max-height:80%;
+  overflow:auto;
+  color:white;
+  margin-right:-40%;
+  border-radius: 0px 0px 0px 5px;
+  color: #AAA;
+}
+#info h1, #info h2, #info h3 {
+  font-weight:normal;
+  font-size: 0.7em;
+  color:white;
+}
+#info b {
+  color:white;
+  float:right;
+}
+#info p {
+  font-size:12px;
+  padding:0px;
+  margin:0px;
+}
+#info p:hover {
+  background-color: #3335;
 }

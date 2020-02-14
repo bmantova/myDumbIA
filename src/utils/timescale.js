@@ -43,10 +43,10 @@ export default class TimeScale {
     this.elem.addEventListener('mousedown', (e) => {
       self.down = true
     })
-    this.elem.addEventListener('mouseup', (e) => {
+    window.addEventListener('mouseup', (e) => {
       self.down = false
     })
-    this.elem.addEventListener('mousemove', (e) => {
+    window.addEventListener('mousemove', (e) => {
       if (self.down) self.updateY(e.clientX)
     })
     this.container.addEventListener('click', (e) => {

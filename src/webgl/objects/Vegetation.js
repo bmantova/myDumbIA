@@ -8,9 +8,7 @@ import {
   ConeBufferGeometry
 } from 'three'
 
-/** Idée
-  Algo génétique pour les plantes
-*/
+import utils from 'utils/utils'
 
 import constants from 'utils/constants'
 
@@ -27,6 +25,8 @@ export default class Vegetation extends Ressource {
 
     this.size = this.biome.humidity + this.biome.temperature + 1
     this.effectiveSize = this.size * 1.5
+
+    this.quantity = 1
 
     this.life = options.life ? options.life : 100
     this.born = options.born ? options.born : 1
@@ -87,7 +87,7 @@ export default class Vegetation extends Ressource {
     } else if (this.biome.height > 0.2) { // Normaux
       const box = new BoxBufferGeometry(this.effectiveSize * 0.1, this.effectiveSize, this.effectiveSize * 0.1)
 
-      const feuillesGeom = new SphereBufferGeometry(this.effectiveSize * 0.5, 4, 4)
+      const feuillesGeom = new SphereBufferGeometry(this.effectiveSize * 0.5, 4, 3)
 
       tronc = new Mesh(box, materialTronc)
       feuilles = new Mesh(feuillesGeom, this.materialFeuilles)
@@ -96,7 +96,7 @@ export default class Vegetation extends Ressource {
       feuilles.position.y += this.effectiveSize
       type = 3
     } else if (this.biome.height > 0.1) { // coraux
-      const feuillesGeom = new SphereBufferGeometry(this.effectiveSize * 0.3, 3, 4)
+      const feuillesGeom = new SphereBufferGeometry(this.effectiveSize * 0.3, 2, 3)
 
       r = (r + 150)
       v = Math.max(0, v - 150)
@@ -106,7 +106,7 @@ export default class Vegetation extends Ressource {
       feuilles.position.y += this.effectiveSize * 0.5
       type = 4
     } else { // algues
-      const feuillesGeom = new SphereBufferGeometry(this.effectiveSize * 0.5, 3, 3)
+      const feuillesGeom = new SphereBufferGeometry(this.effectiveSize * 0.5, 2, 3)
       r = Math.max(0, r - 150)
       v = Math.max(0, v - 100)
       b = Math.max(0, b - 150)
@@ -143,15 +143,26 @@ export default class Vegetation extends Ressource {
     this.lastChild = 0
   }
 
-  update (time) {
-    this.lastChild++
+  eat () {
+    this.quantity -= 0.2
+    if (this.quantity <= 0) this.die()
+  }
+
+  update (time, posCam) {
+    this.lastChild += constants.RESSOURCES.VEGETATION.SPLIT_UPDATE
     this.born += constants.TIME.SPEED
     const deadTime = this.born - this.life
+    this.quantity = utils.limit(this.quantity + 0.0001, 0, 1)
 
-    this.materialFeuilles.uniforms.uDay.value = Math.sin(time)
+    if (posCam.distanceTo(this.position) < Math.min(40 * this.effectiveSize + 40, 400)) {
+      this.materialFeuilles.uniforms.uDay.value = Math.sin(time)
+      if (!this.visible) this.visible = true
+    } else if (this.visible) {
+      this.visible = false
+    }
 
     if (this.born < this.life) {
-      const scale = (this.born / this.life) * this.size
+      const scale = (this.born / this.life) * this.size * 0.7 * this.quantity
       this.scale.set(scale, scale, scale)
     } else if (deadTime < constants.RESSOURCES.VEGETATION.FALLING_TIME) {
       this.rotateX((Math.PI / 2) / (constants.RESSOURCES.VEGETATION.FALLING_TIME))

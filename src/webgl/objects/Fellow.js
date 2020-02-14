@@ -1,5 +1,5 @@
 import Ressource from './Ressource'
-import { BoxGeometry, Mesh, RawShaderMaterial } from 'three'
+import { Mesh, RawShaderMaterial, SphereBufferGeometry } from 'three'
 import ADN from './ADN'
 import constants from 'utils/constants'
 import utils from 'utils/utils'
@@ -8,7 +8,7 @@ import fellowVertexShader from './ObjectShader/fellow.vs'
 import fellowFragmentShader from './ObjectShader/fellow.fs'
 
 /* TODO
-  - Vol
+  - LOD -> Carrés
 */
 export default class Fellow extends Ressource {
   constructor (options) {
@@ -20,7 +20,7 @@ export default class Fellow extends Ressource {
     this.suitsCoeff = 0
     this.direction = Math.random() * Math.PI * 2
     this.focus = null
-    this.effectiveSize = this.ADN.morphology.size * 0.02
+    this.effectiveSize = 0.2
     this.unfuckableEx = []
     this.uneatableEx = []
     this.virus = false
@@ -50,57 +50,92 @@ export default class Fellow extends Ressource {
     if (options.object) {
       this.body = options.object.clone()
       this.object = options.object
+      this.body.scale.set(this.effectiveSize, this.effectiveSize, this.effectiveSize)
 
-      const neckSize = this.ADN.morphology.neck * 2 + 0.001
-      this.body.neck.scale.set(neckSize, neckSize, neckSize)
+      let neckSize = 1
 
-      const headSize = (1 / neckSize) * this.ADN.morphology.head * 2 + 0.001
-      this.body.head.scale.set(headSize, headSize, headSize)
-
-      const legsSize = this.ADN.morphology.legs * 2 + 0.001 * (this.ADN.morphology.nLegs <= 0.25 ? 0 : 1)
-      this.body.leftLeg.scale.set(legsSize, legsSize, legsSize)
-      this.body.rightLeg.scale.set(legsSize, legsSize, legsSize)
-
-      this.otherLegs = []
-      for (let i = 0; i < Math.floor(4 * this.ADN.morphology.nLegs) - 1; i++) {
-        const lLeg = this.body.leftLeg.clone()
-        const rLeg = this.body.rightLeg.clone()
-
-        this.otherLegs.push(lLeg)
-        this.otherLegs.push(rLeg)
-
-        rLeg.position.set(0, i * 0.2, -i * 0.5)
-        lLeg.position.set(0, i * 0.2, -i * 0.5)
-
-        this.body.body.add(lLeg)
-        this.body.body.add(rLeg)
+      if (this.ADN.morphology.neck <= 0.1) {
+        this.body.neck.visible = false
+        this.body.remove(this.body.neck)
+      } else {
+        neckSize = this.ADN.morphology.neck * 2 + 0.001
+        this.body.neck.scale.set(neckSize, neckSize, neckSize)
       }
 
-      const armsSize = this.ADN.morphology.arms * 2 + 0.001 * (this.ADN.morphology.nArms <= 0.25 ? 0 : 1)
-      this.body.leftArm.scale.set(armsSize, armsSize, armsSize)
-      this.body.rightArm.scale.set(armsSize, armsSize, armsSize)
-
-      this.otherArms = []
-      for (let i = 0; i < Math.floor(4 * this.ADN.morphology.nArms) - 1; i++) {
-        const lArm = this.body.leftArm.clone()
-        const rArm = this.body.rightArm.clone()
-
-        this.otherArms.push(lArm)
-        this.otherArms.push(rArm)
-
-        rArm.position.set(0, i * 0.2, -i * 0.5)
-        lArm.position.set(0, i * 0.2, -i * 0.5)
-
-        this.body.body.add(lArm)
-        this.body.body.add(rArm)
+      if (this.ADN.morphology.head <= 0.1) {
+        this.body.head.visible = false
+      } else {
+        const headSize = (1 / neckSize) * this.ADN.morphology.head * 2 + 0.001
+        this.body.head.scale.set(headSize, headSize, headSize)
       }
 
-      const tailSize = this.ADN.morphology.tail * 2 + 0.001
-      this.body.tail.scale.set(tailSize, tailSize, tailSize)
+      if (this.ADN.morphology.legs <= 0.1) {
+        this.body.leftLeg.visible = false
+        this.body.rightLeg.visible = false
+      } else {
+        const legsSize = this.ADN.morphology.legs * 2 + 0.001 * (this.ADN.morphology.nLegs <= 0.25 ? 0 : 1)
+        this.body.leftLeg.scale.set(legsSize, legsSize, legsSize)
+        this.body.rightLeg.scale.set(legsSize, legsSize, legsSize)
 
-      const wingsSize = this.ADN.capacity.fly * 2 + 0.001
-      this.body.leftWing.scale.set(wingsSize, wingsSize, wingsSize)
-      this.body.rightWing.scale.set(wingsSize, wingsSize, wingsSize)
+        this.otherLegs = []
+        for (let i = 0; i < Math.floor(4 * this.ADN.morphology.nLegs) - 1; i++) {
+          const lLeg = this.body.leftLeg.clone()
+          const rLeg = this.body.rightLeg.clone()
+
+          this.otherLegs.push(lLeg)
+          this.otherLegs.push(rLeg)
+
+          rLeg.position.set(0, i * 0.2, -i * 0.5)
+          lLeg.position.set(0, i * 0.2, -i * 0.5)
+
+          this.body.body.add(lLeg)
+          this.body.body.add(rLeg)
+        }
+      }
+
+      if (this.ADN.morphology.arms <= 0.1) {
+        this.body.leftArm.visible = false
+        this.body.rightArm.visible = false
+      } else {
+        const armsSize = this.ADN.morphology.arms * 2 + 0.001 * (this.ADN.morphology.nArms <= 0.25 ? 0 : 1)
+        this.body.leftArm.scale.set(armsSize, armsSize, armsSize)
+        this.body.rightArm.scale.set(armsSize, armsSize, armsSize)
+
+        this.otherArms = []
+        for (let i = 0; i < Math.floor(4 * this.ADN.morphology.nArms) - 1; i++) {
+          const lArm = this.body.leftArm.clone()
+          const rArm = this.body.rightArm.clone()
+
+          this.otherArms.push(lArm)
+          this.otherArms.push(rArm)
+
+          rArm.position.set(0, i * 0.2, -i * 0.5)
+          lArm.position.set(0, i * 0.2, -i * 0.5)
+
+          this.body.body.add(lArm)
+          this.body.body.add(rArm)
+        }
+      }
+
+      if (this.ADN.morphology.tail <= 0.1) {
+        this.body.tail.visible = false
+      } else {
+        const tailSize = this.ADN.morphology.tail * 2 + 0.001
+        this.body.tail.scale.set(tailSize, tailSize, tailSize)
+      }
+
+      if (this.ADN.capacity.fly <= 0.1) {
+        this.body.leftWing.visible = false
+        this.body.rightWing.visible = false
+      } else {
+        const wingsSize = this.ADN.capacity.fly * 2 + 0.001
+        this.body.leftWing.scale.set(wingsSize, wingsSize, wingsSize)
+        this.body.rightWing.scale.set(wingsSize, wingsSize, wingsSize)
+      }
+
+      this.minBody = new Mesh(new SphereBufferGeometry(this.effectiveSize, 3, 3), material)
+      this.minBody.visible = false
+      this.add(this.minBody)
 
       const self = this
       this.body.traverse((el) => {
@@ -110,7 +145,7 @@ export default class Fellow extends Ressource {
         }
       })
     } else {
-      const geometry = new BoxGeometry(this.effectiveSize, this.effectiveSize, this.effectiveSize)
+      const geometry = new SphereBufferGeometry(this.effectiveSize, 3, 3)
       this.body = new Mesh(geometry, material)
     }
     this.add(this.body)
@@ -121,12 +156,12 @@ export default class Fellow extends Ressource {
   }
 
   getSpeed () {
-    const speed = (this.ADN.capacity.fly * 0.3 + this.ADN.morphology.size * 0.2 + this.ADN.morphology.legs * 0.2 - this.ADN.morphology.weight * 0.2) * (Math.sin(this.age * Math.PI) + 0.2)
-    return (speed > 0 ? speed : 0.002) * constants.TIME.SPEED
+    const speed = (this.ADN.capacity.fly * 0.3 + this.ADN.morphology.size * 0.2 + this.ADN.morphology.legs * 0.2 - this.ADN.morphology.weight * 0.2) * (Math.sin(this.age * Math.PI) + 0.2) * 0.2
+    return (speed > 0 ? speed : 0.001) * constants.TIME.SPEED
   }
 
   increaseHunger () {
-    this.hunger += (this.ADN.morphology.size + this.ADN.morphology.weight) * 0.003 * constants.TIME.SPEED
+    this.hunger += (this.ADN.morphology.size + this.ADN.morphology.weight * 0.5 + this.ADN.reproduction.interval + this.ADN.reproduction.litter * 0.5) * 0.004 * constants.TIME.SPEED
   }
 
   increaseDesire () {
@@ -151,8 +186,9 @@ export default class Fellow extends Ressource {
   }
 
   increaseEffectiveSize () {
-    this.effectiveSize = this.age * this.ADN.morphology.size + 1
+    this.effectiveSize = this.age * this.ADN.morphology.size * 2 + 0.2
     this.body.scale.set(this.effectiveSize, this.effectiveSize, this.effectiveSize)
+    this.minBody.scale.set(this.effectiveSize * 8, this.effectiveSize * 8, this.effectiveSize * 8)
   }
 
   clampPosition () {
@@ -166,7 +202,7 @@ export default class Fellow extends Ressource {
     return v
   }
 
-  update (webgl) {
+  update (webgl, posCam) {
     if (this.isAlive()) {
       this.increaseHunger()
       this.increaseDesire()
@@ -174,13 +210,29 @@ export default class Fellow extends Ressource {
       this.updateSuitsCoeff(webgl)
       this.increaseAge()
       this.increaseEffectiveSize()
-      this.animate(webgl)
       if (this.virus) {
         this.getClosest(webgl.getOthers(this))
       }
-      this.body.traverse((el) => {
-        if (el.material) el.material.uniforms.uDay.value = Math.sin(webgl.currentTime * 0.01)
-      })
+
+      const camdist = posCam.distanceTo(this.position)
+
+      if (camdist < 100) {
+        this.body.traverse((el) => {
+          if (el.material) el.material.uniforms.uDay.value = Math.sin(webgl.currentTime * 0.01)
+        })
+        if (!this.body.visible) this.body.visible = true
+        if (this.minBody.visible) this.minBody.visible = false
+        this.animate(webgl)
+      } else if (camdist < 500) {
+        this.minBody.material.uniforms.uDay.value = Math.sin(webgl.currentTime * 0.01)
+        if (!this.minBody.visible) this.minBody.visible = true
+        if (this.body.visible) this.body.visible = false
+      } else if (this.body.visible) {
+        this.body.visible = false
+      } else if (this.minBody.visible) {
+        this.minBody.visible = false
+      }
+
       this.timer++
     }
   }
@@ -251,11 +303,6 @@ export default class Fellow extends Ressource {
 
   handleDesire (webgl) {
     this.handleReproduction(webgl)
-    if (this.focus.element.hunger >= 1) {
-      this.focus.element.hunger = 0
-      webgl.removeFellow(this)
-      this.focus.element.focus = null
-    }
     this.focus = null
   }
 
@@ -270,25 +317,28 @@ export default class Fellow extends Ressource {
   }
 
   handleBirth (webgl) {
+    if (this.virus && Math.random() > this.virus.steril) return false
+    if (this.focus.element.virus && Math.random() > this.focus.element.virus.steril) return false
     const rand = Math.random()
     const n = Math.round(this.ADN.reproduction.litter * 10 * rand)
     for (let i = 0; i < n; i++) {
       const newADN = this.ADN.getADNFromReproductionWith(this.focus.element.ADN)
       webgl.addFellow(new Fellow({ ADN: newADN, object: this.body }), this.position)
     }
+    return true
   }
 
   handleHunger (webgl) {
     if (this.focus.element.type === constants.RESSOURCES.TYPES.MEAT) {
       if (!this.ADN.canFuckWith(this.focus.element.ADN)) {
-        this.hunger = 0
         webgl.removeFellow(this.focus.element)
+        this.hunger = 0
       } else {
         this.uneatableEx.push(this.focus.element)
       }
     } else if (this.focus.element.type === constants.RESSOURCES.TYPES.VEGETATION) {
       this.hunger = 0
-      webgl.ground.removeTree(this.focus.element)
+      webgl.ground.eatTree(this.focus.element)
     }
     this.focus = null
   }
@@ -312,11 +362,13 @@ export default class Fellow extends Ressource {
   }
 
   catchVirus (virus) {
+    virus.evolve()
     this.body.traverse((el) => {
       if (el.material) {
         el.material.uniforms.uVirus.value = 1.0
       }
     })
+    this.minBody.material.uniforms.uVirus.value = 1.0
     this.virus = virus
   }
 
@@ -351,7 +403,7 @@ export default class Fellow extends Ressource {
         this.rotation.y = -this.direction - Math.PI / 2
       }
       this.clampPosition()
-      this.position.y = webgl.ground.getHeight(this.position.x, this.position.z) - 2 + this.ADN.morphology.legs * 4// + (this.ADN.capacity.fly > 0 ? this.flyingTime(webgl.currentTime) * this.ADN.capacity.fly * 50 : 0)
+      this.position.y = webgl.ground.getHeight(this.position.x, this.position.z) - 0.1 + this.ADN.morphology.legs + (this.minBody.visible ? 1 : 0)// + (this.ADN.capacity.fly > 0 ? this.flyingTime(webgl.currentTime) * this.ADN.capacity.fly * 50 : 0)
 
       webgl.updatePosition(this)
     }
@@ -363,35 +415,47 @@ export default class Fellow extends Ressource {
 
   animate (webgl) {
     const t = (webgl.currentTime + this.timeSeed) * 0.1
-    this.body.tail.rotation.y = Math.sin(t) * 0.2 * this.desire
 
-    this.body.leftLeg.rotation.x = Math.sin(t * this.getSpeed() * 3) * 0.5
-    this.body.rightLeg.rotation.x = Math.sin(t * this.getSpeed() * 3 + Math.PI) * 0.5
-
-    for (let i = 0; i < this.otherLegs.length; i++) {
-      this.otherLegs[i].rotation.x = Math.sin(t * this.getSpeed() * 3 + (i % 2 === 0 ? 0 : Math.PI) + i * 0.5) * 0.5
+    if (this.ADN.morphology.tail > 0.1) {
+      this.body.tail.rotation.y = Math.sin(t) * 0.2 * this.desire * 0.3
     }
 
-    this.body.leftArm.rotation.x = Math.sin(t * this.getSpeed()) * 0.3
-    this.body.rightArm.rotation.x = Math.sin(t * this.getSpeed() + Math.PI) * 0.3
+    if (this.ADN.morphology.legs > 0.1) {
+      this.body.leftLeg.rotation.x = Math.sin(t * this.getSpeed() * 3) * 0.2
+      this.body.rightLeg.rotation.x = Math.sin(t * this.getSpeed() * 3 + Math.PI) * 0.2
 
-    for (let i = 0; i < this.otherArms.length; i++) {
-      this.otherArms[i].rotation.x = Math.sin(t * this.getSpeed() * 3 + (i % 2 === 0 ? 0 : Math.PI) + i * 0.5) * 0.5
+      for (let i = 0; i < this.otherLegs.length; i++) {
+        this.otherLegs[i].rotation.x = Math.sin(t * this.getSpeed() * 3 + (i % 2 === 0 ? 0 : Math.PI) + i * 0.5) * 0.2
+      }
     }
 
-    this.body.leftWing.rotation.z = Math.sin(t * 6 * (1 - this.ADN.capacity.fly)) * 0.5
-    this.body.rightWing.rotation.z = -Math.sin(t * 6 * (1 - this.ADN.capacity.fly)) * 0.5
+    if (this.ADN.morphology.arms > 0.1) {
+      this.body.leftArm.rotation.x = Math.sin(t * this.getSpeed()) * 0.3
+      this.body.rightArm.rotation.x = Math.sin(t * this.getSpeed() + Math.PI) * 0.3
 
-    this.body.neck.rotation.y = Math.sin(t * 2) * 0.2
-    this.body.head.rotation.z = Math.sin(t * 2) * 0.2
+      for (let i = 0; i < this.otherArms.length; i++) {
+        this.otherArms[i].rotation.x = Math.sin(t * this.getSpeed() * 3 + (i % 2 === 0 ? 0 : Math.PI) + i * 0.5) * 0.2
+      }
+    }
 
-    this.body.neck.rotation.x = Math.sin(t * 2) * 0.2 * this.hunger
+    if (this.ADN.capacity.fly > 0.1) {
+      this.body.leftWing.rotation.z = Math.sin(t * 6 * (1 - this.ADN.capacity.fly)) * 0.2
+      this.body.rightWing.rotation.z = -Math.sin(t * 6 * (1 - this.ADN.capacity.fly)) * 0.2
+    }
+
+    if (this.ADN.morphology.neck > 0.1) {
+      this.body.neck.rotation.y = Math.sin(t * 2) * 0.1
+      this.body.neck.rotation.x = Math.sin(t * 2) * 0.1 * this.hunger
+    }
+
+    if (this.ADN.morphology.head > 0.1) {
+      this.body.head.rotation.z = Math.sin(t * 2) * 0.1
+    }
   }
 
   handleDeath (webgl) {
     if (this.isAlive() && (this.hunger >= 2 || this.age >= 1)) {
       webgl.removeFellow(this)
-      console.log('mort vieillesse ou de faim')
     }
   }
 
@@ -406,6 +470,35 @@ export default class Fellow extends Ressource {
     str += '</b><br/>diet<b>' + utils.virg(this.ADN.diet.carnivorous)
     str += '</b><br/>longevity<b>' + utils.virg(this.ADN.capacity.longevity)
     str += '</b><br/>speed<b>' + utils.virg(this.getSpeed())
+    return str
+  }
+
+  displayInfo () {
+    let str = '<h1>Fellow</h1>'
+    str += '<div id="info_update">' + this.infoToUpdate() + '</div>'
+    str += '<h2>ADN</h2>'
+    str += this.ADN.toString()
+    if (this.virus) {
+      str += '<h2>Virus</h2>'
+      str += this.virus.toString()
+    }
+
+    document.getElementById('info').innerHTML = str
+    document.getElementById('info').style.animation = '0.5s show forwards'
+  }
+
+  updateInfo () {
+    document.getElementById('info_update').innerHTML = this.infoToUpdate()
+  }
+
+  infoToUpdate () {
+    let str = ''
+    str += '<p>age<b>' + utils.virg(this.age, 3) + '</b></p>'
+    str += '<p>desire<b>' + utils.virg(this.desire, 3) + '</b></p>'
+    str += '<p>hunger<b>' + utils.virg(this.hunger, 3) + '</b></p>'
+    str += '<p>longevity<b>' + utils.virg(this.ADN.capacity.longevity, 3) + '</b></p>'
+    str += '<p>speed<b>' + utils.virg(this.getSpeed(), 3) + '</b></p>'
+
     return str
   }
 }

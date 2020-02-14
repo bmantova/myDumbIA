@@ -25,8 +25,8 @@ export default class Grid {
   getIndexes (position) {
     const offset = constants.GROUND.SUB_ARRAY / 2
     return {
-      x: utils.limit(Math.floor((position.x / constants.GROUND.SIZE) * constants.GROUND.SUB_ARRAY + offset), 0, 32),
-      y: utils.limit(Math.floor((position.z / constants.GROUND.SIZE) * constants.GROUND.SUB_ARRAY + offset), 0, 32)
+      x: utils.limit(Math.floor((position.x / constants.GROUND.SIZE) * constants.GROUND.SUB_ARRAY + offset), 0, constants.GROUND.SUB_ARRAY - 1),
+      y: utils.limit(Math.floor((position.z / constants.GROUND.SIZE) * constants.GROUND.SUB_ARRAY + offset), 0, constants.GROUND.SUB_ARRAY - 1)
     }
   }
 
@@ -40,14 +40,19 @@ export default class Grid {
   }
 
   removeUnit (unit) {
+<<<<<<< HEAD
     const coords = this.getIndexes(unit.position)
     console.log(unit.position)
     console.log(coords)
     console.log('test')
     const tp = this.findTruePosition(unit)
     if (coords.x !== tp.x || coords.y !== tp.y) alert('coords:' + coords.x + ', ' + coords.y + '; tp:' + tp.x + ', ' + tp.y + '; unit' + unit.gridPosition.x + ', ' + unit.gridPosition.y + '; ' + unit.type)
+=======
+    // const coords = this.getIndexes(unit.position)
+    // if (coords.x !== tp.x || coords.y !== tp.y) alert('tp:' + tp.x + ', ' + tp.y + '; unit' + unit.gridPosition.x + ', ' + unit.gridPosition.y + '; pos' + Math.floor(unit.position.x) + ', ' + Math.floor(unit.position.z))
+>>>>>>> 2b2010bc43ee1f3d4c3bca38d6d12a5d5f9c7495
 
-    this.sub[coords.x][coords.y] = this.sub[coords.x][coords.y].filter((el) => el.id !== unit.id)
+    this.sub[unit.gridPosition.x][unit.gridPosition.y] = this.sub[unit.gridPosition.x][unit.gridPosition.y].filter((el) => el.id !== unit.id)
 
     this.scene.remove(unit)
     this.length--
@@ -60,20 +65,23 @@ export default class Grid {
         if (res.length >= 1) return { x: i, y: j }
       }
     }
-    console.log('unknow unit ', unit)
     return { x: false, y: false }
   }
 
   updatePosition (unit) {
     const coords = this.getIndexes(unit.position)
-    if (coords.x !== unit.gridPosition.x || coords.y !== unit.gridPosition.y) {
-      this.sub[unit.gridPosition.x][unit.gridPosition.y].filter(el => el.id !== unit.id)
+    if (!(coords.x === unit.gridPosition.x && coords.y === unit.gridPosition.y)) {
+      this.sub[unit.gridPosition.x][unit.gridPosition.y] = this.sub[unit.gridPosition.x][unit.gridPosition.y].filter(el => el.id !== unit.id)
       this.sub[coords.x][coords.y].push(unit)
       unit.gridPosition = coords
     }
   }
 
-  getOthers (element, toEject) {
+  empty () {
+
+  }
+
+  getOthers (element, toEject = []) {
     const mapMatrix = new Array(constants.GROUND.SUB_ARRAY)
     for (let i = 0; i < mapMatrix.length; i++) {
       mapMatrix[i] = new Array(constants.GROUND.SUB_ARRAY)
