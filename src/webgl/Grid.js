@@ -40,17 +40,8 @@ export default class Grid {
   }
 
   removeUnit (unit) {
-<<<<<<< HEAD
-    const coords = this.getIndexes(unit.position)
-    console.log(unit.position)
-    console.log(coords)
-    console.log('test')
-    const tp = this.findTruePosition(unit)
-    if (coords.x !== tp.x || coords.y !== tp.y) alert('coords:' + coords.x + ', ' + coords.y + '; tp:' + tp.x + ', ' + tp.y + '; unit' + unit.gridPosition.x + ', ' + unit.gridPosition.y + '; ' + unit.type)
-=======
     // const coords = this.getIndexes(unit.position)
     // if (coords.x !== tp.x || coords.y !== tp.y) alert('tp:' + tp.x + ', ' + tp.y + '; unit' + unit.gridPosition.x + ', ' + unit.gridPosition.y + '; pos' + Math.floor(unit.position.x) + ', ' + Math.floor(unit.position.z))
->>>>>>> 2b2010bc43ee1f3d4c3bca38d6d12a5d5f9c7495
 
     this.sub[unit.gridPosition.x][unit.gridPosition.y] = this.sub[unit.gridPosition.x][unit.gridPosition.y].filter((el) => el.id !== unit.id)
 
