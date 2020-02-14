@@ -87,7 +87,7 @@ export default class Cursor {
     let offsetLeft = 0
     let node = this.container
 
-    while (node.id !== 'Play' && node.id !== 'ADNCursorsContainer') {
+    while (node.id !== 'Play' && node.id !== 'ADNCursors') {
       offsetLeft += node.offsetLeft
       node = node.parentNode
     }

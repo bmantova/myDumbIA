@@ -2,8 +2,8 @@ import constants from 'utils/constants'
 import utils from 'utils/utils'
 
 export default class ADN {
-  constructor (options = { capacity: {}, reproduction: {}, morphology: {} }) {
-    if (!options.capcacity) options.capacity = {}
+  constructor (options = { capacity: {}, reproduction: {}, morphology: {}, diet: {}  }) {
+    if (!options.capacity) options.capacity = {}
     if (!options.reproduction) options.reproduction = {}
     if (!options.morphology) options.morphology = {}
     if (!options.diet) options.diet = {}
