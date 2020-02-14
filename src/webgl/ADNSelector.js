@@ -5,12 +5,10 @@ export default class ADNSelector {
   constructor ($parent) {
     this.parent = document.querySelector('#' + $parent)
     this.chosenADN = new ADN()
-    this.cursors = []
   }
 
   init () {
     this.iterateOverADN(this.chosenADN.store)
-    // this.drawSelectorCard()
   }
 
   iterateOverADN (obj) {
@@ -29,16 +27,8 @@ export default class ADNSelector {
     const cursor = new Cursor(name, value * 100)
     const self = this
     cursor.setUpdate((value) => { self.updateChosenADN(name, value / 100) })
-    // this.cursors.push(cursor)
     this.currentCategory.appendChild(cursor.DOM)
     cursor.init()
-  }
-
-  drawSelectorCard () {
-    for (let i = 0; i < this.cursors.length; i++) {
-      this.parent.appendChild(this.cursors[i].DOM)
-      this.cursors[i].init()
-    }
   }
 
   updateChosenADN (name, value) {
