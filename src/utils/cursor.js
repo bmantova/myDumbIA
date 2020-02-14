@@ -49,6 +49,10 @@ export default class Cursor {
       self.updateY(e.clientX)
     })
     this.setLeft(0)
+
+    this.DOM.addEventListener('build', function () {
+      alert('coucuo')
+    })
   }
 
   setMin (val) {
@@ -69,6 +73,10 @@ export default class Cursor {
 
   getWidth () {
     return parseInt(this.container.offsetWidth) - parseInt(this.cursor.offsetWidth)
+  }
+
+  getValue () {
+    return this.val
   }
 
   updateY (x) {

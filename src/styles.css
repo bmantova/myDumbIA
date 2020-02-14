@@ -106,11 +106,17 @@ html, body {
 }
 
 .titleContainer {
-  font-size:150px;
+  font-size:80px;
+  letter-spacing: 0.3em;
+  word-spacing: -0.2em;
   height:40%;
   display:flex;
   align-items: center;
   justify-content: center;
+  font-weight:normal;
+  color:#EEE;
+  text-shadow: 1px 1px #333, 0px 0px 30px  #000F;
+  padding-bottom:20%;
 }
 
 .buttonsContainer {
@@ -122,18 +128,25 @@ html, body {
 }
 
 button {
-  padding:20px 50px;
-  margin:20px;
-  border-radius: 20px;
-  background:rgba(105, 25, 25, 0.8);
-  font-size:35px;
-  font-weight:bold;
-  color:white;
+  text-align: center;
+  padding: 8px 35px;
+  background-color: #DDD;
+  opacity: 0.8;
+  font-size:30px;
+  margin:10px;
+  color:#333;
+  border-radius:15px;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  cursor:pointer;
+  transition: 0.5s;
   border:none;
 }
 
 button:hover {
-  transform:scale(0.9)
+  transform:scale(0.9);
+  opacity: 0.9;
 }
 
 button:disabled,
@@ -142,11 +155,11 @@ button[disabled]{
 }
 
 .playButton {
-
+  padding: 20px 100px;
 }
 
 .aboutButton {
-
+  font-size:15px;
 }
 
 #Play {
@@ -323,13 +336,20 @@ button[disabled]{
   text-align: center;
   width:150px;
   height:40px;
-  background-color: white;
+  background-color: #DDD;
+  opacity: 0.7;
   margin:10px;
-  color:black;
+  color:#333;
   border-radius:15px;
   display:flex;
   justify-content: center;
-  align-items: center;;
+  align-items: center;
+  cursor:pointer;
+  transition: 0.5s;
+}
+
+#openADNCursorsButton:hover {
+  opacity: 0.9;
 }
 
 #closeADNCursorsButton {
