@@ -10,7 +10,7 @@ export default class ADNSelector {
 
   init () {
     this.iterateOverADN(this.chosenADN.store)
-    this.drawSelectorCard()
+    // this.drawSelectorCard()
   }
 
   iterateOverADN (obj) {
@@ -29,7 +29,9 @@ export default class ADNSelector {
     const cursor = new Cursor(name, value * 100)
     const self = this
     cursor.setUpdate((value) => { self.updateChosenADN(name, value / 100) })
-    this.cursors.push(cursor)
+    // this.cursors.push(cursor)
+    this.currentCategory.appendChild(cursor.DOM)
+    cursor.init()
   }
 
   drawSelectorCard () {
@@ -45,8 +47,10 @@ export default class ADNSelector {
 
   addTitle (name) {
     const title = document.createElement('div')
+    title.id = name
     title.classList.add('selectorCategoryTitle')
     title.innerHTML = name
     this.parent.appendChild(title)
+    this.currentCategory = document.querySelector('#' + name)
   }
 }
