@@ -5,13 +5,8 @@ import MapSimulator from './webgl/objects/mapSimulator/mapSimulator'
 import HomeScreen from './webgl/objects/HomeScreen'
 import SnapAnimations from './animations/SnapAnimations'
 import GsapAnimations from './animations/GsapAnimations'
-import ADNSelector from './webgl/ADNSelector'
 
-/* eslint-disable-next-line */
-const adnSelector = new ADNSelector('ADNCursors')
-adnSelector.init()
-
-const webgl = new Webgl({ parent: document.querySelector('#Play'), startingADN: adnSelector.chosenADN })
+const webgl = new Webgl({ parent: document.querySelector('#Play') })
 webgl.setMode('pause')
 
 /* eslint-disable-next-line */
@@ -49,11 +44,13 @@ returnButton.addEventListener('click', () => {
 const openADNCursorsButton = document.querySelector('#openADNCursorsButton')
 openADNCursorsButton.addEventListener('click', () => {
   document.querySelector('#ADNCursorsContainer').style.marginTop = '0%'
+  webgl.adnSelector.run()
 })
 
 const closeADNCursorsButton = document.querySelector('#closeADNCursorsButton')
 closeADNCursorsButton.addEventListener('click', () => {
   document.querySelector('#ADNCursorsContainer').style.marginTop = '-150%'
+  webgl.adnSelector.stop()
 })
 
 /* eslint-disable-next-line */

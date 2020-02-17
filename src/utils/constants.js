@@ -1,4 +1,7 @@
 export default {
+  RD: {
+    NAMES: ['Baptiste', 'Axel', 'Manon', 'Marie', 'Cécile', 'Damien', 'Jérémy', 'Lucas', 'Vincent', 'Guillaume', 'Nicolas', 'Florian', 'Etienne', 'Louise', 'Noelie', 'Robillard', 'Venceslas', 'Sylvain', 'Aubane', 'Sylvie', 'Tom', 'Nathanael', 'Hedi', 'Keven', 'Victor', 'Pascal', 'Bobby', 'Sonia']
+  },
   GROUND: {
     SIZE: 500,
     SUB: 128,

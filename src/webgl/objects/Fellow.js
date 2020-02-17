@@ -7,9 +7,6 @@ import utils from 'utils/utils'
 import fellowVertexShader from './ObjectShader/fellow.vs'
 import fellowFragmentShader from './ObjectShader/fellow.fs'
 
-/* TODO
-  - LOD -> Carrés
-*/
 export default class Fellow extends Ressource {
   constructor (options) {
     super(options)
@@ -25,6 +22,8 @@ export default class Fellow extends Ressource {
     this.uneatableEx = []
     this.virus = false
     this.flyingOffset = utils.randint(0, 1000)
+
+    this.firstname = constants.RD.NAMES[utils.randint(0, constants.RD.NAMES.length - 1)]
 
     this.type = constants.RESSOURCES.TYPES.MEAT
 
@@ -54,13 +53,8 @@ export default class Fellow extends Ressource {
 
       let neckSize = 1
 
-      if (this.ADN.morphology.neck <= 0.1) {
-        this.body.neck.visible = false
-        this.body.remove(this.body.neck)
-      } else {
-        neckSize = this.ADN.morphology.neck * 2 + 0.001
-        this.body.neck.scale.set(neckSize, neckSize, neckSize)
-      }
+      neckSize = this.ADN.morphology.neck * 2 + 0.001
+      this.body.neck.scale.set(neckSize, neckSize, neckSize)
 
       if (this.ADN.morphology.head <= 0.1) {
         this.body.head.visible = false
@@ -474,7 +468,7 @@ export default class Fellow extends Ressource {
   }
 
   displayInfo () {
-    let str = '<h1>Fellow</h1>'
+    let str = '<h1>Fellow (' + this.firstname + ')</h1>'
     str += '<div id="info_update">' + this.infoToUpdate() + '</div>'
     str += '<h2>ADN</h2>'
     str += this.ADN.toString()
@@ -498,6 +492,7 @@ export default class Fellow extends Ressource {
     str += '<p>hunger<b>' + utils.virg(this.hunger, 3) + '</b></p>'
     str += '<p>longevity<b>' + utils.virg(this.ADN.capacity.longevity, 3) + '</b></p>'
     str += '<p>speed<b>' + utils.virg(this.getSpeed(), 3) + '</b></p>'
+    str += '<p>is alive<b>' + (this.isAlive() ? 'yes' : 'no') + '</b></p>'
 
     return str
   }

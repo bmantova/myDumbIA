@@ -388,10 +388,12 @@ button[disabled]{
   position:absolute;
   top:50px;
   right:50px;
+  cursor:pointer;
+  transition: 0.5s;
 }
 
 #openADNCursorsButton:hover, .closeADNCursors:hover {
-  transform: scale(0.95);
+  transform: scale(0.9);
 }
 
 #ADNCursorsContainer {
@@ -409,13 +411,13 @@ button[disabled]{
 
 #ADNCursors {
   width:100%;
-  margin:50px;
+  padding:50px;
+  overflow:auto;
 }
 
 #info, #ADNCursorsContainer {
   background-color:#000A;
   padding:10px;
-  overflow:auto;
   color:white;
   border-radius: 0px 0px 0px 5px;
   color: #AAA;
@@ -424,7 +426,7 @@ button[disabled]{
 #info h1, #info h2, #info h3, 
 #ADNCursors h1, #ADNCursors h2, #ADNCursors h3 {
   font-weight:normal;
-  font-size: 0.7em;
+  font-size: 0.9em;
   color:white;
 }
 #info b, #ADNCursors b {
@@ -438,4 +440,14 @@ button[disabled]{
 }
 #info p:hover, #ADNCursors p:hover {
   background-color: #3335;
+}
+
+.selectorCategory {
+  padding: 10px 0px;
+}
+.selectorCategory h3 {
+  text-align:center;
+}
+
+#previzCanvas {
 }

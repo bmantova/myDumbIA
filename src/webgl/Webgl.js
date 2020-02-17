@@ -16,6 +16,7 @@ import Stats from 'stats.js'
 // import Objects from './objects/Objects'
 import Ground from './objects/ground/Ground'
 import Grid from './Grid'
+import ADNSelector from './ADNSelector'
 
 import createComposer from './postfx/Composer'
 import createLight from './objects/Lights'
@@ -32,15 +33,17 @@ import Virus from 'objects/Virus.js'
 /* TODO
 
  *** INTÉRACTIONS UTILISATEUR ***
-  - Laisser le choix de l'ADN de base à l'utilisateur
-  - Permettre de lancer un virus
+
+  - visu temps réel fellow 3D
+  - Déclancher épidémie
+  - un petit peu d'UX (boutons pause / adios mother fucker...)
+  - quelques icones
 
 */
 
 export default class Webgl {
   constructor (props) {
     this.mode = 'pause'
-    this.startingADN = props.startingADN
     this.currentTime = 0
     this.render = this.render.bind(this)
     this.onResize = this.onResize.bind(this)
@@ -93,6 +96,8 @@ export default class Webgl {
     this.clicked = false
     this.isWatched = false
 
+    this.tAdios = 0
+
     this.loadObj()
     this.keyEvents()
   }
@@ -108,6 +113,8 @@ export default class Webgl {
     this.fellowGeometry = obj
 
     this.fellowModel = new FellowModel({ object: this.fellowObj })
+    this.adnSelector = new ADNSelector('ADNCursors', this.fellowModel)
+    this.adnSelector.init()
 
     this.scene.add(this.ground)
 
@@ -121,16 +128,22 @@ export default class Webgl {
   sparkOfLife () {
     this.best = Math.max(this.best, this.ground.day)
     this.currentTime = 0
-    console.log(this.startingADN)
+    console.log(this.adnSelector.chosenADN)
     for (let i = 0; i < constants.FELLOW.INITIAL_NUMBER; i++) {
       const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE * 0.05, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE * 0.05 }
-      this.addFellow(new Fellow({ ADN: this.startingADN, type: constants.RESSOURCES.TYPES.MEAT, object: this.fellowModel }), position)
+      this.addFellow(new Fellow({ ADN: this.adnSelector.chosenADN, type: constants.RESSOURCES.TYPES.MEAT, object: this.fellowModel }), position)
     }
 
     this.ground.initialBunchOfTrees()
     this.tries++
     utils.debug('#try', this.tries)
     utils.debug('best trie', this.best)
+  }
+
+  adiosMotherFucker () {
+    while (this.fellows.length > 0) {
+      this.removeFellow(this.fellows[0])
+    }
   }
 
   loadObj () {
@@ -155,16 +168,18 @@ export default class Webgl {
   }
 
   render () {
+    this.adnSelector.update()
     if (this.mode === 'run') {
       this.stats.begin()
 
       this.controls.update()
 
       if (this.running) {
+        if (this.tAdios > 0) this.tAdios += constants.TIME.SPEED
         this.currentTime += constants.TIME.SPEED
 
         utils.debug('#fellows', this.fellows.length)
-        this.ground.update(this.currentTime, this.camera.position)
+        this.ground.update(this.currentTime, this.camera.position, this.tAdios)
 
         let nVirus = 0
 
@@ -177,8 +192,9 @@ export default class Webgl {
 
         utils.debug('#sick', nVirus)
 
-        if (this.fellows.length === 0) {
+        if (this.fellows.length === 0 && (this.tAdios === 0 || this.tAdios > 20)) {
           this.sparkOfLife()
+          this.tAdios = 0
         }
         if (this.isWatched && Math.floor(this.currentTime / constants.TIME.SPEED) % 20 === 0) {
           this.isWatched.updateInfo()
@@ -234,7 +250,7 @@ export default class Webgl {
             cur.displayInfo()
             this.isWatched = cur
           }
-          utils.mousewin('Fellow #' + i, cur.toString(), e.clientX, e.clientY)
+          utils.mousewin('Fellow (' + cur.firstname + ')', cur.toString(), e.clientX, e.clientY)
         }
       } else {
         utils.mousewin('close')
@@ -259,11 +275,15 @@ export default class Webgl {
     window.addEventListener('keyup', (e) => {
       // alert(e.keyCode)
       switch (e.keyCode) {
-        case 72: // h
+        case 72: // H
           this.renderEnabled = !this.renderEnabled
           break
         case 32: // SPACE
           this.running = !this.running
+          break
+        case 65: // A
+          this.adiosMotherFucker()
+          this.tAdios++
           break
       }
     })

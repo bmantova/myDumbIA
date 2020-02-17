@@ -56,6 +56,9 @@ export default class Ground extends Object3D {
         },
         uHeight: {
           value: 1.0
+        },
+        uAdios: {
+          value: 1.0
         }
       },
       vertexShader: vertexShader,
@@ -196,7 +199,7 @@ export default class Ground extends Object3D {
     }
   }
 
-  update (time, posCam) {
+  update (time, posCam, adios) {
     const timeMult = 0.01
 
     this.material.uniforms.uTime.value = time * timeMult
@@ -207,6 +210,8 @@ export default class Ground extends Object3D {
     this.material.uniforms.uSunX.value = this.sky.sun.position.x
     this.material.uniforms.uSunY.value = this.sky.sun.position.y
     this.material.uniforms.uSunZ.value = this.sky.sun.position.z
+
+    this.material.uniforms.uAdios.value = adios
 
     const curPart = Math.floor(((this.vegetation.length) / constants.RESSOURCES.VEGETATION.SPLIT_UPDATE) * (time % constants.RESSOURCES.VEGETATION.SPLIT_UPDATE))
 
