@@ -11,7 +11,7 @@ import {
   OrbitControls
 } from './controls/OrbitControls'
 
-import Stats from 'stats.js'
+// import Stats from 'stats.js'
 
 // import Objects from './objects/Objects'
 import Ground from './objects/ground/Ground'
@@ -76,9 +76,9 @@ export default class Webgl {
 
     this.raycaster = new Raycaster()
 
-    this.stats = new Stats()
-    this.stats.showPanel(0)
-    props.parent.appendChild(this.stats.dom)
+    // this.stats = new Stats()
+    // this.stats.showPanel(0)
+    // props.parent.appendChild(this.stats.dom)
 
     this.ground = new Ground()
     this.grid = new Grid({ scene: this.scene })
@@ -128,7 +128,7 @@ export default class Webgl {
   sparkOfLife () {
     this.best = Math.max(this.best, this.ground.day)
     this.currentTime = 0
-    console.log(this.adnSelector.chosenADN)
+    this.tAdios = 0
     for (let i = 0; i < constants.FELLOW.INITIAL_NUMBER; i++) {
       const position = { x: (Math.random() - 0.5) * constants.GROUND.SIZE * 0.05, y: 0, z: (Math.random() - 0.5) * constants.GROUND.SIZE * 0.05 }
       this.addFellow(new Fellow({ ADN: this.adnSelector.chosenADN, type: constants.RESSOURCES.TYPES.MEAT, object: this.fellowModel }), position)
@@ -136,14 +136,15 @@ export default class Webgl {
 
     this.ground.initialBunchOfTrees()
     this.tries++
-    utils.debug('#try', this.tries)
-    utils.debug('best trie', this.best)
+    utils.debug('#try', this.tries, 'Number of tries')
+    utils.debug('best trie', this.best, 'Duration (in days) of the best try')
   }
 
   adiosMotherFucker () {
     while (this.fellows.length > 0) {
       this.removeFellow(this.fellows[0])
     }
+    this.tAdios++
   }
 
   loadObj () {
@@ -170,7 +171,7 @@ export default class Webgl {
   render () {
     this.adnSelector.update()
     if (this.mode === 'run') {
-      this.stats.begin()
+      // this.stats.begin()
 
       this.controls.update()
 
@@ -178,7 +179,7 @@ export default class Webgl {
         if (this.tAdios > 0) this.tAdios += constants.TIME.SPEED
         this.currentTime += constants.TIME.SPEED
 
-        utils.debug('#fellows', this.fellows.length)
+        utils.debug('#fellows', this.fellows.length, 'Number of alive fellows')
         this.ground.update(this.currentTime, this.camera.position, this.tAdios)
 
         let nVirus = 0
@@ -190,8 +191,7 @@ export default class Webgl {
           if (element.virus) nVirus++
         })
 
-        utils.debug('#sick', nVirus)
-
+        utils.debug('#sick', nVirus, 'Number of sick fellows')
         if (this.fellows.length === 0 && (this.tAdios === 0 || this.tAdios > 20)) {
           this.sparkOfLife()
           this.tAdios = 0
@@ -202,7 +202,7 @@ export default class Webgl {
       }
 
       if (this.renderEnabled) this.composer.render()
-      this.stats.end()
+      // this.stats.end()
     }
     requestAnimationFrame(this.render)
   }
@@ -283,7 +283,6 @@ export default class Webgl {
           break
         case 65: // A
           this.adiosMotherFucker()
-          this.tAdios++
           break
       }
     })
@@ -297,7 +296,10 @@ export default class Webgl {
     })
     document.getElementById('info').addEventListener('click', function () {
       document.getElementById('info').style.animation = '0.5s hide forwards'
-      this.isWatched = false
+      self.isWatched = false
+    })
+    document.getElementById('AdiosMotherFuckerButton').addEventListener('click', function () {
+      self.adiosMotherFucker()
     })
   }
 }

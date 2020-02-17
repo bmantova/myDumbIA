@@ -158,6 +158,25 @@ button[disabled]{
   background:rgba(126, 126, 126, 0.8);
 }
 
+.roundedBtn {
+  text-align:center;
+  height:25px;
+  width:25px;
+  padding:10px;
+  border-radius:0px 25px 25px 0px;
+  cursor:pointer;
+  background-color: #333;
+  opacity: 0.8;
+  display:inline-block;
+  transition:0.5s;
+}
+.roundedBtn:hover {
+  transform: scale(0.9);
+}
+.roundedBtn img {
+  height:100%;
+}
+
 .playButton {
   padding: 20px 100px;
 }
@@ -353,10 +372,10 @@ button[disabled]{
   top:20px;
   left:0px;
   right:0px;
-
 }
 
 #openADNCursorsButton {
+  display:inline-block;
   text-align: center;
   width:100px;
   padding:12px;
@@ -369,6 +388,7 @@ button[disabled]{
   border-radius:15px;
   cursor:pointer;
   transition: 0.5s;
+  vertical-align:middle;
 }
 
 #openADNCursorsButton:hover {
@@ -390,6 +410,10 @@ button[disabled]{
   right:50px;
   cursor:pointer;
   transition: 0.5s;
+}
+
+#AdiosMotherFuckerButton {
+  vertical-align:middle;
 }
 
 #openADNCursorsButton:hover, .closeADNCursors:hover {

@@ -247,8 +247,8 @@ export default class Ground extends Object3D {
     this.sky.update(time * timeMult)
     // utils.debug('time', time * constants.TIME.SPEED)
     this.day = Math.floor(time * timeMult / (Math.PI * 2))
-    utils.debug('day', this.day)
-    utils.debug('#trees', this.vegetation.length)
+    utils.debug('day', this.day, 'Number of days since the begining of this try')
+    utils.debug('#trees', this.vegetation.length, 'Number of trees')
   }
 
   getVegetation (elem) {

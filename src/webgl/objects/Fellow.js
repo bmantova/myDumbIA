@@ -30,7 +30,7 @@ export default class Fellow extends Ressource {
     const material = new RawShaderMaterial({
       uniforms: {
         uDay: {
-          value: 0.0
+          value: 2.0
         },
         uColor: {
           value: 0.0

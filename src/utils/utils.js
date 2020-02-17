@@ -14,12 +14,13 @@ export default {
     if (v < a || v > b) return (v) % (b - a) + a
     return v
   },
-  debug: (name, value = '') => {
+  debug: (name, value = '', title = '') => {
+    if (title === '') title = name
     const className = name.replace(' ', '_')
     if (document.getElementById('debug').getElementsByClassName(className).length > 0) {
       document.getElementById('debug').getElementsByClassName(className)[0].innerHTML = '<span class="res_title">' + name + '</span><span class="res_content">' + value + '</span>'
     } else {
-      document.getElementById('debug').innerHTML += '<div class="' + className + '"><span class="res_title">' + name + '</span><span class="res_content">' + value + '</span></div>'
+      document.getElementById('debug').innerHTML += '<div class="' + className + '" title="' + title + '"><span class="res_title">' + name + '</span><span class="res_content">' + value + '</span></div>'
     }
   },
   mousewin: (name, content, x = 0, y = 0) => {
