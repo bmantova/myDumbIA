@@ -54,13 +54,13 @@ export default class mapSimulator {
       height: 1.0
     }
     const self = this
-    this.datGui.add(params, 'humidity').min(0).max(1).onChange((value) => {
+    this.datGui.add(params, 'humidity').min(0).max(1).step(0.1).onChange((value) => {
       self.ground.material.uniforms.uHumidity.value = value
     })
-    this.datGui.add(params, 'temperature').min(-1).max(1).onChange((value) => {
+    this.datGui.add(params, 'temperature').min(-1).max(1).step(0.1).onChange((value) => {
       self.ground.material.uniforms.uTemperature.value = value
     })
-    this.datGui.add(params, 'height').min(0).max(4).onChange((value) => {
+    this.datGui.add(params, 'height').min(0).max(4).step(0.1).onChange((value) => {
       self.ground.material.uniforms.uHeight.value = value
     })
 
