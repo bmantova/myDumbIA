@@ -277,6 +277,7 @@ export default class Webgl {
       switch (e.keyCode) {
         case 72: // H
           this.renderEnabled = !this.renderEnabled
+          this.calcMode()
           break
         case 32: // SPACE
           this.running = !this.running
@@ -286,6 +287,16 @@ export default class Webgl {
           break
       }
     })
+  }
+
+  calcMode () {
+    const debugDiv = document.querySelector('#debug')
+    if (!this.renderEnabled) {
+      debugDiv.classList.add('debugMiddlePosition')
+    }
+    else {
+      debugDiv.classList.remove('debugMiddlePosition')
+    }
   }
 
   clickEvent () {

@@ -29,14 +29,19 @@ html, body {
   overflow:hidden;
 }
 #debug {
+  color: white;
+  background-color:rgba(0,0,0,0.6);
+}
+
+.debug {
   position: fixed;
   bottom: 0px;
   left:0px;
-  color: white;
-  background-color:rgba(0,0,0,0.6);
+  transform: translate(0%,0%);
   border-radius: 0px 5px 0px 0px;
+  transition: 0.2s all;
 }
-#debug>div {
+.debug>div {
   border-bottom:1px solid #9995;
   padding: 6px;
   font-size:14px;
@@ -197,7 +202,8 @@ button[disabled]{
 }
 
 .appearAnimation #debug {
-  display:block;
+  display:flex;
+  flex-direction: column;
 }
 
 #About {
@@ -475,4 +481,22 @@ button[disabled]{
 }
 
 #previzCanvas {
+}
+
+.debugMiddlePosition {
+  bottom:50%;
+  left: 50%;
+  transform: translate(-50%,50%);
+  border-radius: 5px 5px 5px 5px;
+  width:300px;
+  height:300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.debugMiddlePosition > div {
+  width:80%;
+  font-size:18px;
 }
