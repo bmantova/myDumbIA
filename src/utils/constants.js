@@ -44,7 +44,7 @@ export default {
     INITIAL_NUMBER: 50
   },
   VIRUS: {
-    INITIAL_APPEAR: 0.01,
+    INITIAL_APPEAR: 0.005,
     BEST_VIRUS: 0
   },
   TIME: {

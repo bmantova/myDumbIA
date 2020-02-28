@@ -277,7 +277,7 @@ export default class Fellow extends Ressource {
       } else {
         this.focus = null
       }
-    } else {
+    } else { // Desire > 0
       const others = webgl.getOthers(this, this.unfuckableEx)
       if (others.length !== 0) {
         this.focus = this.getClosest(others)
